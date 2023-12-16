@@ -15,7 +15,6 @@
 
     <!-- Assembly -->
     <PropertyGroup>
-        <Tfm>net7.0</Tfm>
         <PlatformTarget>AnyCPU</PlatformTarget>
         <Platforms>x64</Platforms>
         <GlobalNamespacePrefix>StrongOf</GlobalNamespacePrefix>
@@ -24,7 +23,7 @@
 
     <!-- Project Defaults -->
     <PropertyGroup>
-        <TargetFramework>$(Tfm)</TargetFramework>
+        <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 
     <!-- Package -->
