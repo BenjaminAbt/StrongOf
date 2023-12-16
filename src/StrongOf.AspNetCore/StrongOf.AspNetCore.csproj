@@ -8,15 +8,17 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="readme.md" Pack="true" PackagePath=""/>
-        <None Include="LICENSE.txt" Pack="true" PackagePath=""/>
+        <None Include="readme.md" Pack="true" PackagePath="" />
+        <None Include="LICENSE.txt" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+    <!-- Dependencies -->
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="System.Text.Json" />
+        <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
-    </ItemGroup>
 </Project>

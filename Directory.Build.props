@@ -31,15 +31,8 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
-        <PackageReadmeFile>readme.md</PackageReadmeFile>
-        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
         <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
     </PropertyGroup>
-
-    <ItemGroup>
-        <None Include="readme.md" Pack="true" PackagePath=""/>
-        <None Include="LICENSE.txt" Pack="true" PackagePath=""/>
-    </ItemGroup>
 
     <!-- C# -->
     <PropertyGroup>

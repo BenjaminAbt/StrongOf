@@ -70,8 +70,67 @@ JsonSerializerOptions serializeOptions = new JsonSerializerOptions
 string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
 ```
 
+## Usage with ASP.NET Core
+
+You can just use [StrongOf.AspNetCore](https://www.nuget.org/packages/StrongOf.AspNetCore) and use one of the pre-defined binders
+
+```csharp
+public class MyBinderProvider : IModelBinderProvider
+{
+    private static readonly IReadOnlyDictionary<Type, Type> s_binders = new Dictionary<Type, Type>
+    {
+        {typeof(UserId), typeof(StrongGuidBinder<UserId>)}
+        // ... more here ...
+    };
+
+    public IModelBinder? GetBinder(ModelBinderProviderContext context)
+    {
+        if (s_binders.TryGetValue(context.Metadata.ModelType, out Type? binderType))
+        {
+            return new BinderTypeModelBinder(binderType);
+        }
+
+        return null;
+    }
+}
+```
+
+You can also create a customized binder
+
+```csharp
+public class MyCustonStrongGuidBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongGuid<TStrong>
+{
+    public override bool TryHandle(string value, out ModelBindingResult result)
+    {
+        // do something here
+        
+        if (StrongGuid<TStrong>.TryParse(value, out TStrong? strong))
+        {
+            result = ModelBindingResult.Success(strong);
+            return true;
+        }
+
+        result = ModelBindingResult.Failed();
+        return false;
+    }
+}
+```
+
 
 ## Usage with Entity Framework
+
+Unfortunately, the Entity Framework does not love generic [Value Converter](https://learn.microsoft.com/en-us/ef/core/modeling/value-conversions?WT.mc_id=DT-MVP-5001507), which is why you have to write it yourself.
+
+```csharp
+public class UserIdValueConverter : ValueConverter<UserId, Guid>
+{
+    public UserIdValueConverter(ConverterMappingHints? mappingHints = null)
+        : base(id => id.Value, value => new(value), mappingHints) { }
+}
+```
+
+## Usage with ASP.NET Core
 
 Unfortunately, the Entity Framework does not love generic [Value Converter](https://learn.microsoft.com/en-us/ef/core/modeling/value-conversions?WT.mc_id=DT-MVP-5001507), which is why you have to write it yourself.
 
@@ -86,6 +145,7 @@ public class UserIdValueConverter : ValueConverter<UserId, Guid>
 ## Installation
 
 [![StrongOf](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf)\
+[![StrongOf.AspNetCore](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)
 [![StrongOf.Json](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)
 
 See [StrongOf on NuGet.org](https://www.nuget.org/packages/StrongOf)
