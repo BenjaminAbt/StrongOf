@@ -1,0 +1,34 @@
+<Project>
+
+    <!-- Head -->
+    <PropertyGroup>
+        <Company>Benjamin Abt</Company>
+        <Authors>Benjamin Abt, SchwabenCode</Authors>
+        <Product>BenjaminAbt.StrongOf</Product>
+    </PropertyGroup>
+
+    <!-- Assembly -->
+    <PropertyGroup>
+        <Tfm>net7.0</Tfm>
+        <GlobalNamespacePrefix>StrongOf</GlobalNamespacePrefix>
+        <GlobalAssemblyNamePrefix>BenjaminAbt.StrongOf</GlobalAssemblyNamePrefix>
+    </PropertyGroup>
+
+    <!-- Project Defaults -->
+    <PropertyGroup>
+        <TargetFramework>$(Tfm)</TargetFramework>
+    </PropertyGroup>
+
+    <!-- C# -->
+    <PropertyGroup>
+        <LangVersion>12.0</LangVersion>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <!-- NuGet -->
+    <PropertyGroup>
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+</Project>

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+    
+    <ItemGroup>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    </ItemGroup>
+    
+    <ItemGroup>
+      <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
+    </ItemGroup>
+
+</Project>
