@@ -40,9 +40,4 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     </PropertyGroup>
-
-    <!-- NuGet -->
-    <PropertyGroup>
-        <IsPackable>false</IsPackable>
-    </PropertyGroup>
 </Project>

@@ -145,7 +145,7 @@ public class UserIdValueConverter : ValueConverter<UserId, Guid>
 ## Installation
 
 [![StrongOf](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf)\
-[![StrongOf.AspNetCore](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)
+[![StrongOf.AspNetCore](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)\
 [![StrongOf.Json](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)
 
 See [StrongOf on NuGet.org](https://www.nuget.org/packages/StrongOf)
