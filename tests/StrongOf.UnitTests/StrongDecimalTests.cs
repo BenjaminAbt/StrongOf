@@ -1,3 +1,4 @@
+using System.Globalization;
 using Xunit;
 
 namespace StrongOf.Tests;
@@ -28,9 +29,20 @@ public class StrongDecimalTests
     }
 
     [Fact]
-    public void TryParse_ShouldReturnTrueForValidDecimal()
+    public void TryParse_ShouldReturnTrueForValidDecimal_US()
     {
-        Assert.True(TestDecimalOf.TryParse("1.23", System.Globalization.NumberStyles.Number, null, out TestDecimalOf? strong));
+        Assert.True(TestDecimalOf.TryParse("1.23", NumberStyles.Number,
+            CultureInfo.GetCultureInfo("en-US").NumberFormat, out TestDecimalOf? strong));
+
+        Assert.Equal(1.23m, strong.Value);
+    }
+
+    [Fact]
+    public void TryParse_ShouldReturnTrueForValidDecimal_DE()
+    {
+        Assert.True(TestDecimalOf.TryParse("1.23", NumberStyles.Number,
+            CultureInfo.GetCultureInfo("de_DE").NumberFormat, out TestDecimalOf? strong));
+
         Assert.Equal(123, strong.Value);
     }
 

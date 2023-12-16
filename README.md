@@ -45,7 +45,7 @@ AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
 
 ## Usage with Json
 
-You can just use [StrongOf.Json](https://www.nuget.org/packages/StrongOf) and use one of the pre-defined converters
+You can just use [StrongOf.Json](https://www.nuget.org/packages/StrongOf.Json) and use one of the pre-defined converters
 
 ```csharp
 public class MyClass
