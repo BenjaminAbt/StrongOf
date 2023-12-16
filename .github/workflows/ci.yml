@@ -18,7 +18,7 @@ jobs:
       steps:
       
       - name: Cancel previous builds in PR
-        uses: styfle/cancel-workflow-action
+        uses: styfle/cancel-workflow-action@0.9.1
         with:
           access_token: ${{ github.token }}
           
