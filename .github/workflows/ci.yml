@@ -19,8 +19,6 @@ jobs:
       
       - name: Cancel previous builds in PR
         uses: styfle/cancel-workflow-action@0.9.1
-        with:
-          access_token: ${{ github.token }}
           
       - name: 'Checkoud Code'
         uses: actions/checkout@v4
@@ -58,3 +56,4 @@ jobs:
                 --api-key ${{ secrets.NUGET_DEPLOY_KEY }}
                 --source https://api.nuget.org/v3/index.json
                 --no-symbols
+                --skip-duplicate
