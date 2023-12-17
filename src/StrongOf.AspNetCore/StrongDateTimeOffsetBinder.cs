@@ -1,5 +1,4 @@
-﻿using System.Globalization;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace StrongOf.AspNetCore;
 
@@ -18,8 +17,7 @@ public abstract class StrongDateTimeOffsetBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongDateTimeOffset<TStrong>.TryParse(value,
-            CultureInfo.InvariantCulture.DateTimeFormat, out TStrong? strong))
+        if (StrongDateTimeOffset<TStrong>.TryParseIso8601(value, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

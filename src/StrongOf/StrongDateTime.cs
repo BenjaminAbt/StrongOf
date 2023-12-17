@@ -39,6 +39,23 @@ public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTim
     }
 
     /// <summary>
+    /// Tries to parse a DateTime from a ReadOnlySpan of char using the ISO 8601 format and returns a value that indicates whether the operation succeeded.
+    /// </summary>
+    /// <param name="content">A ReadOnlySpan of char containing a DateTime to convert.</param>
+    /// <param name="strong">When this method returns, contains the DateTime value equivalent to the DateTime contained in content, if the conversion succeeded, or null if the conversion failed.</param>
+    /// <returns>True if content was converted successfully; otherwise, false.</returns>
+    public static bool TryParseIso8601(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
+    {
+        if (TryParseExact(content, "o", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out strong))
+        {
+            return true;
+        }
+
+        strong = null;
+        return false;
+    }
+
+    /// <summary>
     /// Tries to convert the specified string to a DateTime and returns a value that indicates whether the operation succeeded.
     /// </summary>
     /// <param name="content">The string to convert.</param>

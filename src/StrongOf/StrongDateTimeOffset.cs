@@ -39,6 +39,23 @@ public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : Stro
     }
 
     /// <summary>
+    /// Tries to parse a DateTimeOffset from a ReadOnlySpan of char using the ISO 8601 format and returns a value that indicates whether the operation succeeded.
+    /// </summary>
+    /// <param name="content">A ReadOnlySpan of char containing a DateTimeOffset to convert.</param>
+    /// <param name="strong">When this method returns, contains the DateTimeOffset value equivalent to the DateTimeOffset contained in content, if the conversion succeeded, or null if the conversion failed.</param>
+    /// <returns>True if content was converted successfully; otherwise, false.</returns>
+    public static bool TryParseIso8601(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
+    {
+        if (TryParseExact(content, "o", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out strong))
+        {
+            return true;
+        }
+
+        strong = null;
+        return false;
+    }
+
+    /// <summary>
     /// Tries to convert the specified string representation of a date and time to its DateTimeOffset equivalent using the specified format, culture-specific format information, and style. The format of the string representation must match the specified format exactly. The method returns a value that indicates whether the conversion succeeded.
     /// </summary>
     /// <param name="content">A string containing a date and time to convert.</param>
