@@ -15,8 +15,6 @@
 
     <!-- Assembly -->
     <PropertyGroup>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <Platforms>x64</Platforms>
         <GlobalNamespacePrefix>StrongOf</GlobalNamespacePrefix>
         <GlobalAssemblyNamePrefix>BenjaminAbt.StrongOf</GlobalAssemblyNamePrefix>
     </PropertyGroup>

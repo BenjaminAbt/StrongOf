@@ -1,3 +1,4 @@
+using System.Globalization;
 using Xunit;
 
 namespace StrongOf.Tests;
@@ -53,5 +54,16 @@ public class StrongDateTimeOffsetTests
     {
         TestDateTimeOffsetOf strongDateTimeOffset = new(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
         Assert.True(strongDateTimeOffset != new DateTimeOffset(2001, 1, 1, 0, 0, 0, TimeSpan.Zero));
+    }
+
+    [Fact]
+    public void ToString_Iso8601()
+    {
+        TestDateTimeOffsetOf strong = TestDateTimeOffsetOf.FromIso8601("2023-12-17T14:24:22.6412808+00:00");
+        DateTimeOffset dateTimeOffset = DateTimeOffset.ParseExact("2023-12-17T14:24:22.6412808+00:00", "o",
+            CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal);
+
+        Assert.Equal("2023-12-17T14:24:22.6412808+00:00", strong.ToStringIso8601());
+        Assert.Equal(dateTimeOffset.ToString("o"), strong.ToStringIso8601());
     }
 }

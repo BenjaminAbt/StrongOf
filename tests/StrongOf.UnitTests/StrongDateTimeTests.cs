@@ -1,3 +1,4 @@
+using System.Globalization;
 using Xunit;
 
 namespace StrongOf.Tests;
@@ -53,5 +54,16 @@ public class StrongDateTimeTests
     {
         TestDateTimeOf strongDateTime = new(new DateTime(2000, 1, 1));
         Assert.True(strongDateTime != new DateTime(2001, 1, 1));
+    }
+
+    [Fact]
+    public void ToString_Iso8601()
+    {
+        TestDateTimeOf strong = TestDateTimeOf.FromIso8601("2023-12-17T14:24:22.6412808+00:00");
+        DateTime dateTime = DateTime.ParseExact("2023-12-17T14:24:22.6412808+00:00", "o",
+            CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal);
+
+        Assert.Equal("2023-12-17T14:24:22.6412808Z", strong.ToStringIso8601());
+        Assert.Equal(dateTime.ToString("o"), strong.ToStringIso8601());
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace StrongOf.Json;
@@ -20,7 +21,8 @@ public class StrongDateTimeOffsetJsonConverter<TStrong> : JsonConverter<TStrong>
     public override TStrong? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
-        if (string.IsNullOrEmpty(value) && StrongDateTimeOffset<TStrong>.TryParse(value, out TStrong? strong))
+        if (string.IsNullOrEmpty(value) is false &&
+            StrongDateTimeOffset<TStrong>.TryParseExact(value, "o", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out TStrong? strong))
         {
             return strong;
         }

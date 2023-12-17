@@ -4,18 +4,18 @@ using Xunit;
 
 namespace StrongOf.Json.UnitTests;
 
-public class StrongGuidJsonConverterTests
+public class StrongInt64JsonConverterTests
 {
-    private sealed class TestGuidOf(Guid value) : StrongGuid<TestGuidOf>(value) { }
+    private sealed class TestInt64Of(long value) : StrongInt64<TestInt64Of>(value) { }
 
-    private readonly StrongGuidJsonConverter<TestGuidOf> _converter = new();
+    private readonly StrongInt64JsonConverter<TestInt64Of> _converter = new();
     private readonly JsonSerializerOptions _options = new();
 
     [Fact]
-    public void Read_ValidJson_ReturnsStrongGuid()
+    public void Read_ValidJson_ReturnsStrongInt64()
     {
         // Arrange
-        string json = "{\"Id\": \"d3dd268c-7d12-4e2a-89b9-5368f0b2f38a\"}";
+        string json = "{\"Id\": \"123\"}";
 
         Utf8JsonReader reader = new(Encoding.UTF8.GetBytes(json));
 
@@ -23,18 +23,18 @@ public class StrongGuidJsonConverterTests
         while (reader.Read()) { if (reader.TokenType == JsonTokenType.String) { break; } }
 
         // Act
-        TestGuidOf? result = _converter.Read(ref reader, typeof(TestGuidOf), _options);
+        TestInt64Of? result = _converter.Read(ref reader, typeof(TestInt64Of), _options);
 
         // Assert
         Assert.NotNull(result);
-        Assert.Equal("d3dd268c-7d12-4e2a-89b9-5368f0b2f38a", result.Value.ToString());
+        Assert.Equal(123, result.Value);
     }
 
     [Fact]
-    public void Write_ValidStrongGuid_WritesJson()
+    public void Write_ValidStrongInt64_WritesJson()
     {
         // Arrange
-        TestGuidOf strong = new(Guid.Parse("d3dd268c-7d12-4e2a-89b9-5368f0b2f38a"));
+        TestInt64Of strong = new(123);
         MemoryStream stream = new();
         using Utf8JsonWriter writer = new(stream);
 
@@ -44,6 +44,6 @@ public class StrongGuidJsonConverterTests
         string json = Encoding.UTF8.GetString(stream.ToArray());
 
         // Assert
-        Assert.Equal("\"d3dd268c-7d12-4e2a-89b9-5368f0b2f38a\"", json);
+        Assert.Equal("\"123\"", json);
     }
 }

@@ -11,6 +11,14 @@ public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTim
     where TStrong : StrongDateTime<TStrong>
 {
     /// <summary>
+    /// Creates a new instance of TStrong from an ISO 8601 string.
+    /// </summary>
+    /// <param name="value">The ISO 8601 string to convert.</param>
+    /// <returns>A new instance of TStrong.</returns>
+    public static TStrong FromIso8601(string value)
+        => From(DateTime.ParseExact(value, "o", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal));
+
+    /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
@@ -28,6 +36,27 @@ public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTim
         }
 
         throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+    }
+
+    /// <summary>
+    /// Tries to convert the specified string to a DateTime and returns a value that indicates whether the operation succeeded.
+    /// </summary>
+    /// <param name="content">The string to convert.</param>
+    /// <param name="format">The required format of the date and time string.</param>
+    /// <param name="provider">An object that supplies culture-specific formatting information.</param>
+    /// <param name="dateTimeStyles">A bitwise combination of enumeration values that indicates the permitted format of content.</param>
+    /// <param name="strong">When this method returns, contains the DateTime value equivalent to the date and time contained in content, if the conversion succeeded, or null if the conversion failed.</param>
+    /// <returns>True if content was converted successfully; otherwise, false.</returns>
+    public static bool TryParseExact(ReadOnlySpan<char> content, string format, IFormatProvider? provider, DateTimeStyles dateTimeStyles, [NotNullWhen(true)] out TStrong? strong)
+    {
+        if (DateTime.TryParseExact(content, format, provider, dateTimeStyles, out DateTime value))
+        {
+            strong = From(value);
+            return true;
+        }
+
+        strong = null;
+        return false;
     }
 
     /// <summary>
@@ -133,6 +162,13 @@ public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTim
     /// Converts the value of the current StrongDateTime object to its equivalent string representation using the specified format.
     /// </summary>
     /// <param name="format">A standard or custom date and time format string.</param>
+    /// <param name="provider">An IFormatProvider that supplies culture-specific formatting information.</param>
     /// <returns>A string representation of value of the current StrongDateTime object as specified by format.</returns>
-    public string ToString(string format) => Value.ToString(format);
+    public string ToString(string format, IFormatProvider? provider = null) => Value.ToString(format, provider);
+
+    /// <summary>
+    /// Converts the value of the current StrongDateTime object to its equivalent string representation in ISO 8601 format.
+    /// </summary>
+    /// <returns>A string representation of value of the current StrongDateTime object in ISO 8601 format.</returns>
+    public string ToStringIso8601() => Value.ToString("o", CultureInfo.InvariantCulture);
 }

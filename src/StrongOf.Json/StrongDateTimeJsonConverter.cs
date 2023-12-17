@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace StrongOf.Json;
@@ -20,7 +21,8 @@ public class StrongDateTimeJsonConverter<TStrong> : JsonConverter<TStrong>
     public override TStrong? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
-        if (string.IsNullOrEmpty(value) is false && StrongDateTime<TStrong>.TryParse(value, out TStrong? strong))
+        if (string.IsNullOrEmpty(value) is false &&
+            StrongDateTime<TStrong>.TryParseExact(value, "o", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out TStrong? strong))
         {
             return strong;
         }
@@ -35,5 +37,5 @@ public class StrongDateTimeJsonConverter<TStrong> : JsonConverter<TStrong>
     /// <param name="strong">The value to write.</param>
     /// <param name="options">Options to control the serializer behavior during writing.</param>
     public override void Write(Utf8JsonWriter writer, TStrong strong, JsonSerializerOptions options)
-        => writer.WriteStringValue(strong.Value.ToString());
+        => writer.WriteStringValue(strong.ToStringIso8601());
 }
