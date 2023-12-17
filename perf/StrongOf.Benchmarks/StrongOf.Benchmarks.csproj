@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="BenchmarkDotNet" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\StrongOf\StrongOf.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="LICENSE.txt">
+        <PackagePath></PackagePath>
+        <Pack>true</Pack>
+      </None>
+    </ItemGroup>
+</Project>
