@@ -7,6 +7,7 @@ namespace StrongOf;
 /// Represents a strongly typed DateTime value.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
+/// <remarks>"The DateTime type has some design flaws. Please migrate to DateTimeOffset."</remarks>
 public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTime, TStrong>(Value), IComparable, IStrongDateTime
     where TStrong : StrongDateTime<TStrong>
 {
