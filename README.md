@@ -185,6 +185,7 @@ AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
 |             |           |           |           |           |        |           |
 | String_New  |  3.807 ns | 0.1205 ns | 0.1127 ns |  3.837 ns | 0.0014 |      24 B |
 | String_From | 11.339 ns | 0.4997 ns | 1.4735 ns | 10.969 ns | 0.0014 |      24 B |
+```
 
 For certain scenarios, this library also has an `Expression.New` implementation (through a static From method); but not for general instantiation.
 
