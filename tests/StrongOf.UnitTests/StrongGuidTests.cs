@@ -104,4 +104,12 @@ public class StrongGuidTests
         TestGuidOf strongGuid = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
         Assert.Equal("00000000000000000000000000000001", strongGuid.ToStringWithoutDashes());
     }
+
+    [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestGuidOf strongGuid = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+        Assert.True(strongGuid != null);
+        Assert.False(strongGuid == null);
+    }
 }

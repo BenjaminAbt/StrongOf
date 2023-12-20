@@ -61,27 +61,35 @@ public abstract class StrongOf<TTarget, TStrong> : IStrongOf
     /// Determines whether two specified instances of StrongOf are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other represent the same value; otherwise, false.</returns>
-    public static bool operator ==(StrongOf<TTarget, TStrong> strong, StrongOf<TTarget, TStrong> other)
+    public static bool operator ==(StrongOf<TTarget, TStrong>? strong, object? other)
     {
-        if (strong is null && other is null)
+        if (strong is null)
         {
-            return true;
+            return other is null;
         }
 
-        return strong is not null && other is not null &&
-            strong.Value is not null && other.Value is not null &&
-            strong.Value.Equals(other.Value);
+        if (other is TTarget targetValue)
+        {
+            return strong.Value!.Equals(targetValue);
+        }
+
+        if (other is StrongOf<TTarget, TStrong> otherStrong)
+        {
+            return strong.Value!.Equals(otherStrong.Value);
+        }
+
+        return false;
     }
 
     /// <summary>
     /// Determines whether two specified instances of StrongOf are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same value; otherwise, false.</returns>
-    public static bool operator !=(StrongOf<TTarget, TStrong> strong, StrongOf<TTarget, TStrong> other)
+    public static bool operator !=(StrongOf<TTarget, TStrong> strong, object? other)
     {
         return (strong == other) is false;
     }

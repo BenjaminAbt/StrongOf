@@ -110,72 +110,23 @@ public abstract class StrongDecimal<TStrong>(decimal Value) : StrongOf<decimal, 
     /// Determines whether two specified instances of StrongDecimal are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and value represent the same decimal; otherwise, false.</returns>
-    public static bool operator ==(StrongDecimal<TStrong> strong, decimal other)
-    {
-        if (strong is null)
-        {
-            return false;
-        }
-
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same decimal; otherwise, false.</returns>
-    public static bool operator !=(StrongDecimal<TStrong> strong, decimal other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same decimal; otherwise, false.</returns>
-    public static bool operator ==(StrongDecimal<TStrong> strong, decimal? other)
+    public static bool operator ==(StrongDecimal<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
             return other is null;
         }
 
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same decimal; otherwise, false.</returns>
-    public static bool operator !=(StrongDecimal<TStrong> strong, decimal? other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same decimal; otherwise, false.</returns>
-    public static bool operator ==(StrongDecimal<TStrong> strong, StrongDecimal<TStrong>? other)
-    {
-        if (strong is null && other is null)
+        if (other is decimal decimalValue)
         {
-            return true;
+            return strong.Value == decimalValue;
         }
 
-        if (strong is not null && other is not null)
+        if (other is StrongDecimal<TStrong> otherStrong)
         {
-            return strong.Value == other.Value;
+            return strong.Value == otherStrong.Value;
         }
 
         return false;
@@ -185,9 +136,9 @@ public abstract class StrongDecimal<TStrong>(decimal Value) : StrongOf<decimal, 
     /// Determines whether two specified instances of StrongDecimal are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same decimal; otherwise, false.</returns>
-    public static bool operator !=(StrongDecimal<TStrong> strong, StrongDecimal<TStrong>? other)
+    public static bool operator !=(StrongDecimal<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }

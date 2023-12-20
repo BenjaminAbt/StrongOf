@@ -156,72 +156,23 @@ public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : Stro
     /// Determines whether two specified instances of StrongDateTimeOffset are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator ==(StrongDateTimeOffset<TStrong> strong, DateTimeOffset other)
-    {
-        if (strong is null)
-        {
-            return false;
-        }
-
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDateTime are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator !=(StrongDateTimeOffset<TStrong> strong, DateTimeOffset other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDateTimeOffset are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator ==(StrongDateTimeOffset<TStrong> strong, DateTimeOffset? other)
+    public static bool operator ==(StrongDateTimeOffset<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
             return other is null;
         }
 
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDateTime are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator !=(StrongDateTimeOffset<TStrong> strong, DateTimeOffset? other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDateTimeOffset are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator ==(StrongDateTimeOffset<TStrong> strong, StrongDateTimeOffset<TStrong>? other)
-    {
-        if (strong is null && other is null)
+        if (other is DateTimeOffset dtValue)
         {
-            return true;
+            return strong.Value == dtValue;
         }
 
-        if (strong is not null && other is not null)
+        if (other is StrongDateTimeOffset<TStrong> otherStrong)
         {
-            return strong.Value == other.Value;
+            return strong.Value == otherStrong.Value;
         }
 
         return false;
@@ -231,9 +182,9 @@ public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : Stro
     /// Determines whether two specified instances of StrongDateTime are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator !=(StrongDateTimeOffset<TStrong> strong, StrongDateTimeOffset<TStrong>? other)
+    public static bool operator !=(StrongDateTimeOffset<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }

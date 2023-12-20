@@ -78,6 +78,14 @@ public class StrongInt64Tests
     }
 
     [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestInt64Of strongInt = new(123);
+        Assert.True(strongInt != null);
+        Assert.False(strongInt == null);
+    }
+
+    [Fact]
     public void Equals_ShouldReturnTrueForEqualValues()
     {
         TestInt64Of strongInt1 = new(123);

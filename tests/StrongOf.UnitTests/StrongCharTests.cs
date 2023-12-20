@@ -65,6 +65,14 @@ public class StrongCharTests
     }
 
     [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestCharOf strongChar = new('a');
+        Assert.True(strongChar != null);
+        Assert.False(strongChar == null);
+    }
+
+    [Fact]
     public void OperatorNotEquals_ShouldReturnTrueForDifferentValues()
     {
         TestCharOf strongChar = new('a');

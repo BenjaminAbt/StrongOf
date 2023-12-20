@@ -70,72 +70,23 @@ public abstract class StrongInt32<TStrong>(int Value) : StrongOf<int, TStrong>(V
     /// Determines whether two specified instances of StrongInt32 are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and value represent the same Int32; otherwise, false.</returns>
-    public static bool operator ==(StrongInt32<TStrong>? strong, int other)
+    public static bool operator ==(StrongInt32<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
-            return false;
+            return other is null;
         }
 
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt32 are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same Int32; otherwise, false.</returns>
-    public static bool operator !=(StrongInt32<TStrong>? strong, int other)
-    {
-        return (strong == other) is false;
-    }
-
-    ///// <summary>
-    ///// Determines whether two specified instances of StrongInt32 are equal.
-    ///// </summary>
-    ///// <param name="strong">The first instance to compare.</param>
-    ///// <param name="other">The second instance to compare.</param>
-    ///// <returns>True if strong and value represent the same Int32; otherwise, false.</returns>
-    //public static bool operator ==(StrongInt32<TStrong>? strong, int? other)
-    //{
-    //    if (strong is null)
-    //    {
-    //        return other is null;
-    //    }
-
-    //    return strong.Value == other;
-    //}
-
-    ///// <summary>
-    ///// Determines whether two specified instances of StrongInt32 are not equal.
-    ///// </summary>
-    ///// <param name="strong">The first instance to compare.</param>
-    ///// <param name="other">The second instance to compare.</param>
-    ///// <returns>True if strong and other do not represent the same Int32; otherwise, false.</returns>
-    //public static bool operator !=(StrongInt32<TStrong>? strong, int? other)
-    //{
-    //    return (strong == other) is false;
-    //}
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt32 are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same Int32; otherwise, false.</returns>
-    public static bool operator ==(StrongInt32<TStrong>? strong, StrongInt32<TStrong>? other)
-    {
-        if (strong is null && other is null)
+        if (other is int intValue)
         {
-            return true;
+            return strong.Value == intValue;
         }
 
-        if (strong is not null && other is not null)
+        if (other is StrongInt32<TStrong> otherStrong)
         {
-            return strong.Value == other.Value;
+            return strong.Value == otherStrong.Value;
         }
 
         return false;
@@ -145,9 +96,9 @@ public abstract class StrongInt32<TStrong>(int Value) : StrongOf<int, TStrong>(V
     /// Determines whether two specified instances of StrongInt32 are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same Int32; otherwise, false.</returns>
-    public static bool operator !=(StrongInt32<TStrong>? strong, StrongInt32<TStrong>? other)
+    public static bool operator !=(StrongInt32<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }

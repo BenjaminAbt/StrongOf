@@ -70,72 +70,28 @@ public abstract class StrongInt64<TStrong>(long Value) : StrongOf<long, TStrong>
     /// Determines whether two specified instances of StrongInt64 are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and value represent the same Int64; otherwise, false.</returns>
-    public static bool operator ==(StrongInt64<TStrong> strong, long other)
-    {
-        if (strong is null)
-        {
-            return false;
-        }
-
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt64 are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same Int64; otherwise, false.</returns>
-    public static bool operator !=(StrongInt64<TStrong> strong, long other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt64 are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same Int64; otherwise, false.</returns>
-    public static bool operator ==(StrongInt64<TStrong> strong, long? other)
+    public static bool operator ==(StrongInt64<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
             return other is null;
         }
 
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt64 are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same Int64; otherwise, false.</returns>
-    public static bool operator !=(StrongInt64<TStrong> strong, long? other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt64 are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same Int64; otherwise, false.</returns>
-    public static bool operator ==(StrongInt64<TStrong> strong, StrongInt64<TStrong>? other)
-    {
-        if (strong is null && other is null)
+        if (other is int intValue)
         {
-            return true;
+            return strong.Value == intValue;
         }
 
-        if (strong is not null && other is not null)
+        if (other is long longValue)
         {
-            return strong.Value == other.Value;
+            return strong.Value == longValue;
+        }
+
+        if (other is StrongInt64<TStrong> otherStrong)
+        {
+            return strong.Value == otherStrong.Value;
         }
 
         return false;
@@ -145,9 +101,9 @@ public abstract class StrongInt64<TStrong>(long Value) : StrongOf<long, TStrong>
     /// Determines whether two specified instances of StrongInt64 are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same Int64; otherwise, false.</returns>
-    public static bool operator !=(StrongInt64<TStrong> strong, StrongInt64<TStrong>? other)
+    public static bool operator !=(StrongInt64<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }

@@ -120,72 +120,23 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     /// Determines whether two specified instances of StrongGuid are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and value represent the same Guid; otherwise, false.</returns>
-    public static bool operator ==(StrongGuid<TStrong> strong, Guid other)
-    {
-        if (strong is null)
-        {
-            return false;
-        }
-
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongGuid are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same Guid; otherwise, false.</returns>
-    public static bool operator !=(StrongGuid<TStrong> strong, Guid other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongGuid are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same Guid; otherwise, false.</returns>
-    public static bool operator ==(StrongGuid<TStrong> strong, Guid? other)
+    public static bool operator ==(StrongGuid<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
             return other is null;
         }
 
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongGuid are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same Guid; otherwise, false.</returns>
-    public static bool operator !=(StrongGuid<TStrong> strong, Guid? other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongGuid are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same Guid; otherwise, false.</returns>
-    public static bool operator ==(StrongGuid<TStrong> strong, StrongGuid<TStrong>? other)
-    {
-        if (strong is null && other is null)
+        if (other is Guid guidValue)
         {
-            return true;
+            return strong.Value == guidValue;
         }
 
-        if (strong is not null && other is not null)
+        if (other is StrongGuid<TStrong> otherStrong)
         {
-            return strong.Value == other.Value;
+            return strong.Value == otherStrong.Value;
         }
 
         return false;
@@ -195,9 +146,9 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     /// Determines whether two specified instances of StrongGuid are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same Guid; otherwise, false.</returns>
-    public static bool operator !=(StrongGuid<TStrong> strong, StrongGuid<TStrong>? other)
+    public static bool operator !=(StrongGuid<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }

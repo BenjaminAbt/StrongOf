@@ -57,6 +57,14 @@ public class StrongDateTimeOffsetTests
     }
 
     [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestDateTimeOffsetOf strongDateTimeOffset = new(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
+        Assert.True(strongDateTimeOffset != null);
+        Assert.False(strongDateTimeOffset == null);
+    }
+
+    [Fact]
     public void ToString_Iso8601()
     {
         TestDateTimeOffsetOf strong = TestDateTimeOffsetOf.FromIso8601("2023-12-17T14:24:22.6412808+00:00");

@@ -74,6 +74,14 @@ public class StrongStringTests
     }
 
     [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestStringOf strongString = new("test");
+        Assert.True(strongString != null);
+        Assert.False(strongString == null);
+    }
+
+    [Fact]
     public void OperatorNotEquals_ShouldReturnTrueForDifferentValues()
     {
         TestStringOf strongString = new("test");

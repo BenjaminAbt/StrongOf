@@ -75,6 +75,14 @@ public class StrongDecimalTests
     }
 
     [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestDecimalOf strongDecimal = new(1.23m);
+        Assert.True(strongDecimal != null);
+        Assert.False(strongDecimal == null);
+    }
+
+    [Fact]
     public void OperatorNotEquals_ShouldReturnTrueForDifferentValues()
     {
         TestDecimalOf strongDecimal = new(1.23m);

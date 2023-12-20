@@ -70,74 +70,35 @@ public abstract class StrongChar<TStrong>(char Value) : StrongOf<char, TStrong>(
     /// Determines whether two specified instances of StrongChar are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and value represent the same char; otherwise, false.</returns>
-    public static bool operator ==(StrongChar<TStrong> strong, char other)
-    {
-        if (strong is null)
-        {
-            return false;
-        }
-
-        return strong.Value == other;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongChar are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same char; otherwise, false.</returns>
-    public static bool operator !=(StrongChar<TStrong> strong, char other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongChar are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same char; otherwise, false.</returns>
-    public static bool operator ==(StrongChar<TStrong> strong, char? other)
+    public static bool operator ==(StrongChar<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
             return other is null;
         }
 
-        return strong.Value == other;
+        if (other is char charValue)
+        {
+            return strong.Value == charValue;
+        }
+
+        if (other is StrongChar<TStrong> otherStrong)
+        {
+            return strong.Value == otherStrong.Value;
+        }
+
+        return false;
     }
 
     /// <summary>
     /// Determines whether two specified instances of StrongChar are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same char; otherwise, false.</returns>
-    public static bool operator !=(StrongChar<TStrong> strong, StrongChar<TStrong>? other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongChar are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
-    /// <returns>True if strong and value represent the same char; otherwise, false.</returns>
-    public static bool operator ==(StrongChar<TStrong> strong, StrongChar<TStrong>? other)
-    {
-        return strong?.Value == other?.Value;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongChar are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
-    /// <returns>True if strong and other do not represent the same char; otherwise, false.</returns>
-    public static bool operator !=(StrongChar<TStrong> strong, char? other)
+    public static bool operator !=(StrongChar<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }

@@ -74,45 +74,23 @@ public abstract class StrongString<TStrong>(string Value) : StrongOf<string, TSt
     /// Determines whether the specified strong string and string are equal.
     /// </summary>
     /// <param name="strong">The strong string to compare.</param>
-    /// <param name="value">The string to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if the specified strong string and string are equal; otherwise, false.</returns>
-    public static bool operator ==(StrongString<TStrong> strong, string value)
+    public static bool operator ==(StrongString<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
-            return value is null;
+            return other is null;
         }
 
-        return strong.Value == value;
-    }
-
-    /// <summary>
-    /// Determines whether the specified strong string and string are not equal.
-    /// </summary>
-    /// <param name="strong">The strong string to compare.</param>
-    /// <param name="other">The string to compare.</param>
-    /// <returns>True if the specified strong string and string are not equal; otherwise, false.</returns>
-    public static bool operator !=(StrongString<TStrong> strong, string other)
-    {
-        return (strong == other) is false;
-    }
-
-    /// <summary>
-    /// Determines whether the specified strong string and string are equal.
-    /// </summary>
-    /// <param name="strong">The strong string to compare.</param>
-    /// <param name="value">The string to compare.</param>
-    /// <returns>True if the specified strong string and string are equal; otherwise, false.</returns>
-    public static bool operator ==(StrongString<TStrong> strong, StrongString<TStrong>? other)
-    {
-        if (strong is null && other is null)
+        if (other is string stringValue)
         {
-            return true;
+            return strong.Value == stringValue;
         }
 
-        if (strong is not null && other is not null)
+        if (other is StrongString<TStrong> otherStrong)
         {
-            return strong.Value == other.Value;
+            return strong.Value == otherStrong.Value;
         }
 
         return false;
@@ -122,9 +100,9 @@ public abstract class StrongString<TStrong>(string Value) : StrongOf<string, TSt
     /// Determines whether the specified strong string and string are not equal.
     /// </summary>
     /// <param name="strong">The strong string to compare.</param>
-    /// <param name="other">The string to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if the specified strong string and string are not equal; otherwise, false.</returns>
-    public static bool operator !=(StrongString<TStrong> strong, StrongString<TStrong> other)
+    public static bool operator !=(StrongString<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }
