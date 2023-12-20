@@ -6,7 +6,7 @@ namespace StrongOf.AspNetCore;
 /// Represents a binder for StrongChar type.
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongChar.</typeparam>
-public abstract class StrongCharBinder<TStrong> : StrongOfBinder
+public class StrongCharBinder<TStrong> : StrongOfBinder
     where TStrong : StrongChar<TStrong>
 {
     /// <summary>

@@ -3,11 +3,11 @@
 namespace StrongOf.AspNetCore;
 
 /// <summary>
-/// Represents a binder for StrongInt64 type.
+/// Represents a binder for StrongGuid type.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongInt64.</typeparam>
-public class StrongInt64Binder<TStrong> : StrongOfBinder
-    where TStrong : StrongInt64<TStrong>
+/// <typeparam name="TStrong">The type of the StrongGuid.</typeparam>
+public class StrongGuidBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongGuid<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -17,7 +17,7 @@ public class StrongInt64Binder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongInt64<TStrong>.TryParse(value, out TStrong? strong))
+        if (StrongGuid<TStrong>.TryParse(value, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

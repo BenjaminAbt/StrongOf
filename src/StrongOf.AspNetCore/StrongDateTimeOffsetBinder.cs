@@ -6,7 +6,7 @@ namespace StrongOf.AspNetCore;
 /// Represents a binder for StrongDateTimeOffset type.
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
-public abstract class StrongDateTimeOffsetBinder<TStrong> : StrongOfBinder
+public class StrongDateTimeOffsetBinder<TStrong> : StrongOfBinder
     where TStrong : StrongDateTimeOffset<TStrong>
 {
     /// <summary>
