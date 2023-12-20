@@ -17,6 +17,22 @@ public class StrongCharTests
     }
 
     [Fact]
+    public void Equals_WithTargetType_ReturnsTrue()
+    {
+        TestCharOf testOf = new('a');
+
+        Assert.True(testOf.Equals('a'));
+    }
+
+    [Fact]
+    public void Equals_WithTargetType_ReturnsFalse()
+    {
+        TestCharOf testOf = new('a');
+
+        Assert.False(testOf.Equals('b'));
+    }
+
+    [Fact]
     public void CompareTo_ShouldReturnCorrectOrder()
     {
         TestCharOf first = new('a');
@@ -46,6 +62,14 @@ public class StrongCharTests
     {
         TestCharOf strongChar = new('a');
         Assert.True(strongChar == 'a');
+    }
+
+    [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestCharOf strongChar = new('a');
+        Assert.True(strongChar != null);
+        Assert.False(strongChar == null);
     }
 
     [Fact]

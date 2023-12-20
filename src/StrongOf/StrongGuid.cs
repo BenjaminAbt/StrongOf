@@ -10,6 +10,23 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     where TStrong : StrongGuid<TStrong>
 {
     /// <summary>
+    /// Creates a new instance of StrongGuid from a nullable Guid value.
+    /// </summary>
+    /// <param name="value">The nullable char value.</param>
+    /// <returns>A new instance of StrongGuid if the value has a value, null otherwise.</returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static TStrong? FromNullable(Guid? value)
+    {
+        if (value.HasValue)
+        {
+            TStrong strong = From(value.Value);
+            return strong;
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// Initializes a new instance of the StrongGuid class using the specified string representation of a Guid.
     /// </summary>
     /// <param name="value">A string containing a Guid to use for initialization.</param>
@@ -98,35 +115,47 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
         => Value.ToString("N");
 
     // Operators
+
     /// <summary>
     /// Determines whether two specified instances of StrongGuid are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and value represent the same Guid; otherwise, false.</returns>
-    public static bool operator ==(StrongGuid<TStrong> strong, Guid value)
+    public static bool operator ==(StrongGuid<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
-            return true;
+            return other is null;
         }
 
-        return strong.Value == value;
+        if (other is Guid guidValue)
+        {
+            return strong.Value == guidValue;
+        }
+
+        if (other is StrongGuid<TStrong> otherStrong)
+        {
+            return strong.Value == otherStrong.Value;
+        }
+
+        return false;
     }
 
     /// <summary>
     /// Determines whether two specified instances of StrongGuid are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The second instance to compare.</param>
+    /// <param name="other">The object to compare.</param>
     /// <returns>True if strong and other do not represent the same Guid; otherwise, false.</returns>
-    public static bool operator !=(StrongGuid<TStrong> strong, Guid other)
+    public static bool operator !=(StrongGuid<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }
 
 
     // Equals
+
     /// <summary>
     /// Determines whether the specified object is equal to the current object.
     /// </summary>

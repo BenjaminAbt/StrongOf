@@ -25,6 +25,20 @@ public class StrongInt64Tests
     }
 
     [Fact]
+    public void Equals_WithTargetType_ReturnsTrue()
+    {
+        TestInt64Of testOf = new(1L);
+        Assert.True(testOf.Equals(1L));
+    }
+
+    [Fact]
+    public void Equals_WithTargetType_ReturnsFalse()
+    {
+        TestInt64Of testOf = new(1L);
+        Assert.False(testOf.Equals(2L));
+    }
+
+    [Fact]
     public void CompareTo_ShouldReturnCorrectOrder()
     {
         TestInt64Of strongInt1 = new(1);
@@ -61,6 +75,14 @@ public class StrongInt64Tests
     {
         TestInt64Of strongInt = new(123);
         Assert.True(strongInt != 456);
+    }
+
+    [Fact]
+    public void OperatorEquals_Null()
+    {
+        TestInt64Of strongInt = new(123);
+        Assert.True(strongInt != null);
+        Assert.False(strongInt == null);
     }
 
     [Fact]
