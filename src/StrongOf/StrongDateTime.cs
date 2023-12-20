@@ -12,6 +12,23 @@ public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTim
     where TStrong : StrongDateTime<TStrong>
 {
     /// <summary>
+    /// Creates a new instance of StrongDateTime from a nullable DateTime value.
+    /// </summary>
+    /// <param name="value">The nullable char value.</param>
+    /// <returns>A new instance of StrongDateTime if the value has a value, null otherwise.</returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static TStrong? FromNullable(DateTime? value)
+    {
+        if (value.HasValue)
+        {
+            TStrong strong = From(value.Value);
+            return strong;
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// Creates a new instance of TStrong from an ISO 8601 string.
     /// </summary>
     /// <param name="value">The ISO 8601 string to convert.</param>
@@ -135,20 +152,21 @@ public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTim
     }
 
     // Operators
+
     /// <summary>
     /// Determines whether two specified instances of StrongDateTime are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
     /// <returns>True if strong and value represent the same DateTime; otherwise, false.</returns>
-    public static bool operator ==(StrongDateTime<TStrong> strong, DateTime value)
+    public static bool operator ==(StrongDateTime<TStrong> strong, DateTime other)
     {
         if (strong is null)
         {
-            return true;
+            return false;
         }
 
-        return strong.Value == value;
+        return strong.Value == other;
     }
 
     /// <summary>
@@ -162,7 +180,68 @@ public abstract class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTim
         return (strong == other) is false;
     }
 
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTime are equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
+    /// <returns>True if strong and value represent the same DateTime; otherwise, false.</returns>
+    public static bool operator ==(StrongDateTime<TStrong> strong, DateTime? other)
+    {
+        if (strong is null)
+        {
+            return other is null;
+        }
+
+        return strong.Value == other;
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTime are not equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
+    /// <returns>True if strong and other do not represent the same DateTime; otherwise, false.</returns>
+    public static bool operator !=(StrongDateTime<TStrong> strong, DateTime? other)
+    {
+        return (strong == other) is false;
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTime are equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="value">The second instance to compare.</param>
+    /// <returns>True if strong and value represent the same DateTime; otherwise, false.</returns>
+    public static bool operator ==(StrongDateTime<TStrong> strong, StrongDateTime<TStrong>? other)
+    {
+        if (strong is null && other is null)
+        {
+            return true;
+        }
+
+        if (strong is not null && other is not null)
+        {
+            return strong.Value == other.Value;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTime are not equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
+    /// <returns>True if strong and other do not represent the same DateTime; otherwise, false.</returns>
+    public static bool operator !=(StrongDateTime<TStrong> strong, StrongDateTime<TStrong>? other)
+    {
+        return (strong == other) is false;
+    }
+
     // Equals
+
+
     /// <summary>
     /// Determines whether the specified object is equal to the current object.
     /// </summary>

@@ -18,6 +18,20 @@ public class StrongDecimalTests
     }
 
     [Fact]
+    public void Equals_WithTargetType_ReturnsTrue()
+    {
+        TestDecimalOf testOf = new(1m);
+        Assert.True(testOf.Equals(1m));
+    }
+
+    [Fact]
+    public void Equals_WithTargetType_ReturnsFalse()
+    {
+        TestDecimalOf testOf = new(1m);
+        Assert.False(testOf.Equals(2m));
+    }
+
+    [Fact]
     public void CompareTo_ShouldReturnCorrectOrder()
     {
         TestDecimalOf first = new(1m);

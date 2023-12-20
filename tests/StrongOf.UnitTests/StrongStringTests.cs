@@ -17,6 +17,20 @@ public class StrongStringTests
     }
 
     [Fact]
+    public void Equals_WithTargetType_ReturnsTrue()
+    {
+        TestStringOf testOf = new("test");
+        Assert.True(testOf.Equals("test"));
+    }
+
+    [Fact]
+    public void Equals_WithTargetType_ReturnsFalse()
+    {
+        TestStringOf testOf = new("test");
+        Assert.False(testOf.Equals("test2"));
+    }
+
+    [Fact]
     public void FromTrimmed_ShouldReturnTrimmedValue()
     {
         TestStringOf strongString = TestStringOf.FromTrimmed("  test  ");

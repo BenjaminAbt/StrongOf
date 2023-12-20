@@ -17,6 +17,20 @@ public class StrongGuidTests
     }
 
     [Fact]
+    public void Equals_WithTargetType_ReturnsTrue()
+    {
+        TestGuidOf testOf = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+        Assert.True(testOf.Equals(Guid.Parse("00000000-0000-0000-0000-000000000001")));
+    }
+
+    [Fact]
+    public void Equals_WithTargetType_ReturnsFalse()
+    {
+        TestGuidOf testOf = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
+        Assert.False(testOf.Equals(Guid.Parse("00000000-0000-0000-0000-000000000002")));
+    }
+
+    [Fact]
     public void CompareTo_ShouldReturnCorrectOrder()
     {
         TestGuidOf strongGuid1 = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));

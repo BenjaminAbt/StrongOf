@@ -42,9 +42,7 @@ public abstract class StrongOf<TTarget, TStrong> : IStrongOf
     /// <returns>A new instance of the strong type.</returns>
     public static TStrong From(TTarget value)
     {
-        TStrong strong = s_factoryWithParameter(value);
-
-        return strong;
+        return s_factoryWithParameter(value);
     }
 
     /// <summary>
@@ -108,12 +106,17 @@ public abstract class StrongOf<TTarget, TStrong> : IStrongOf
             return true;
         }
 
-        if (other is not StrongOf<TTarget, TStrong> strong)
+        if (other is StrongOf<TTarget, TStrong> strong)
         {
-            return false;
+            return Value!.Equals(strong.Value);
         }
 
-        return Value!.Equals(strong.Value);
+        if (other is TTarget target)
+        {
+            return Value!.Equals(target);
+        }
+
+        return false;
     }
 
     /// <summary>

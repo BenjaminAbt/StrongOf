@@ -25,6 +25,20 @@ public class StrongInt32Tests
     }
 
     [Fact]
+    public void Equals_WithTargetType_ReturnsTrue()
+    {
+        TestInt32Of testOf = new(1);
+        Assert.True(testOf.Equals(1));
+    }
+
+    [Fact]
+    public void Equals_WithTargetType_ReturnsFalse()
+    {
+        TestInt32Of testOf = new(1);
+        Assert.False(testOf.Equals(2));
+    }
+
+    [Fact]
     public void CompareTo_ShouldReturnCorrectOrder()
     {
         TestInt32Of strongInt1 = new(1);

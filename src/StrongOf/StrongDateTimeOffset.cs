@@ -11,6 +11,23 @@ public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : Stro
     where TStrong : StrongDateTimeOffset<TStrong>
 {
     /// <summary>
+    /// Creates a new instance of StrongDateTimeOffset from a nullable DateTimeOffset value.
+    /// </summary>
+    /// <param name="value">The nullable char value.</param>
+    /// <returns>A new instance of StrongDateTimeOffset if the value has a value, null otherwise.</returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static TStrong? FromNullable(DateTimeOffset? value)
+    {
+        if (value.HasValue)
+        {
+            TStrong strong = From(value.Value);
+            return strong;
+        }
+
+        return null;
+    }
+
+    /// <summary>
     /// Creates a new instance of TStrong from an ISO 8601 string.
     /// </summary>
     /// <param name="value">The ISO 8601 string to convert.</param>
@@ -134,20 +151,21 @@ public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : Stro
     }
 
     // Operators
+
     /// <summary>
     /// Determines whether two specified instances of StrongDateTimeOffset are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
-    /// <param name="value">The second instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
     /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator ==(StrongDateTimeOffset<TStrong> strong, DateTimeOffset value)
+    public static bool operator ==(StrongDateTimeOffset<TStrong> strong, DateTimeOffset other)
     {
         if (strong is null)
         {
-            return true;
+            return false;
         }
 
-        return strong.Value == value;
+        return strong.Value == other;
     }
 
     /// <summary>
@@ -161,7 +179,67 @@ public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : Stro
         return (strong == other) is false;
     }
 
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTimeOffset are equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
+    /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
+    public static bool operator ==(StrongDateTimeOffset<TStrong> strong, DateTimeOffset? other)
+    {
+        if (strong is null)
+        {
+            return other is null;
+        }
+
+        return strong.Value == other;
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTime are not equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
+    /// <returns>True if strong and other do not represent the same DateTimeOffset; otherwise, false.</returns>
+    public static bool operator !=(StrongDateTimeOffset<TStrong> strong, DateTimeOffset? other)
+    {
+        return (strong == other) is false;
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTimeOffset are equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="value">The second instance to compare.</param>
+    /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
+    public static bool operator ==(StrongDateTimeOffset<TStrong> strong, StrongDateTimeOffset<TStrong>? other)
+    {
+        if (strong is null && other is null)
+        {
+            return true;
+        }
+
+        if (strong is not null && other is not null)
+        {
+            return strong.Value == other.Value;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of StrongDateTime are not equal.
+    /// </summary>
+    /// <param name="strong">The first instance to compare.</param>
+    /// <param name="other">The second instance to compare.</param>
+    /// <returns>True if strong and other do not represent the same DateTimeOffset; otherwise, false.</returns>
+    public static bool operator !=(StrongDateTimeOffset<TStrong> strong, StrongDateTimeOffset<TStrong>? other)
+    {
+        return (strong == other) is false;
+    }
+
     // Equals
+
     /// <summary>
     /// Determines whether the specified object is equal to the current object.
     /// </summary>

@@ -1,4 +1,6 @@
-﻿namespace StrongOf;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace StrongOf;
 
 /// <summary>
 /// Represents a strong type of string.
@@ -7,6 +9,23 @@
 public abstract class StrongString<TStrong>(string Value) : StrongOf<string, TStrong>(Value), IComparable, IStrongString
     where TStrong : StrongString<TStrong>
 {
+    /// <summary>
+    /// Creates a new instance of StrongString from a nullable string value.
+    /// </summary>
+    /// <param name="value">The nullable char value.</param>
+    /// <returns>A new instance of StrongString if the value has a value, null otherwise.</returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static TStrong? FromNullable(string? value)
+    {
+        if (value != null)
+        {
+            TStrong strong = From(value);
+            return strong;
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// Creates a new instance of the strong string from the specified trimmed value.
     /// </summary>
@@ -50,6 +69,7 @@ public abstract class StrongString<TStrong>(string Value) : StrongOf<string, TSt
         => Value == "";
 
     // Operators
+
     /// <summary>
     /// Determines whether the specified strong string and string are equal.
     /// </summary>
@@ -60,7 +80,7 @@ public abstract class StrongString<TStrong>(string Value) : StrongOf<string, TSt
     {
         if (strong is null)
         {
-            return true;
+            return value is null;
         }
 
         return strong.Value == value;
@@ -77,7 +97,40 @@ public abstract class StrongString<TStrong>(string Value) : StrongOf<string, TSt
         return (strong == other) is false;
     }
 
+    /// <summary>
+    /// Determines whether the specified strong string and string are equal.
+    /// </summary>
+    /// <param name="strong">The strong string to compare.</param>
+    /// <param name="value">The string to compare.</param>
+    /// <returns>True if the specified strong string and string are equal; otherwise, false.</returns>
+    public static bool operator ==(StrongString<TStrong> strong, StrongString<TStrong>? other)
+    {
+        if (strong is null && other is null)
+        {
+            return true;
+        }
+
+        if (strong is not null && other is not null)
+        {
+            return strong.Value == other.Value;
+        }
+
+        return false;
+    }
+
+    /// <summary>
+    /// Determines whether the specified strong string and string are not equal.
+    /// </summary>
+    /// <param name="strong">The strong string to compare.</param>
+    /// <param name="other">The string to compare.</param>
+    /// <returns>True if the specified strong string and string are not equal; otherwise, false.</returns>
+    public static bool operator !=(StrongString<TStrong> strong, StrongString<TStrong> other)
+    {
+        return (strong == other) is false;
+    }
+
     // Equals
+
     /// <summary>
     /// Determines whether the specified object is equal to the current object.
     /// </summary>
