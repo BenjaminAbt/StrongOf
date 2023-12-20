@@ -6,7 +6,7 @@ namespace StrongOf.AspNetCore;
 /// Represents a binder for StrongInt32 type.
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongInt32.</typeparam>
-public abstract class StrongInt32Binder<TStrong> : StrongOfBinder
+public class StrongInt32Binder<TStrong> : StrongOfBinder
     where TStrong : StrongInt32<TStrong>
 {
     /// <summary>

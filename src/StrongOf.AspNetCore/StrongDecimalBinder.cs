@@ -8,7 +8,7 @@ namespace StrongOf.AspNetCore;
 /// Represents a binder for StrongDecimal type.
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDecimal.</typeparam>
-public abstract class StrongDecimalBinder<TStrong> : StrongOfBinder
+public class StrongDecimalBinder<TStrong> : StrongOfBinder
     where TStrong : StrongDecimal<TStrong>
 {
     /// <summary>
