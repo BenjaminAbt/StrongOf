@@ -17,11 +17,11 @@ The frequent problem in code implementation is that values are not given any mea
 ```csharp
 public class User
 {    
-    public Tenant TenantId { get; set; }
-    public Guid UserId { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Email { get; set; }
+    public  Guid    TenantId { get; set; }
+    public  Guid    UserId { get; set; }
+    public  string  FirstName { get; set; }
+    public  string  LastName { get; set; }
+    public  string  Email { get; set; }
 }
 ```
 
@@ -35,19 +35,19 @@ public User AddUser(Guid tenantId, Guid userId, string firstName, string lastNam
 The idea is to use a domain-driven design approach to give specific values a meaning through their own types.
 
 ```csharp
-private sealed class TenantId(Guid value) : StrongGuid<TenantId>(value) { }
-private sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
+private sealed class TenantId(Guid value)    : StrongGuid<TenantId>(value) { }
+private sealed class UserId(Guid value)      : StrongGuid<UserId>(value) { }
 private sealed class FirstName(string value) : StrongString<FirstName>(value) { }
-private sealed class LastName(string value) : StrongString<LastName>(value) { }
-private sealed class Email(string value) : StrongString<Email>(value) { }
+private sealed class LastName(string value)  : StrongString<LastName>(value) { }
+private sealed class Email(string value)     : StrongString<Email>(value) { }
 
 public class User
 {    
-    public TenantId TenantId { get; set; }
-    public UserId UserId { get; set; }
-    public FirstName FirstName { get; set; }
-    public LastName LastName { get; set; }
-    public Email Email { get; set; }
+    public  TenantId   TenantId { get; set; }
+    public  UserId     UserId { get; set; }
+    public  FirstName  FirstName { get; set; }
+    public  LastName   LastName { get; set; }
+    public  Email      Email { get; set; }
 }
 
 // with compiler warning if you mess up the order here
@@ -119,7 +119,7 @@ public class MyBinderProvider : IModelBinderProvider
 You can also create a customized binder
 
 ```csharp
-public class MyCustonStrongGuidBinder<TStrong> : StrongOfBinder
+public class MyCustomStrongGuidBinder<TStrong> : StrongOfBinder
     where TStrong : StrongGuid<TStrong>
 {
     public override bool TryHandle(string value, out ModelBindingResult result)
