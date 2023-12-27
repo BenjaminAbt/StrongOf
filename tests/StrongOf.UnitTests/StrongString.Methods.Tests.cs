@@ -1,4 +1,4 @@
-using Xunit;
+﻿using Xunit;
 
 namespace StrongOf.UnitTests;
 
@@ -70,5 +70,43 @@ public class StrongStringMethodsTests
         TestStringOf strongString = new("test");
         char result = strongString.FirstCharUpperInvariant();
         Assert.Equal('T', result);
+    }
+
+    [Theory]
+    // https://github.com/xunit/xunit/issues/2024
+    [MemberData(nameof(ContainsInvalidBytesTestsData), DisableDiscoveryEnumeration = true)]
+    public void ContainsInvalidCharsTests(bool expected, string invalidCharsExpected, string input)
+    {
+        const string allowedChars =
+            " !\"§#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`´abcdefghijklmnopqrstuvwxyz{|}~c«r°²³'µ·»¼AÄIÖÜßàáaäèéíñöü--–',.?€";
+
+        TestStringOf stringOf = new(input);
+
+        HashSet<char> allowedCharsSet = new(allowedChars);
+        Assert.Equal(expected, stringOf.ContainsInvalidChars(allowedCharsSet, out ICollection<char>? invalidChars));
+
+        if (expected)
+        {
+            Assert.NotEmpty(invalidCharsExpected);
+            HashSet<char> invalidCharsExpectedSet = new(invalidCharsExpected.ToCharArray());
+
+            Assert.Equal(invalidCharsExpectedSet, invalidChars);
+        }
+        else
+        {
+            Assert.Empty(invalidCharsExpected);
+            Assert.Null(invalidChars);
+        }
+    }
+
+    public static IEnumerable<object[]> ContainsInvalidBytesTestsData()
+    {
+        yield return new object[] { true, "𝐻𝑒𝓁𝑜𝒯𝓈𝓉", "𝐻𝑒𝓁𝓁𝑜 𝒯𝑒𝓈𝓉" };
+        yield return new object[] { false, "", "Object list Filter elements" };
+        yield return new object[] { false, "", "4th annual C# advent" };
+        yield return new object[] { false, "", "Why is Serialport.ReadExisting with binary data so slow with C#?" };
+        yield return new object[] { false, "", "[solved] How can I display a print dialog for an RDLC report from the code?" };
+        yield return new object[] { false, "", "Regex: Find everything between an @ and a whitespace/end of string" };
+        yield return new object[] { false, "", "dll created with .NET Core and Roslyn throws \"The type 'Object' is defined...\" Error in another dll" };
     }
 }

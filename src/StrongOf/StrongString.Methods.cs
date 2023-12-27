@@ -1,4 +1,6 @@
-﻿namespace StrongOf;
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace StrongOf;
 
 /// <summary>
 /// Represents a strong string of a specific type.
@@ -86,4 +88,33 @@ public abstract partial class StrongString<TStrong>
     /// <returns>The first character of the current string in uppercase.</returns>
     public char FirstCharUpperInvariant()
         => char.ToUpperInvariant(FirstChar());
+
+    /// <summary>
+    /// Determines whether the current string contains any characters not present in the provided set of allowed characters.
+    /// </summary>
+    /// <param name="allowedChars">A set of characters that are allowed in the string.</param>
+    /// <param name="invalidCharacters">When this method returns, contains the collection of invalid characters, if any. This parameter is passed uninitialized.</param>
+    /// <returns>true if the current string contains any characters not present in the allowedChars parameter; otherwise, false.</returns>
+    public bool ContainsInvalidChars(HashSet<char> allowedChars, [NotNullWhen(true)] out ICollection<char>? invalidCharacters)
+    {
+        HashSet<char>? invalidChars = null;
+
+        foreach (char c in Value)
+        {
+            if (!allowedChars.Contains(c))
+            {
+                invalidChars ??= [];
+                invalidChars.Add(c);
+            }
+        }
+
+        if (invalidChars is null)
+        {
+            invalidCharacters = null;
+            return false;
+        }
+
+        invalidCharacters = invalidChars;
+        return true;
+    }
 }

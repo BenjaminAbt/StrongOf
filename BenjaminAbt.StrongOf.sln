@@ -39,6 +39,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "perf", "perf", "{4AAB4675-C
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrongOf.Benchmarks", "perf\StrongOf.Benchmarks\StrongOf.Benchmarks.csproj", "{DAC3D916-3080-473A-8F9C-7556B9D9BBFC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrongOf.FluentValidation", "src\StrongOf.FluentValidation\StrongOf.FluentValidation.csproj", "{65E24D12-B53F-4455-95B7-9C6A2CA89894}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StrongOf.FluentValidation.UnitTests", "tests\StrongOf.FluentValidation.UnitTests\StrongOf.FluentValidation.UnitTests.csproj", "{E936BCE7-100B-4D33-B0CA-67D0109CEA10}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +73,14 @@ Global
 		{DAC3D916-3080-473A-8F9C-7556B9D9BBFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAC3D916-3080-473A-8F9C-7556B9D9BBFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAC3D916-3080-473A-8F9C-7556B9D9BBFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65E24D12-B53F-4455-95B7-9C6A2CA89894}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65E24D12-B53F-4455-95B7-9C6A2CA89894}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65E24D12-B53F-4455-95B7-9C6A2CA89894}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65E24D12-B53F-4455-95B7-9C6A2CA89894}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E936BCE7-100B-4D33-B0CA-67D0109CEA10}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E936BCE7-100B-4D33-B0CA-67D0109CEA10}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E936BCE7-100B-4D33-B0CA-67D0109CEA10}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E936BCE7-100B-4D33-B0CA-67D0109CEA10}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -80,6 +92,8 @@ Global
 		{D77A2C90-177F-4136-99F8-9BFCF903B289} = {C087DEB7-775E-41AA-A635-7961034570DC}
 		{0C62481D-5C5E-4F78-BB26-8477F0FD8AE4} = {C087DEB7-775E-41AA-A635-7961034570DC}
 		{DAC3D916-3080-473A-8F9C-7556B9D9BBFC} = {4AAB4675-C1B3-49E1-87DA-72E66D8AF90C}
+		{65E24D12-B53F-4455-95B7-9C6A2CA89894} = {23C114B9-080A-47BC-9FE7-673E1E0B9856}
+		{E936BCE7-100B-4D33-B0CA-67D0109CEA10} = {C087DEB7-775E-41AA-A635-7961034570DC}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {596765F3-28D7-480C-9E4C-03DDD9F0F82C}
