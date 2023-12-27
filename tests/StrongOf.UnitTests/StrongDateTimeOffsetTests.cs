@@ -5,8 +5,8 @@ namespace StrongOf.Tests;
 
 public class StrongDateTimeOffsetTests
 {
-    private sealed class TestDateTimeOffsetOf(DateTimeOffset value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(value) { }
-    private sealed class OtherTestDateTimeOffsetOf(DateTimeOffset value) : StrongDateTimeOffset<OtherTestDateTimeOffsetOf>(value) { }
+    private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value) { }
+    private sealed class OtherTestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<OtherTestDateTimeOffsetOf>(Value) { }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()

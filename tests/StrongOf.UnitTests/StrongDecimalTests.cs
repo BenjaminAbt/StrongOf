@@ -5,8 +5,8 @@ namespace StrongOf.Tests;
 
 public class StrongDecimalTests
 {
-    private sealed class TestDecimalOf(decimal value) : StrongDecimal<TestDecimalOf>(value) { }
-    private sealed class OtherTestDecimalOf(decimal value) : StrongDecimal<OtherTestDecimalOf>(value) { }
+    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value) { }
+    private sealed class OtherTestDecimalOf(decimal Value) : StrongDecimal<OtherTestDecimalOf>(Value) { }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()

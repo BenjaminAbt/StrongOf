@@ -4,8 +4,8 @@ namespace StrongOf.UnitTests;
 
 public class StrongStringTests
 {
-    private sealed class TestStringOf(string value) : StrongString<TestStringOf>(value) { }
-    private sealed class OtherTestStringOf(string value) : StrongString<OtherTestStringOf>(value) { }
+    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
+    private sealed class OtherTestStringOf(string Value) : StrongString<OtherTestStringOf>(Value) { }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()
