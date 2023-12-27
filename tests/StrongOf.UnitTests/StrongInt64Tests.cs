@@ -4,8 +4,8 @@ namespace StrongOf.UnitTests;
 
 public class StrongInt64Tests
 {
-    private sealed class TestInt64Of(long value) : StrongInt64<TestInt64Of>(value) { }
-    private sealed class OtherTestInt64Of(long value) : StrongInt64<OtherTestInt64Of>(value) { }
+    private sealed class TestInt64Of(long Value) : StrongInt64<TestInt64Of>(Value) { }
+    private sealed class OtherTestInt64Of(long Value) : StrongInt64<OtherTestInt64Of>(Value) { }
 
     [Fact]
     public void NewFrom_ShouldBeTheSame()

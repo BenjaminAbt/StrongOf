@@ -4,8 +4,8 @@ namespace StrongOf.Tests;
 
 public class StrongCharTests
 {
-    private sealed class TestCharOf(char value) : StrongChar<TestCharOf>(value) { }
-    private sealed class OtherTestCharOf(char value) : StrongChar<OtherTestCharOf>(value) { }
+    private sealed class TestCharOf(char Value) : StrongChar<TestCharOf>(Value) { }
+    private sealed class OtherTestCharOf(char Value) : StrongChar<OtherTestCharOf>(Value) { }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()

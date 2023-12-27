@@ -6,7 +6,7 @@ namespace StrongOf;
 /// Represents a strong type of string.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong string.</typeparam>
-public abstract class StrongString<TStrong>(string Value) : StrongOf<string, TStrong>(Value), IComparable, IStrongString
+public abstract partial class StrongString<TStrong>(string Value) : StrongOf<string, TStrong>(Value), IComparable, IStrongString
     where TStrong : StrongString<TStrong>
 {
     /// <summary>

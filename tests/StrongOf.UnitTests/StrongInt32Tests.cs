@@ -4,8 +4,8 @@ namespace StrongOf.UnitTests;
 
 public class StrongInt32Tests
 {
-    private sealed class TestInt32Of(int value) : StrongInt32<TestInt32Of>(value) { }
-    private sealed class OtherTestInt32Of(int value) : StrongInt32<OtherTestInt32Of>(value) { }
+    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value) { }
+    private sealed class OtherTestInt32Of(int Value) : StrongInt32<OtherTestInt32Of>(Value) { }
 
     [Fact]
     public void NewFrom_ShouldBeTheSame()

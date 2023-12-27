@@ -5,8 +5,8 @@ namespace StrongOf.Tests;
 
 public class StrongDateTimeTests
 {
-    private sealed class TestDateTimeOf(DateTime value) : StrongDateTime<TestDateTimeOf>(value) { }
-    private sealed class OtherTestDateTimeOf(DateTime value) : StrongDateTime<OtherTestDateTimeOf>(value) { }
+    private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value) { }
+    private sealed class OtherTestDateTimeOf(DateTime Value) : StrongDateTime<OtherTestDateTimeOf>(Value) { }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()

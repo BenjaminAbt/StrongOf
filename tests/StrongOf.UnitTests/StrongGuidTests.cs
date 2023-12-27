@@ -4,8 +4,8 @@ namespace StrongOf.UnitTests;
 
 public class StrongGuidTests
 {
-    private sealed class TestGuidOf(Guid value) : StrongGuid<TestGuidOf>(value) { }
-    private sealed class OtherTestGuidOf(Guid value) : StrongGuid<OtherTestGuidOf>(value) { }
+    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value) { }
+    private sealed class OtherTestGuidOf(Guid Value) : StrongGuid<OtherTestGuidOf>(Value) { }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()
