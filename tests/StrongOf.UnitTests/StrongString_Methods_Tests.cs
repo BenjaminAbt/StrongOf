@@ -2,7 +2,7 @@
 
 namespace StrongOf.UnitTests;
 
-public class StrongStringMethodsTests
+public class StrongString_Methods_Tests
 {
     private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
 
