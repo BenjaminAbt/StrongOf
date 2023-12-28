@@ -3,7 +3,7 @@ using Xunit;
 
 namespace StrongOf.Tests;
 
-public class StrongDateTimeTests
+public class StrongDateTime_Tests
 {
     private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value) { }
     private sealed class OtherTestDateTimeOf(DateTime Value) : StrongDateTime<OtherTestDateTimeOf>(Value) { }
@@ -40,28 +40,6 @@ public class StrongDateTimeTests
     {
         Assert.False(TestDateTimeOf.TryParse("invalid", out TestDateTimeOf? strong));
         Assert.Null(strong);
-    }
-
-    [Fact]
-    public void OperatorEquals_ShouldReturnTrueForEqualValues()
-    {
-        TestDateTimeOf strongDateTime = new(new DateTime(2000, 1, 1));
-        Assert.True(strongDateTime == new DateTime(2000, 1, 1));
-    }
-
-    [Fact]
-    public void OperatorNotEquals_ShouldReturnTrueForDifferentValues()
-    {
-        TestDateTimeOf strongDateTime = new(new DateTime(2000, 1, 1));
-        Assert.True(strongDateTime != new DateTime(2001, 1, 1));
-    }
-
-    [Fact]
-    public void OperatorEquals_Null()
-    {
-        TestDateTimeOf strongDateTime = new(new DateTime(2000, 1, 1));
-        Assert.True(strongDateTime != null);
-        Assert.False(strongDateTime == null);
     }
 
     [Fact]

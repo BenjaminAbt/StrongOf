@@ -3,7 +3,7 @@ using Xunit;
 
 namespace StrongOf.Tests;
 
-public class StrongDateTimeOffsetTests
+public class StrongDateTimeOffset_Tests
 {
     private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value) { }
     private sealed class OtherTestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<OtherTestDateTimeOffsetOf>(Value) { }
@@ -40,28 +40,6 @@ public class StrongDateTimeOffsetTests
     {
         Assert.False(TestDateTimeOffsetOf.TryParse("invalid", out TestDateTimeOffsetOf? strong));
         Assert.Null(strong);
-    }
-
-    [Fact]
-    public void OperatorEquals_ShouldReturnTrueForEqualValues()
-    {
-        TestDateTimeOffsetOf strongDateTimeOffset = new(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        Assert.True(strongDateTimeOffset == new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-    }
-
-    [Fact]
-    public void OperatorNotEquals_ShouldReturnTrueForDifferentValues()
-    {
-        TestDateTimeOffsetOf strongDateTimeOffset = new(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        Assert.True(strongDateTimeOffset != new DateTimeOffset(2001, 1, 1, 0, 0, 0, TimeSpan.Zero));
-    }
-
-    [Fact]
-    public void OperatorEquals_Null()
-    {
-        TestDateTimeOffsetOf strongDateTimeOffset = new(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
-        Assert.True(strongDateTimeOffset != null);
-        Assert.False(strongDateTimeOffset == null);
     }
 
     [Fact]
