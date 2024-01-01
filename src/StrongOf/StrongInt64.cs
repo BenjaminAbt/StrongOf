@@ -9,6 +9,17 @@ namespace StrongOf;
 public abstract partial class StrongInt64<TStrong>(long Value) : StrongOf<long, TStrong>(Value), IComparable, IStrongInt64
     where TStrong : StrongInt64<TStrong>
 {
+
+    /// <summary>
+    /// Returns the value of the strong type as a long.
+    /// </summary>
+    public long AsInt64() => Value;
+
+    /// <summary>
+    /// Returns the value of the strong type as a long.
+    /// </summary>
+    public long AsLong() => Value;
+
     /// <summary>
     /// Creates a new instance of StrongInt64 from a nullable Int64 value.
     /// </summary>

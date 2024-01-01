@@ -12,4 +12,14 @@ public interface IStrongInt32 : IStrongOf
     /// The value of the Int32.
     /// </value>
     int Value { get; }
+
+    /// <summary>
+    /// Returns the value of the strong type as a int.
+    /// </summary>
+    int AsInt();
+
+    /// <summary>
+    /// Returns the value of the strong type as a int.
+    /// </summary>
+    int AsInt32();
 }

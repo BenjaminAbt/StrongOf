@@ -10,6 +10,11 @@ public abstract class StrongChar<TStrong>(char Value) : StrongOf<char, TStrong>(
     where TStrong : StrongChar<TStrong>
 {
     /// <summary>
+    /// Returns the value of the strong type as a char.
+    /// </summary>
+    public char AsChar() => Value;
+
+    /// <summary>
     /// Creates a new instance of StrongChar from a nullable char value.
     /// </summary>
     /// <param name="value">The nullable char value.</param>

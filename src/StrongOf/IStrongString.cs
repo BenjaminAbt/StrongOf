@@ -11,4 +11,9 @@ public interface IStrongString : IStrongOf
     /// This property is used to access the underlying string value of the strong type.
     /// </summary>
     string Value { get; }
+
+    /// <summary>
+    /// Returns the value of the strong type as a string.
+    /// </summary>
+    string AsString();
 }

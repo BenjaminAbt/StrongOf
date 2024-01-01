@@ -12,6 +12,26 @@ public abstract partial class StrongDateTime<TStrong>(DateTime Value) : StrongOf
     where TStrong : StrongDateTime<TStrong>
 {
     /// <summary>
+    /// Returns the value of the strong type as a DateTime.
+    /// </summary>
+    public DateTime AsDateTime() => Value;
+
+    /// <summary>
+    /// Returns the value of the strong type as a DateTimeOffset.
+    /// </summary>
+    public DateTimeOffset AsDateTimeOffset() => new(Value);
+
+    /// <summary>
+    /// Returns the value of the strong type as a DateOnly.
+    /// </summary>
+    public DateOnly AsDate() => DateOnly.FromDateTime(Value);
+
+    /// <summary>
+    /// Returns the value of the strong type as a TimeOnly.
+    /// </summary>
+    public TimeOnly AsTime() => TimeOnly.FromDateTime(Value);
+
+    /// <summary>
     /// Creates a new instance of StrongDateTime from a nullable DateTime value.
     /// </summary>
     /// <param name="value">The nullable char value.</param>

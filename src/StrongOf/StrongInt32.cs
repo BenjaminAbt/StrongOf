@@ -10,6 +10,16 @@ public abstract partial class StrongInt32<TStrong>(int Value) : StrongOf<int, TS
     where TStrong : StrongInt32<TStrong>
 {
     /// <summary>
+    /// Returns the value of the strong type as a int.
+    /// </summary>
+    public int AsInt() => Value;
+
+    /// <summary>
+    /// Returns the value of the strong type as a int.
+    /// </summary>
+    public int AsInt32() => Value;
+
+    /// <summary>
     /// Creates a new instance of StrongInt32 from a nullable Int32 value.
     /// </summary>
     /// <param name="value">The nullable char value.</param>
