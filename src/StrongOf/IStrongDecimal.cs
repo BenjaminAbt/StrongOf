@@ -8,5 +8,10 @@ public interface IStrongDecimal : IStrongOf
     /// <summary>
     /// Gets the value of the strong type.
     /// </summary>
-    Decimal Value { get; }
+    decimal Value { get; }
+
+    /// <summary>
+    /// Returns the value of the strong type as a Decimal.
+    /// </summary>
+    decimal AsDecimal();
 }

@@ -8,8 +8,10 @@ public interface IStrongGuid : IStrongOf
     /// <summary>
     /// Gets the value of the Guid.
     /// </summary>
-    /// <value>
-    /// The value of the Guid.
-    /// </value>
     Guid Value { get; }
+
+    /// <summary>
+    /// Returns the value of the strong type as a Guid.
+    /// </summary>
+    Guid AsGuid();
 }

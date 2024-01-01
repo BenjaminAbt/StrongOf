@@ -64,28 +64,6 @@ public class StrongInt32Tests
     }
 
     [Fact]
-    public void OperatorEquals_ShouldReturnTrueForEqualValues()
-    {
-        TestInt32Of strongInt = new(123);
-        Assert.True(strongInt == 123);
-    }
-
-    [Fact]
-    public void OperatorNotEquals_ShouldReturnTrueForDifferentValues()
-    {
-        TestInt32Of strongInt = new(123);
-        Assert.True(strongInt != 456);
-    }
-
-    [Fact]
-    public void OperatorEquals_Null()
-    {
-        TestInt32Of strongInt = new(123);
-        Assert.True(strongInt != null);
-        Assert.False(strongInt == null);
-    }
-
-    [Fact]
     public void Equals_ShouldReturnTrueForEqualValues()
     {
         TestInt32Of strongInt1 = new(123);

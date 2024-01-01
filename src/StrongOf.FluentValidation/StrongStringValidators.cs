@@ -76,6 +76,22 @@ public static class StrongStringValidators
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
     }
+    /// <summary>
+    /// Validates that the strong string is equal to another strong string.
+    /// </summary>
+    /// <typeparam name="T">The type of the object being validated.</typeparam>
+    /// <typeparam name="TStrong">The type of the strong string.</typeparam>
+    /// <param name="rule">The rule builder.</param>
+    /// <param name="expression">The expression that specifies the other strong string.</param>
+    /// <returns>The rule builder options.</returns>
+    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
+        where TStrong : StrongString<TStrong>
+    {
+        MemberInfo member = expression.GetMember();
+        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        string name = InternalValidation.GetDisplayName(member, expression);
+        return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
+    }
 
     /// <summary>
     /// Validates that the strong string only contains allowed characters.

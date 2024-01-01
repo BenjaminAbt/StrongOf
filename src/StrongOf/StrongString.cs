@@ -10,6 +10,11 @@ public abstract partial class StrongString<TStrong>(string Value) : StrongOf<str
     where TStrong : StrongString<TStrong>
 {
     /// <summary>
+    /// Returns the value of the strong type as a string.
+    /// </summary>
+    public string AsString() => Value;
+
+    /// <summary>
     /// Creates a new instance of StrongString from a nullable string value.
     /// </summary>
     /// <param name="value">The nullable char value.</param>

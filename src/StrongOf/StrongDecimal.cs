@@ -11,6 +11,11 @@ public abstract class StrongDecimal<TStrong>(decimal Value) : StrongOf<decimal, 
     where TStrong : StrongDecimal<TStrong>
 {
     /// <summary>
+    /// Returns the value of the strong type as a Decimal.
+    /// </summary>
+    public decimal AsDecimal() => Value;
+
+    /// <summary>
     /// Creates a new instance of StrongDecimal from a nullable decimal value.
     /// </summary>
     /// <param name="value">The nullable char value.</param>

@@ -10,6 +10,11 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     where TStrong : StrongGuid<TStrong>
 {
     /// <summary>
+    /// Returns the value of the strong type as a Guid.
+    /// </summary>
+    public Guid AsGuid() => Value;
+
+    /// <summary>
     /// Creates a new instance of StrongGuid from a nullable Guid value.
     /// </summary>
     /// <param name="value">The nullable char value.</param>

@@ -6,9 +6,20 @@ namespace StrongOf;
 /// Represents a strong type of Int64.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong Int64.</typeparam>
-public abstract class StrongInt64<TStrong>(long Value) : StrongOf<long, TStrong>(Value), IComparable, IStrongInt64
+public abstract partial class StrongInt64<TStrong>(long Value) : StrongOf<long, TStrong>(Value), IComparable, IStrongInt64
     where TStrong : StrongInt64<TStrong>
 {
+
+    /// <summary>
+    /// Returns the value of the strong type as a long.
+    /// </summary>
+    public long AsInt64() => Value;
+
+    /// <summary>
+    /// Returns the value of the strong type as a long.
+    /// </summary>
+    public long AsLong() => Value;
+
     /// <summary>
     /// Creates a new instance of StrongInt64 from a nullable Int64 value.
     /// </summary>
@@ -62,50 +73,6 @@ public abstract class StrongInt64<TStrong>(long Value) : StrongOf<long, TStrong>
 
         strong = null;
         return false;
-    }
-
-    // Operators
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt64 are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same Int64; otherwise, false.</returns>
-    public static bool operator ==(StrongInt64<TStrong>? strong, object? other)
-    {
-        if (strong is null)
-        {
-            return other is null;
-        }
-
-        if (other is int intValue)
-        {
-            return strong.Value == intValue;
-        }
-
-        if (other is long longValue)
-        {
-            return strong.Value == longValue;
-        }
-
-        if (other is StrongInt64<TStrong> otherStrong)
-        {
-            return strong.Value == otherStrong.Value;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongInt64 are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same Int64; otherwise, false.</returns>
-    public static bool operator !=(StrongInt64<TStrong>? strong, object? other)
-    {
-        return (strong == other) is false;
     }
 
     // Equals

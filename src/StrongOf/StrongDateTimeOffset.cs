@@ -7,9 +7,34 @@ namespace StrongOf;
 /// Represents a strongly typed DateTimeOffset.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong DateTimeOffset.</typeparam>
-public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : StrongOf<DateTimeOffset, TStrong>(Value), IComparable, IStrongDateTimeOffset
+public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : StrongOf<DateTimeOffset, TStrong>(Value), IComparable, IStrongDateTimeOffset
     where TStrong : StrongDateTimeOffset<TStrong>
 {
+    /// <summary>
+    /// Returns the value of the strong type as a DateTimeOffset.
+    /// </summary>
+    public DateTimeOffset AsDateTimeOffset() => Value;
+
+    /// <summary>
+    /// Returns the value of the strong type as a DateTime.
+    /// </summary>
+    public DateTime AsDateTime() => Value.DateTime;
+
+    /// <summary>
+    /// Returns the value of the strong type as a DateTime UTC.
+    /// </summary>
+    public DateTime AsDateTimeUtc() => Value.UtcDateTime;
+
+    /// <summary>
+    /// Returns the value of the strong type as a DateOnly.
+    /// </summary>
+    public DateOnly AsDate() => DateOnly.FromDateTime(Value.Date);
+
+    /// <summary>
+    /// Returns the value of the strong type as a TimeOnly.
+    /// </summary>
+    public TimeOnly AsTime() => TimeOnly.FromDateTime(Value.Date);
+
     /// <summary>
     /// Creates a new instance of StrongDateTimeOffset from a nullable DateTimeOffset value.
     /// </summary>
@@ -148,45 +173,6 @@ public abstract class StrongDateTimeOffset<TStrong>(DateTimeOffset Value) : Stro
 
         strong = null;
         return false;
-    }
-
-    // Operators
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDateTimeOffset are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator ==(StrongDateTimeOffset<TStrong>? strong, object? other)
-    {
-        if (strong is null)
-        {
-            return other is null;
-        }
-
-        if (other is DateTimeOffset dtValue)
-        {
-            return strong.Value == dtValue;
-        }
-
-        if (other is StrongDateTimeOffset<TStrong> otherStrong)
-        {
-            return strong.Value == otherStrong.Value;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDateTime are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same DateTimeOffset; otherwise, false.</returns>
-    public static bool operator !=(StrongDateTimeOffset<TStrong>? strong, object? other)
-    {
-        return (strong == other) is false;
     }
 
     // Equals

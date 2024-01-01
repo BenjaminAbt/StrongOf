@@ -9,4 +9,9 @@ public interface IStrongChar : IStrongOf
     /// Gets the value of the strong type.
     /// </summary>
     char Value { get; }
+
+    /// <summary>
+    /// Returns the value of the strong type as a char.
+    /// </summary>
+    char AsChar();
 }

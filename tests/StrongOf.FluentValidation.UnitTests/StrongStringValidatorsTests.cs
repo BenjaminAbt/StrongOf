@@ -21,7 +21,6 @@ public class StrongStringValidatorsTests
         public TestStringOf? Other { get; set; }
     }
 
-
     [Fact]
     public void HasValue_ShouldFail_WhenValueIsNull()
     {
