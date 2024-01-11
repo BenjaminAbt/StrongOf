@@ -15,16 +15,33 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     public Guid AsGuid() => Value;
 
     /// <summary>
-    /// Creates a new instance of StrongGuid from a nullable Guid value.
+    /// Converts a nullable Guid value to a strong type of Guid.
     /// </summary>
-    /// <param name="value">The nullable char value.</param>
-    /// <returns>A new instance of StrongGuid if the value has a value, null otherwise.</returns>
+    /// <param name="value">The nullable Guid value to convert.</param>
+    /// <returns>A strong type of Guid if the value has a Guid; otherwise, null.</returns>
     [return: NotNullIfNotNull(nameof(value))]
-    public static TStrong? FromNullable(Guid? value)
+    public static TStrong? FromGuid(Guid? value)
     {
         if (value.HasValue)
         {
             TStrong strong = From(value.Value);
+            return strong;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Converts a string to a strong type of Guid.
+    /// </summary>
+    /// <param name="value">The string to convert.</param>
+    /// <returns>A strong type of Guid if the string can be parsed to a Guid; otherwise, null.</returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static TStrong? FromString(string? value)
+    {
+        if (value is not null && Guid.TryParse(value, out Guid result))
+        {
+            TStrong strong = From(result);
             return strong;
         }
 
@@ -63,7 +80,7 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     /// </summary>
     /// <returns>An empty Guid of the strong type.</returns>
     public static TStrong Empty()
-        => From(Guid.Empty);
+        => StrongOf<Guid, TStrong>.From(Guid.Empty);
 
     /// <summary>
     /// Checks if the Guid is empty.
@@ -77,7 +94,7 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     /// </summary>
     /// <returns>A new Guid of the strong type.</returns>
     public static TStrong New()
-         => From(Guid.NewGuid());
+         => StrongOf<Guid, TStrong>.From(Guid.NewGuid());
 
     /// <summary>
     /// Tries to parse a Guid from a string and returns a value that indicates whether the operation succeeded.
@@ -89,7 +106,7 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     {
         if (Guid.TryParse(content, out Guid value))
         {
-            strong = From(value);
+            strong = StrongOf<Guid, TStrong>.From(value);
             return true;
         }
 

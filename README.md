@@ -184,7 +184,7 @@ public class MySubmitModelValidator : AbstractValidator<MySubmitModel>
 
 [![StrongOf](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf)\
 [![StrongOf.AspNetCore](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)\
-[![StrongOf.Json](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)
+[![StrongOf.Json](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)\
 [![StrongOf.FluentValidation](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)
 
 See [StrongOf on NuGet.org](https://www.nuget.org/packages/StrongOf)
