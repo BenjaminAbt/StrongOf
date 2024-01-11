@@ -80,7 +80,7 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     /// </summary>
     /// <returns>An empty Guid of the strong type.</returns>
     public static TStrong Empty()
-        => StrongOf<Guid, TStrong>.From(Guid.Empty);
+        => From(Guid.Empty);
 
     /// <summary>
     /// Checks if the Guid is empty.
@@ -94,7 +94,7 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     /// </summary>
     /// <returns>A new Guid of the strong type.</returns>
     public static TStrong New()
-         => StrongOf<Guid, TStrong>.From(Guid.NewGuid());
+         => From(Guid.NewGuid());
 
     /// <summary>
     /// Tries to parse a Guid from a string and returns a value that indicates whether the operation succeeded.
@@ -106,7 +106,7 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     {
         if (Guid.TryParse(content, out Guid value))
         {
-            strong = StrongOf<Guid, TStrong>.From(value);
+            strong = From(value);
             return true;
         }
 
