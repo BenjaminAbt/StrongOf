@@ -8,6 +8,44 @@ public class StrongGuidTests
     private sealed class OtherTestGuidOf(Guid Value) : StrongGuid<OtherTestGuidOf>(Value) { }
 
     [Fact]
+    public void FromGuid_NullValue_ReturnsNull()
+    {
+        Assert.Null(TestGuidOf.FromGuid(null));
+    }
+
+    [Fact]
+    public void FromGuid_ValidValue_ReturnsStrongGuid()
+    {
+        Guid guid = Guid.NewGuid();
+        TestGuidOf strongGuid = TestGuidOf.FromGuid(guid);
+
+        Assert.NotNull(strongGuid);
+        Assert.Equal(guid, strongGuid.AsGuid());
+    }
+
+    [Fact]
+    public void FromString_NullValue_ReturnsNull()
+    {
+        Assert.Null(TestGuidOf.FromString(null));
+    }
+
+    [Fact]
+    public void FromString_InvalidValue_ReturnsNull()
+    {
+        Assert.Null(TestGuidOf.FromString("invalid"));
+    }
+
+    [Fact]
+    public void FromString_ValidValue_ReturnsStrongGuid()
+    {
+        Guid guid = Guid.NewGuid();
+        TestGuidOf strongGuid = TestGuidOf.FromString(guid.ToString());
+
+        Assert.NotNull(strongGuid);
+        Assert.Equal(guid, strongGuid.AsGuid());
+    }
+
+    [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()
     {
         TestGuidOf testOf = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
