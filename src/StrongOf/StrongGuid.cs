@@ -10,11 +10,6 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     where TStrong : StrongGuid<TStrong>
 {
     /// <summary>
-    /// Returns the value of the strong type as a Guid.
-    /// </summary>
-    public Guid AsGuid() => Value;
-
-    /// <summary>
     /// Converts a nullable Guid value to a strong type of Guid.
     /// </summary>
     /// <param name="value">The nullable Guid value to convert.</param>
@@ -49,13 +44,6 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     }
 
     /// <summary>
-    /// Initializes a new instance of the StrongGuid class using the specified string representation of a Guid.
-    /// </summary>
-    /// <param name="value">A string containing a Guid to use for initialization.</param>
-    /// <remarks>Uses <see cref="Guid.Parse(string)"/></remarks>
-    public StrongGuid(string value) : this(Guid.Parse(value)) { }
-
-    /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
@@ -83,13 +71,6 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
         => From(Guid.Empty);
 
     /// <summary>
-    /// Checks if the Guid is empty.
-    /// </summary>
-    /// <returns>True if the Guid is empty; otherwise, false.</returns>
-    public bool IsEmpty()
-        => Value == Guid.Empty;
-
-    /// <summary>
     /// Creates a new Guid of the strong type.
     /// </summary>
     /// <returns>A new Guid of the strong type.</returns>
@@ -113,28 +94,6 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
         strong = null;
         return false;
     }
-
-    /// <summary>
-    /// Converts the value of this instance to its equivalent string representation using the specified format.
-    /// </summary>
-    /// <param name="format">A standard or custom format string.</param>
-    /// <returns>The string representation of the value of this instance as specified by format.</returns>
-    public string ToString(string format)
-        => Value.ToString(format);
-
-    /// <summary>
-    /// Converts the value of this instance to its equivalent string representation with dashes.
-    /// </summary>
-    /// <returns>The string representation of the value of this instance with dashes.</returns>
-    public string ToStringWithDashes()
-        => Value.ToString("D");
-
-    /// <summary>
-    /// Converts the value of this instance to its equivalent string representation without dashes.
-    /// </summary>
-    /// <returns>The string representation of the value of this instance without dashes.</returns>
-    public string ToStringWithoutDashes()
-        => Value.ToString("N");
 
     // Operators
 
