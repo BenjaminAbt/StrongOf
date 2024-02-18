@@ -46,7 +46,7 @@ public static class StrongStringValidators
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximumLength<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int maxLength)
         where TStrong : StrongString<TStrong>
-        => rule.Must(content => content?.Value is not null && content.Value.Length <= maxLength);
+        => rule.Must(content => content?.Value is null ? true : content.Value.Length <= maxLength);
 
     /// <summary>
     /// Validates that the strong string matches a regular expression.

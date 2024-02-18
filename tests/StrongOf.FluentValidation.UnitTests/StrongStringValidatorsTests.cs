@@ -50,6 +50,16 @@ public class StrongStringValidatorsTests
     }
 
     [Fact]
+    public void HasMaximumLength_ShouldNotFail_WhenValueIsNull()
+    {
+        _validator.RuleFor(x => x.Strong).HasMaximumLength(5);
+
+        TestModel model = new() { Strong = null };
+        TestValidationResult<TestModel> result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Strong);
+    }
+
+    [Fact]
     public void IsRegexMatch_ShouldFail_WhenValueDoesNotMatchRegex()
     {
         _validator.RuleFor(x => x.Strong).IsRegexMatch(new Regex(@"^\d+$"));
