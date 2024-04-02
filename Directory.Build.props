@@ -11,31 +11,44 @@
             StrongOf helps to implement primitives as a strong type that represents a domain object (e.g. UserId, EmailAddress, etc.). It is a simple class that wraps a value and provides a few helper methods to make it easier to work with.
             In contrast to other approaches, StrongOf is above all simple and performant - and not over-engineered.
         </Description>
+        <DefaultLanguage>en-US</DefaultLanguage>
+        <NoPackageAnalysis>true</NoPackageAnalysis>
+        <DebugType>embedded</DebugType>
     </PropertyGroup>
 
-    <!-- Assembly -->
-    <PropertyGroup>
+    <PropertyGroup Label="Env">
+        <IsTestProject>$(MSBuildProjectName.Contains('Test'))</IsTestProject>
+        <IsBenchmarkProject>$(MsBuildProjectName.Contains('Benchmark'))</IsBenchmarkProject>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Assembly">
         <GlobalNamespacePrefix>StrongOf</GlobalNamespacePrefix>
         <GlobalAssemblyNamePrefix>BenjaminAbt.StrongOf</GlobalAssemblyNamePrefix>
     </PropertyGroup>
 
-    <!-- Project Defaults -->
-    <PropertyGroup>
+    <PropertyGroup Label="Project Defaults">
         <TargetFrameworks>net7.0;net8.0</TargetFrameworks>
     </PropertyGroup>
 
-    <!-- Package -->
-    <PropertyGroup>
+    <PropertyGroup Label="Package">
         <IsPackable>false</IsPackable>
         <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <Description>Primitive Obsession with .NET</Description>
+        <MinClientVersion>2.12</MinClientVersion>
         <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
+        <IsPackable>false</IsPackable>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
     </PropertyGroup>
 
-    <!-- C# -->
-    <PropertyGroup>
+    <PropertyGroup Label="C#">
         <LangVersion>12.0</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
+        <GenerateDocumentationFile Condition="'$(Configuration)' == 'Release'">true</GenerateDocumentationFile>
     </PropertyGroup>
 </Project>

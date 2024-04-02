@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <!-- Package -->
-    <PropertyGroup>
+    <PropertyGroup Label="Package">
         <IsPackable>true</IsPackable>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
@@ -17,6 +16,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
+        <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
     </ItemGroup>
 </Project>
