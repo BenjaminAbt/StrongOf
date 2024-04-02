@@ -1,9 +1,5 @@
 ﻿namespace StrongOf;
 
-/// <summary>
-/// Represents a strong type of Int64.
-/// </summary>
-/// <typeparam name="TStrong">The type of the strong Int64.</typeparam>
 public abstract partial class StrongInt64<TStrong>
 {
     /// <summary>

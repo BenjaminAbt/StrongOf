@@ -40,7 +40,7 @@ public static class StrongIn64Validators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong Int64.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="min">The maximum value.</param>
+    /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, long max)
         where TStrong : StrongInt64<TStrong>
