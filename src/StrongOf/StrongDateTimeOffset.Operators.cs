@@ -1,9 +1,5 @@
 ﻿namespace StrongOf;
 
-/// <summary>
-/// Represents a strongly typed DateTimeOffset.
-/// </summary>
-/// <typeparam name="TStrong">The type of the strong DateTimeOffset.</typeparam>
 public abstract partial class StrongDateTimeOffset<TStrong>
 {
     /// <summary>
