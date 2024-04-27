@@ -1,5 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <ItemGroup Label="Analyzers">
+        <PackageReference Include="Meziantou.Analyzer">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
     <PropertyGroup Label="Package">
         <IsPackable>true</IsPackable>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
@@ -16,6 +23,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
+        <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
     </ItemGroup>
 </Project>

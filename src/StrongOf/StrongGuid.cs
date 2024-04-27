@@ -6,7 +6,8 @@ namespace StrongOf;
 /// Represents a strong type of Guid.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong Guid.</typeparam>
-public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(Value), IComparable, IStrongGuid
+public abstract partial class StrongGuid<TStrong>(Guid Value)
+        : StrongOf<Guid, TStrong>(Value), IComparable, IStrongGuid
     where TStrong : StrongGuid<TStrong>
 {
     /// <summary>
@@ -72,7 +73,7 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
             return Value.CompareTo(otherStrong.Value);
         }
 
-        throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+        throw new ArgumentException($"Object is not a {typeof(TStrong)}", nameof(other));
     }
 
     /// <summary>
@@ -135,46 +136,6 @@ public abstract class StrongGuid<TStrong>(Guid Value) : StrongOf<Guid, TStrong>(
     /// <returns>The string representation of the value of this instance without dashes.</returns>
     public string ToStringWithoutDashes()
         => Value.ToString("N");
-
-    // Operators
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongGuid are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same Guid; otherwise, false.</returns>
-    public static bool operator ==(StrongGuid<TStrong>? strong, object? other)
-    {
-        if (strong is null)
-        {
-            return other is null;
-        }
-
-        if (other is Guid guidValue)
-        {
-            return strong.Value == guidValue;
-        }
-
-        if (other is StrongGuid<TStrong> otherStrong)
-        {
-            return strong.Value == otherStrong.Value;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongGuid are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same Guid; otherwise, false.</returns>
-    public static bool operator !=(StrongGuid<TStrong>? strong, object? other)
-    {
-        return (strong == other) is false;
-    }
-
 
     // Equals
 

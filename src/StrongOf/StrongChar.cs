@@ -6,7 +6,8 @@ namespace StrongOf;
 /// Represents a strongly typed character.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong character.</typeparam>
-public abstract class StrongChar<TStrong>(char Value) : StrongOf<char, TStrong>(Value), IComparable, IStrongChar
+public abstract partial class StrongChar<TStrong>(char Value)
+        : StrongOf<char, TStrong>(Value), IComparable, IStrongChar
     where TStrong : StrongChar<TStrong>
 {
     /// <summary>
@@ -48,7 +49,7 @@ public abstract class StrongChar<TStrong>(char Value) : StrongOf<char, TStrong>(
             return Value.CompareTo(otherStrong.Value);
         }
 
-        throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+        throw new ArgumentException($"Object is not a {typeof(TStrong)}", nameof(other));
     }
 
     /// <summary>
@@ -67,45 +68,6 @@ public abstract class StrongChar<TStrong>(char Value) : StrongOf<char, TStrong>(
 
         strong = null;
         return false;
-    }
-
-    // Operators
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongChar are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same char; otherwise, false.</returns>
-    public static bool operator ==(StrongChar<TStrong>? strong, object? other)
-    {
-        if (strong is null)
-        {
-            return other is null;
-        }
-
-        if (other is char charValue)
-        {
-            return strong.Value == charValue;
-        }
-
-        if (other is StrongChar<TStrong> otherStrong)
-        {
-            return strong.Value == otherStrong.Value;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongChar are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same char; otherwise, false.</returns>
-    public static bool operator !=(StrongChar<TStrong>? strong, object? other)
-    {
-        return (strong == other) is false;
     }
 
     // Equals

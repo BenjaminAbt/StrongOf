@@ -25,7 +25,7 @@ public class StrongDateTimeJsonConverterTests
 
         // Act
         TestDateTimeOffsetOf? result = _converter.Read(ref reader, typeof(TestDateTimeOffsetOf), _options);
-        DateTime expected = DateTime.ParseExact("2023-12-17T14:24:22.6412808+00:00", "o", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal);
+        DateTime expected = DateTime.ParseExact("2023-12-17T14:24:22.6412808+00:00", "o", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.None);
 
         // Assert
         Assert.NotNull(result);

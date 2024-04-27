@@ -77,7 +77,7 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
             return Value.CompareTo(otherStrong.Value);
         }
 
-        throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+        throw new ArgumentException($"Object is not a {typeof(TStrong)}", nameof(other));
     }
 
     /// <summary>
@@ -119,14 +119,15 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
     }
 
     /// <summary>
-    /// Tries to parse a DateTimeOffset from a ReadOnlySpan of char and returns a value that indicates whether the operation succeeded.
+    /// Tries to parse the specified content into a <typeparamref name="TStrong"/> object.
     /// </summary>
-    /// <param name="content">A ReadOnlySpan of char containing a DateTimeOffset to convert.</param>
-    /// <param name="strong">When this method returns, contains the DateTimeOffset value equivalent to the DateTimeOffset contained in content, if the conversion succeeded, or null if the conversion failed.</param>
-    /// <returns>True if content was converted successfully; otherwise, false.</returns>
-    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
+    /// <param name="content">The content to parse.</param>
+    /// <param name="strong">When this method returns, contains the parsed value if the parsing succeeded, or <c>null</c> if the parsing failed. The parsing is case-sensitive.</param>
+    /// <param name="formatProvider">An optional <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+    /// <returns><c>true</c> if the parsing was successful; otherwise, <c>false</c>.</returns>
+    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
-        if (DateTimeOffset.TryParse(content, out DateTimeOffset value))
+        if (DateTimeOffset.TryParse(content, formatProvider, out DateTimeOffset value))
         {
             strong = From(value);
             return true;

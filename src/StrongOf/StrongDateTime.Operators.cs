@@ -86,7 +86,7 @@ public abstract partial class StrongDateTime<TStrong>
 
         if (other is DateTimeOffset dtoValue)
         {
-            return strong.Value < dtoValue;
+            return strong.Value < dtoValue.Date;
         }
 
         return false;
@@ -112,7 +112,7 @@ public abstract partial class StrongDateTime<TStrong>
 
         if (other is DateTimeOffset dtoValue)
         {
-            return strong.Value > dtoValue;
+            return strong.Value > dtoValue.Date;
         }
 
         return false;
@@ -138,7 +138,7 @@ public abstract partial class StrongDateTime<TStrong>
 
         if (other is DateTimeOffset dtoValue)
         {
-            return strong.Value <= dtoValue;
+            return strong.Value <= dtoValue.Date;
         }
 
         return false;
@@ -164,7 +164,7 @@ public abstract partial class StrongDateTime<TStrong>
 
         if (other is DateTimeOffset dtoValue)
         {
-            return strong.Value >= dtoValue;
+            return strong.Value >= dtoValue.Date;
         }
 
         return false;

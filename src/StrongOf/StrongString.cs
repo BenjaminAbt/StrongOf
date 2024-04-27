@@ -2,11 +2,14 @@
 
 namespace StrongOf;
 
+#pragma warning disable MA0097 // A class that implements IComparable<T> or IComparable should override comparison operators
+
 /// <summary>
 /// Represents a strong type of string.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong string.</typeparam>
-public abstract partial class StrongString<TStrong>(string Value) : StrongOf<string, TStrong>(Value), IComparable, IStrongString
+public abstract partial class StrongString<TStrong>(string Value)
+        : StrongOf<string, TStrong>(Value), IComparable, IStrongString
     where TStrong : StrongString<TStrong>
 {
     /// <summary>
@@ -56,7 +59,7 @@ public abstract partial class StrongString<TStrong>(string Value) : StrongOf<str
             return Value.CompareTo(otherStrong.Value);
         }
 
-        throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+        throw new ArgumentException($"Object is not a {typeof(TStrong)}", nameof(other));
     }
 
     /// <summary>
@@ -72,45 +75,6 @@ public abstract partial class StrongString<TStrong>(string Value) : StrongOf<str
     /// <returns>True if the current instance is empty; otherwise, false.</returns>
     public bool IsEmpty()
         => Value == "";
-
-    // Operators
-
-    /// <summary>
-    /// Determines whether the specified strong string and string are equal.
-    /// </summary>
-    /// <param name="strong">The strong string to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if the specified strong string and string are equal; otherwise, false.</returns>
-    public static bool operator ==(StrongString<TStrong>? strong, object? other)
-    {
-        if (strong is null)
-        {
-            return other is null;
-        }
-
-        if (other is string stringValue)
-        {
-            return strong.Value == stringValue;
-        }
-
-        if (other is StrongString<TStrong> otherStrong)
-        {
-            return strong.Value == otherStrong.Value;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Determines whether the specified strong string and string are not equal.
-    /// </summary>
-    /// <param name="strong">The strong string to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if the specified strong string and string are not equal; otherwise, false.</returns>
-    public static bool operator !=(StrongString<TStrong>? strong, object? other)
-    {
-        return (strong == other) is false;
-    }
 
     // Equals
 

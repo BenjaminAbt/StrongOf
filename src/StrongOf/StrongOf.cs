@@ -3,12 +3,15 @@ using StrongOf.Factories;
 
 namespace StrongOf;
 
+#pragma warning disable MA0049 // Type name should not match containing namespace
+
 /// <summary>
 /// Represents a strong type of TTarget.
 /// </summary>
 /// <typeparam name="TTarget">The type of the target.</typeparam>
 /// <typeparam name="TStrong">The type of the strong.</typeparam>
-public abstract class StrongOf<TTarget, TStrong> : IStrongOf
+public abstract class StrongOf<TTarget, TStrong>
+        : IStrongOf, IEquatable<StrongOf<TTarget, TStrong>>
     where TStrong : StrongOf<TTarget, TStrong>
 {
     private static readonly Func<TTarget, TStrong> s_factoryWithParameter;
@@ -51,7 +54,7 @@ public abstract class StrongOf<TTarget, TStrong> : IStrongOf
     /// <param name="source">The source to create the list of strong types from.</param>
     /// <returns>A list of strong types.</returns>
     [return: NotNullIfNotNull(nameof(source))]
-    public static List<TStrong>? From(IEnumerable<TTarget>? source)
+    public static ICollection<TStrong>? From(IEnumerable<TTarget>? source)
         => source?.Select(e => From(e)).ToList();
 
 
@@ -132,8 +135,13 @@ public abstract class StrongOf<TTarget, TStrong> : IStrongOf
     /// </summary>
     /// <param name="other">The StrongOf to compare with the current StrongOf.</param>
     /// <returns>True if the specified StrongOf is equal to the current StrongOf; otherwise, false.</returns>
-    public virtual bool Equals(StrongOf<TTarget, TStrong> other)
+    public virtual bool Equals(StrongOf<TTarget, TStrong>? other)
     {
+        if (other is null)
+        {
+            return false;
+        }
+
         return s_comparer.Equals(Value, other.Value);
     }
 

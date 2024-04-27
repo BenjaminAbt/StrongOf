@@ -46,7 +46,7 @@ public static class StrongStringValidators
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximumLength<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int maxLength)
         where TStrong : StrongString<TStrong>
-        => rule.Must(content => content?.Value is null ? true : content.Value.Length <= maxLength);
+        => rule.Must(content => content?.Value is null || content.Value.Length <= maxLength);
 
     /// <summary>
     /// Validates that the strong string matches a regular expression.
@@ -94,15 +94,20 @@ public static class StrongStringValidators
     }
 
     /// <summary>
-    /// Validates that the strong string only contains allowed characters.
+    /// Specifies that the value being validated must only contain characters from the specified collection.
     /// </summary>
-    /// <typeparam name="T">The type of the object being validated.</typeparam>
-    /// <typeparam name="TStrong">The type of the strong string.</typeparam>
+    /// <typeparam name="T">The type of the parent object being validated.</typeparam>
+    /// <typeparam name="TStrong">The type of the strong string being validated.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="chars">The set of allowed characters.</param>
-    /// <param name="messagePattern">The message pattern to use if the validation fails.</param>
+    /// <param name="chars">The collection of allowed characters.</param>
+    /// <param name="messagePattern">The pattern used to format the error message if validation fails.</param>
+    /// <param name="formatProvider">An optional <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptionsConditions<T, TStrong?> AllowedChars<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, HashSet<char> chars, string messagePattern)
+    /// <remarks>
+    /// This method adds a custom validation rule to the rule builder that checks if the value being validated contains only characters from the specified collection.
+    /// If the validation fails, an error message is added to the validation context using the provided message pattern.
+    /// </remarks>
+    public static IRuleBuilderOptionsConditions<T, TStrong?> AllowedChars<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, ICollection<char> chars, string messagePattern, IFormatProvider? formatProvider = null)
         where TStrong : StrongString<TStrong>
     {
         return rule.Custom((topic, context) =>
@@ -111,7 +116,7 @@ public static class StrongStringValidators
             {
                 if (strong.ContainsInvalidChars(chars, out ICollection<char>? invalidChars))
                 {
-                    context.AddFailure(string.Format(messagePattern, string.Concat(invalidChars)));
+                    context.AddFailure(string.Format(formatProvider, messagePattern, string.Concat(invalidChars)));
                 }
             }
         });

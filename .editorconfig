@@ -288,3 +288,12 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 
 # IDE0290: Use primary constructor
 dotnet_diagnostic.IDE0290.severity = none
+
+# MA0017: Abstract types should not have public or internal constructors
+dotnet_diagnostic.MA0017.severity = none
+
+# MA0018: Do not declare static members on generic types (deprecated; use CA1000 instead)
+dotnet_diagnostic.MA0018.severity = none
+
+# MA0154: Use langword in XML comment
+dotnet_diagnostic.MA0154.severity = none
