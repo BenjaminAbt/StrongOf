@@ -1,6 +1,5 @@
 {
   "sdk": {
-    "version": "9.0.100-preview.3",
-    "allowPrerelease": true
+    "version": "9.0.100-preview.3"
   }
 }

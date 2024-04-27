@@ -29,6 +29,7 @@ jobs:
         uses: actions/setup-dotnet@v3
         with:
           global-json-file: ./global.json
+          dotnet-quality: 'preview'
 
       - name: Versioning
         uses: dotnet/nbgv@master
