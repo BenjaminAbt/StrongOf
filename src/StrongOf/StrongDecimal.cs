@@ -7,7 +7,8 @@ namespace StrongOf;
 /// Represents a strongly typed decimal.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong decimal.</typeparam>
-public abstract class StrongDecimal<TStrong>(decimal Value) : StrongOf<decimal, TStrong>(Value), IComparable, IStrongDecimal
+public abstract partial class StrongDecimal<TStrong>(decimal Value)
+        : StrongOf<decimal, TStrong>(Value), IComparable, IStrongDecimal
     where TStrong : StrongDecimal<TStrong>
 {
     /// <summary>
@@ -49,18 +50,19 @@ public abstract class StrongDecimal<TStrong>(decimal Value) : StrongOf<decimal, 
             return Value.CompareTo(otherStrong.Value);
         }
 
-        throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+        throw new ArgumentException($"Object is not a {typeof(TStrong)}", nameof(other));
     }
 
     /// <summary>
-    /// Tries to parse a decimal from a ReadOnlySpan of char and returns a value that indicates whether the operation succeeded.
+    /// Tries to parse the specified content into a <typeparamref name="TStrong"/> object.
     /// </summary>
-    /// <param name="content">A ReadOnlySpan of char containing a decimal to convert.</param>
-    /// <param name="strong">When this method returns, contains the decimal value equivalent to the decimal contained in content, if the conversion succeeded, or null if the conversion failed.</param>
-    /// <returns>True if content was converted successfully; otherwise, false.</returns>
-    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
+    /// <param name="content">The content to parse.</param>
+    /// <param name="strong">When this method returns, contains the parsed value if the parsing succeeded, or <c>null</c> if the parsing failed. The parsing is case-sensitive.</param>
+    /// <param name="formatProvider">An optional <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+    /// <returns><c>true</c> if the parsing was successful; otherwise, <c>false</c>.</returns>
+    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
-        if (decimal.TryParse(content, out decimal value))
+        if (decimal.TryParse(content, formatProvider, out decimal value))
         {
             strong = From(value);
             return true;
@@ -107,45 +109,6 @@ public abstract class StrongDecimal<TStrong>(decimal Value) : StrongOf<decimal, 
 
         strong = null;
         return false;
-    }
-
-    // Operators
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same decimal; otherwise, false.</returns>
-    public static bool operator ==(StrongDecimal<TStrong>? strong, object? other)
-    {
-        if (strong is null)
-        {
-            return other is null;
-        }
-
-        if (other is decimal decimalValue)
-        {
-            return strong.Value == decimalValue;
-        }
-
-        if (other is StrongDecimal<TStrong> otherStrong)
-        {
-            return strong.Value == otherStrong.Value;
-        }
-
-        return false;
-    }
-
-    /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are not equal.
-    /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same decimal; otherwise, false.</returns>
-    public static bool operator !=(StrongDecimal<TStrong>? strong, object? other)
-    {
-        return (strong == other) is false;
     }
 
     // Equals

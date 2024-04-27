@@ -1,7 +1,9 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace StrongOf;
 
+#pragma warning disable MA0097 // A class that implements IComparable<T> or IComparable should override comparison operators
 public abstract partial class StrongString<TStrong>
 {
     /// <summary>
@@ -47,8 +49,8 @@ public abstract partial class StrongString<TStrong>
     /// Returns a copy of this string converted to lowercase.
     /// </summary>
     /// <returns>A string in lowercase.</returns>
-    public TStrong ToLower()
-        => From(Value.ToLower());
+    public TStrong ToLower(CultureInfo? cultureInfo = null)
+        => From(Value.ToLower(cultureInfo));
 
     /// <summary>
     /// Returns a copy of this string converted to lowercase, using the casing rules of the invariant culture.
@@ -61,8 +63,8 @@ public abstract partial class StrongString<TStrong>
     /// Returns a copy of this string converted to uppercase.
     /// </summary>
     /// <returns>A string in uppercase.</returns>
-    public TStrong ToUpper()
-        => From(Value.ToUpper());
+    public TStrong ToUpper(CultureInfo? cultureInfo = null)
+        => From(Value.ToUpper(cultureInfo));
 
     /// <summary>
     /// Returns a copy of this string converted to uppercase, using the casing rules of the invariant culture.
@@ -91,7 +93,7 @@ public abstract partial class StrongString<TStrong>
     /// <param name="allowedChars">A set of characters that are allowed in the string.</param>
     /// <param name="invalidCharacters">When this method returns, contains the collection of invalid characters, if any. This parameter is passed uninitialized.</param>
     /// <returns>true if the current string contains any characters not present in the allowedChars parameter; otherwise, false.</returns>
-    public bool ContainsInvalidChars(HashSet<char> allowedChars, [NotNullWhen(true)] out ICollection<char>? invalidCharacters)
+    public bool ContainsInvalidChars(ICollection<char> allowedChars, [NotNullWhen(true)] out ICollection<char>? invalidCharacters)
     {
         HashSet<char>? invalidChars = null;
 

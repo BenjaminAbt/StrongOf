@@ -8,7 +8,8 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
 /// <remarks>"The DateTime type has some design flaws. Please migrate to DateTimeOffset."</remarks>
-public abstract partial class StrongDateTime<TStrong>(DateTime Value) : StrongOf<DateTime, TStrong>(Value), IComparable, IStrongDateTime
+public abstract partial class StrongDateTime<TStrong>(DateTime Value)
+        : StrongOf<DateTime, TStrong>(Value), IComparable, IStrongDateTime
     where TStrong : StrongDateTime<TStrong>
 {
     /// <summary>
@@ -73,7 +74,7 @@ public abstract partial class StrongDateTime<TStrong>(DateTime Value) : StrongOf
             return Value.CompareTo(otherStrong.Value);
         }
 
-        throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+        throw new ArgumentException($"Object is not a {typeof(TStrong)}", nameof(other));
     }
 
     /// <summary>
@@ -84,7 +85,7 @@ public abstract partial class StrongDateTime<TStrong>(DateTime Value) : StrongOf
     /// <returns>True if content was converted successfully; otherwise, false.</returns>
     public static bool TryParseIso8601(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
     {
-        if (TryParseExact(content, "o", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out strong))
+        if (TryParse(content, CultureInfo.InvariantCulture, out strong))
         {
             return true;
         }
@@ -115,14 +116,15 @@ public abstract partial class StrongDateTime<TStrong>(DateTime Value) : StrongOf
     }
 
     /// <summary>
-    /// Tries to parse an DateTime from a ReadOnlySpan of char and returns a value that indicates whether the operation succeeded.
+    /// Tries to parse the specified content into a <typeparamref name="TStrong"/> object.
     /// </summary>
-    /// <param name="content">A ReadOnlySpan of char containing an DateTime to convert.</param>
-    /// <param name="strong">When this method returns, contains the DateTime value equivalent to the DateTime contained in content, if the conversion succeeded, or null if the conversion failed.</param>
-    /// <returns>True if content was converted successfully; otherwise, false.</returns>
-    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
+    /// <param name="content">The content to parse.</param>
+    /// <param name="strong">When this method returns, contains the parsed value if the parsing succeeded, or <c>null</c> if the parsing failed. The parsing is case-sensitive.</param>
+    /// <param name="formatProvider">An optional <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+    /// <returns><c>true</c> if the parsing was successful; otherwise, <c>false</c>.</returns>
+    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
-        if (DateTime.TryParse(content, out DateTime value))
+        if (DateTime.TryParse(content, formatProvider, out DateTime value))
         {
             strong = From(value);
             return true;

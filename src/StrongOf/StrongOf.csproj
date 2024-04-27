@@ -1,5 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <ItemGroup Label="Analyzers">
+        <PackageReference Include="Meziantou.Analyzer">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+
     <PropertyGroup Label="Package">
         <IsPackable>true</IsPackable>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
@@ -7,8 +14,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="readme.md" Pack="true" PackagePath=""/>
-        <None Include="LICENSE.txt" Pack="true" PackagePath=""/>
+        <None Include="readme.md" Pack="true" PackagePath="" />
+        <None Include="LICENSE.txt" Pack="true" PackagePath="" />
     </ItemGroup>
 
 </Project>

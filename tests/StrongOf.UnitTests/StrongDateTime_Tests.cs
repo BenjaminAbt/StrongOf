@@ -43,6 +43,34 @@ public class StrongDateTime_Tests
     }
 
     [Fact]
+    public void ToString_DelegatesCallToUnderlyingValue_WithDefaultProvider()
+    {
+        // Arrange
+        TestDateTimeOf strong = new(new DateTime(2000, 1, 1));
+        string expected = strong.Value.ToString();
+
+        // Act
+        string result = strong.ToString();
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ToString_DelegatesCallToUnderlyingValue_WithCustomProvider()
+    {
+        // Arrange
+        TestDateTimeOf strong = new(new DateTime(2000, 1, 1));
+        string expected = strong.Value.ToString("o", CultureInfo.InvariantCulture);
+
+        // Act
+        string result = strong.ToString("o", CultureInfo.InvariantCulture);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
     public void ToString_Iso8601()
     {
         TestDateTimeOf strong = TestDateTimeOf.FromIso8601("2023-12-17T14:24:22.6412808+00:00");

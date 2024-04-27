@@ -6,7 +6,8 @@ namespace StrongOf;
 /// Represents a strong type of Int64.
 /// </summary>
 /// <typeparam name="TStrong">The type of the strong Int64.</typeparam>
-public abstract partial class StrongInt64<TStrong>(long Value) : StrongOf<long, TStrong>(Value), IComparable, IStrongInt64
+public abstract partial class StrongInt64<TStrong>(long Value)
+        : StrongOf<long, TStrong>(Value), IComparable, IStrongInt64
     where TStrong : StrongInt64<TStrong>
 {
 
@@ -54,18 +55,19 @@ public abstract partial class StrongInt64<TStrong>(long Value) : StrongOf<long, 
             return Value.CompareTo(otherStrong.Value);
         }
 
-        throw new ArgumentException($"Object is not a {typeof(TStrong)}");
+        throw new ArgumentException($"Object is not a {typeof(TStrong)}", nameof(other));
     }
 
     /// <summary>
-    /// Tries to parse an Int64 from a ReadOnlySpan of char and returns a value that indicates whether the operation succeeded.
+    /// Tries to parse the specified content into a <typeparamref name="TStrong"/> object.
     /// </summary>
-    /// <param name="content">A ReadOnlySpan of char containing an Int64 to convert.</param>
-    /// <param name="strong">When this method returns, contains the Int64 value equivalent to the Int64 contained in content, if the conversion succeeded, or null if the conversion failed.</param>
-    /// <returns>True if content was converted successfully; otherwise, false.</returns>
-    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
+    /// <param name="content">The content to parse.</param>
+    /// <param name="strong">When this method returns, contains the parsed value if the parsing succeeded, or <see langword="null">null</see> if the parsing failed. The parsing is case-sensitive.</param>
+    /// <param name="formatProvider">An optional <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
+    /// <returns><see langword="true">true</see> if the parsing was successful; otherwise, <see langword="false">false</see>.</returns>
+    public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
-        if (long.TryParse(content, out long value))
+        if (long.TryParse(content, formatProvider, out long value))
         {
             strong = From(value);
             return true;
