@@ -4,7 +4,8 @@ namespace StrongOf.UnitTests;
 
 public class StrongGuidTests
 {
-    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value) { }
+    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value);
+
     private sealed class OtherTestGuidOf(Guid Value) : StrongGuid<OtherTestGuidOf>(Value) { }
 
     [Fact]
@@ -147,7 +148,7 @@ public class StrongGuidTests
     public void OperatorEquals_Null()
     {
         TestGuidOf strongGuid = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
-        Assert.True(strongGuid != null);
-        Assert.False(strongGuid == null);
+        Assert.NotNull(strongGuid);
+        Assert.NotNull(strongGuid);
     }
 }

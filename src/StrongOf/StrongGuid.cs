@@ -50,13 +50,6 @@ public abstract partial class StrongGuid<TStrong>(Guid Value)
     }
 
     /// <summary>
-    /// Initializes a new instance of the StrongGuid class using the specified string representation of a Guid.
-    /// </summary>
-    /// <param name="value">A string containing a Guid to use for initialization.</param>
-    /// <remarks>Uses <see cref="Guid.Parse(string)"/></remarks>
-    public StrongGuid(string value) : this(Guid.Parse(value)) { }
-
-    /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>

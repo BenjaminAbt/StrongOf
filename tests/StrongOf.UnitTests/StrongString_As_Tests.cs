@@ -15,4 +15,43 @@ public class StrongString_As_Tests
         // Assert
         Assert.Equal(strong.Value, strong.AsString());
     }
+
+    [Fact]
+    public void FromNullable_WithValue_ReturnsNonNull()
+    {
+        // Arrange
+        string value = "A";
+
+        // Act
+        TestStringOf result = TestStringOf.FromNullable(value);
+
+        // Assert
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void FromNullable_WithNull_ReturnsNull()
+    {
+        // Arrange
+        string? value = null;
+
+        // Act
+        TestStringOf? result = TestStringOf.FromNullable(value);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void FromNullable_WithNotNull_ReturnsCorrectValue()
+    {
+        // Arrange
+        string value = "A";
+
+        // Act
+        TestStringOf result = TestStringOf.FromNullable(value);
+
+        // Assert
+        Assert.Equal(value, result.Value);
+    }
 }
