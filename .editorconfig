@@ -289,6 +289,9 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 # IDE0290: Use primary constructor
 dotnet_diagnostic.IDE0290.severity = none
 
+# MA0016: Prefer using collection abstraction instead of implementation
+dotnet_diagnostic.MA0016.severity = none
+
 # MA0017: Abstract types should not have public or internal constructors
 dotnet_diagnostic.MA0017.severity = none
 

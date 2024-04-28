@@ -25,7 +25,7 @@ public class StrongDateTimeOffset_Tests
 
         Assert.True(first.CompareTo(second) < 0);
         Assert.True(second.CompareTo(first) > 0);
-        Assert.True(first.CompareTo(first) == 0);
+        Assert.Equal(0, first.CompareTo(first));
     }
 
     [Fact]

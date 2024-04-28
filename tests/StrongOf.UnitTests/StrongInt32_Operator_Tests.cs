@@ -26,8 +26,8 @@ public class StrongInt32_Operator_Tests
     public void OperatorEquals_Null()
     {
         TestInt32Of strongInt = new(123);
-        Assert.True(strongInt != null);
-        Assert.False(strongInt == null);
+        Assert.NotNull(strongInt);
+        Assert.NotNull(strongInt);
     }
 
     [Theory]

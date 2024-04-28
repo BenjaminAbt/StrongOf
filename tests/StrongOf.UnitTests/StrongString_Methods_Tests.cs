@@ -41,6 +41,16 @@ public class StrongString_Methods_Tests
     }
 
     [Fact]
+    public void EqualsStrong_ShouldReturnTrueWhenValuesAreEqual()
+    {
+        TestStringOf strongString1 = new("Test");
+        TestStringOf strongString2 = new("Test");
+
+        Assert.True(strongString1.Equals("Test", StringComparison.Ordinal));
+        Assert.True(strongString2.Equals("Test", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void ToLower_ShouldReturnLowerCaseString()
     {
         TestStringOf strongString = new("TEST");
@@ -49,10 +59,26 @@ public class StrongString_Methods_Tests
     }
 
     [Fact]
+    public void ToLowerInvariant_ShouldReturnLowerCaseString()
+    {
+        TestStringOf strongString = new("TEST");
+        TestStringOf result = strongString.ToLowerInvariant();
+        Assert.Equal("test", result.Value);
+    }
+
+    [Fact]
     public void ToUpper_ShouldReturnUpperCaseString()
     {
         TestStringOf strongString = new("test");
         TestStringOf result = strongString.ToUpper();
+        Assert.Equal("TEST", result.Value);
+    }
+
+    [Fact]
+    public void ToUpperInvariant_ShouldReturnUpperCaseString()
+    {
+        TestStringOf strongString = new("test");
+        TestStringOf result = strongString.ToUpperInvariant();
         Assert.Equal("TEST", result.Value);
     }
 

@@ -25,7 +25,7 @@ public abstract partial class StrongString<TStrong>(string Value)
     [return: NotNullIfNotNull(nameof(value))]
     public static TStrong? FromNullable(string? value)
     {
-        if (value != null)
+        if (value is not null)
         {
             TStrong strong = From(value);
             return strong;
@@ -74,7 +74,7 @@ public abstract partial class StrongString<TStrong>(string Value)
     /// </summary>
     /// <returns>True if the current instance is empty; otherwise, false.</returns>
     public bool IsEmpty()
-        => Value == "";
+        => Value is "";
 
     // Equals
 

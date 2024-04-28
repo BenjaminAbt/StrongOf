@@ -54,7 +54,7 @@ public abstract class StrongOf<TTarget, TStrong>
     /// <param name="source">The source to create the list of strong types from.</param>
     /// <returns>A list of strong types.</returns>
     [return: NotNullIfNotNull(nameof(source))]
-    public static ICollection<TStrong>? From(IEnumerable<TTarget>? source)
+    public static List<TStrong>? From(IEnumerable<TTarget>? source)
         => source?.Select(e => From(e)).ToList();
 
 

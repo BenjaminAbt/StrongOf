@@ -25,4 +25,43 @@ public class StrongInt64_As_Tests
         // Assert
         Assert.Equal(strong.Value, strong.AsInt64());
     }
+
+    [Fact]
+    public void FromNullable_WithValue_ReturnsNonNull()
+    {
+        // Arrange
+        long value = 7;
+
+        // Act
+        TestInt64Of result = TestInt64Of.FromNullable(value);
+
+        // Assert
+        Assert.NotNull(result);
+    }
+
+    [Fact]
+    public void FromNullable_WithNull_ReturnsNull()
+    {
+        // Arrange
+        long? value = null;
+
+        // Act
+        TestInt64Of? result = TestInt64Of.FromNullable(value);
+
+        // Assert
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void FromNullable_WithNotNull_ReturnsCorrectValue()
+    {
+        // Arrange
+        long value = 7;
+
+        // Act
+        TestInt64Of result = TestInt64Of.FromNullable(value);
+
+        // Assert
+        Assert.Equal(value, result.Value);
+    }
 }
