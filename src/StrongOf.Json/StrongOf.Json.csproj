@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <PropertyGroup>
+        <AssemblyName>$(GlobalAssemblyNamePrefix).Json</AssemblyName>
+    </PropertyGroup>
+
     <ItemGroup Label="Analyzers">
         <PackageReference Include="Meziantou.Analyzer">
             <PrivateAssets>all</PrivateAssets>
@@ -8,6 +12,7 @@
     </ItemGroup>
 
     <PropertyGroup Label="Package">
+        <PackageId>StrongOf.Json</PackageId>
         <IsPackable>true</IsPackable>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>

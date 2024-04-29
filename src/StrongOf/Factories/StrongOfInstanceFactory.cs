@@ -6,15 +6,25 @@ namespace StrongOf.Factories;
 /// <summary>
 /// A factory class for creating Lambda Expressions.
 /// </summary>
-internal static class StrongOfInstanceFactory
+public static class StrongOfInstanceFactory
 {
     /// <summary>
-    /// Creates a LambdaExpression with one parameter.
+    /// Creates a lambda expression representing the instantiation of a constructor with one parameter.
     /// </summary>
-    /// <typeparam name="TStrong">The type of the object to be created.</typeparam>
+    /// <typeparam name="TStrong">The type of object to be constructed.</typeparam>
     /// <typeparam name="TTarget">The type of the parameter for the constructor.</typeparam>
-    /// <returns>A LambdaExpression that represents the creation of an object of type TStrong with a constructor parameter of type TTarget.</returns>
+    /// <returns>A lambda expression representing the constructor invocation.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when no constructor is found for the specified type with the given parameter type.</exception>
+    /// <example>
+    /// The following example demonstrates how to use the CreateWithOneParameterExpression method.
+    /// <code>
+    /// var expression = LambdaExpressionHelper.CreateWithOneParameterExpression&lt;TestClass, int&gt;();
+    /// Func&lt;int, TestClass&gt; func = (Func&lt;int, TestClass&gt;)expression.Compile();
+    /// TestClass instance = func.Invoke(42);
+    /// </code>
+    /// </example>
     public static LambdaExpression CreateWithOneParameterExpression<TStrong, TTarget>()
+        where TStrong : class, IStrongOf
     {
         Type ctorParameterType = typeof(TTarget);
         ParameterExpression ctorParameter = Expression.Parameter(ctorParameterType);
@@ -36,6 +46,7 @@ internal static class StrongOfInstanceFactory
     /// <typeparam name="TTarget">The type of the parameter for the constructor.</typeparam>
     /// <returns>A Func delegate that represents the creation of an object of type TStrong with a constructor parameter of type TTarget.</returns>
     public static Func<TTarget, TStrong> CreateWithOneParameterDelegate<TStrong, TTarget>()
+        where TStrong : class, IStrongOf
     {
         return (Func<TTarget, TStrong>)CreateWithOneParameterExpression<TStrong, TTarget>().Compile();
     }
