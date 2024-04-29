@@ -12,6 +12,7 @@
     </ItemGroup>
 
     <PropertyGroup Label="Package">
+        <PackageId>StrongOf.FluentValidation</PackageId>
         <IsPackable>true</IsPackable>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
         <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
