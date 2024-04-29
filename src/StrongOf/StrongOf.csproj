@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <PropertyGroup>
+        <AssemblyName>$(GlobalAssemblyNamePrefix)</AssemblyName>
+    </PropertyGroup>
+
     <ItemGroup Label="Analyzers">
         <PackageReference Include="Meziantou.Analyzer">
             <PrivateAssets>all</PrivateAssets>
