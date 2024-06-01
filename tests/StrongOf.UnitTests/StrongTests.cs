@@ -46,6 +46,7 @@ public class StrongTests
     {
         TestStringOf strongString = new("");
         Assert.True(Strong.IsNullOrEmpty(strongString));
+        Assert.False(Strong.HasValue(strongString));
     }
 
     [Fact]
@@ -53,6 +54,7 @@ public class StrongTests
     {
         TestStringOf strongString = new("test");
         Assert.False(Strong.IsNullOrEmpty(strongString));
+        Assert.True(Strong.HasValue(strongString));
     }
 
     [Fact]
@@ -60,6 +62,7 @@ public class StrongTests
     {
         TestStringOf strongString = new("test");
         Assert.True(Strong.IsNotNullOrEmpty(strongString));
+        Assert.True(Strong.HasValue(strongString));
     }
 
     [Fact]
@@ -67,6 +70,7 @@ public class StrongTests
     {
         TestStringOf? strongString = null;
         Assert.False(Strong.IsNotNullOrEmpty(strongString));
+        Assert.False(Strong.HasValue(strongString));
     }
 
     [Fact]
@@ -74,5 +78,6 @@ public class StrongTests
     {
         TestStringOf strongString = new("");
         Assert.False(Strong.IsNotNullOrEmpty(strongString));
+        Assert.False(Strong.HasValue(strongString));
     }
 }

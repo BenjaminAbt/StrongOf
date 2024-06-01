@@ -30,26 +30,47 @@ public static class Strong
     }
 
     /// <summary>
-    /// Checks if the given strong string is null or empty.
+    /// Determines whether the specified <typeparamref name="TStrong"/> instance is <c>null</c> or empty.
     /// </summary>
-    /// <typeparam name="TStrong">The type of the strong string.</typeparam>
-    /// <param name="strong">The strong string to check.</param>
-    /// <returns>true if the strong string is null or empty; otherwise, false.</returns>
+    /// <typeparam name="TStrong">The type of the strong string. Must inherit from <see cref="StrongString{TStrong}"/>.</typeparam>
+    /// <param name="strong">The <typeparamref name="TStrong"/> instance to check.</param>
+    /// <returns>
+    /// <c>true</c> if the <paramref name="strong"/> instance is <c>null</c> or empty; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsNullOrEmpty<TStrong>(TStrong? strong)
         where TStrong : StrongString<TStrong>
     {
         return strong is null || strong.IsEmpty();
     }
 
+
     /// <summary>
-    /// Checks if the given strong string is not null or empty.
+    /// Determines whether the specified <typeparamref name="TStrong"/> instance has a value.
     /// </summary>
-    /// <typeparam name="TStrong">The type of the strong string.</typeparam>
-    /// <param name="strong">The strong string to check.</param>
-    /// <returns>true if the strong string is not null or empty; otherwise, false.</returns>
+    /// <typeparam name="TStrong">The type of the strong string. Must inherit from <see cref="StrongString{TStrong}"/>.</typeparam>
+    /// <param name="strong">The <typeparamref name="TStrong"/> instance to check.</param>
+    /// <returns>
+    /// <c>true</c> if the <paramref name="strong"/> instance is not <c>null</c> and is not empty; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool HasValue<TStrong>(TStrong? strong)
+        where TStrong : StrongString<TStrong>
+    {
+        return IsNotNullOrEmpty(strong);
+    }
+
+
+    /// <summary>
+    /// Determines whether the specified <typeparamref name="TStrong"/> instance is not <c>null</c> and not empty.
+    /// </summary>
+    /// <typeparam name="TStrong">The type of the strong string. Must inherit from <see cref="StrongString{TStrong}"/>.</typeparam>
+    /// <param name="strong">The <typeparamref name="TStrong"/> instance to check.</param>
+    /// <returns>
+    /// <c>true</c> if the <paramref name="strong"/> instance is not <c>null</c> and not empty; otherwise, <c>false</c>.
+    /// </returns>
     public static bool IsNotNullOrEmpty<TStrong>(TStrong? strong)
-       where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>
     {
         return strong is not null && strong.IsEmpty() is false;
     }
+
 }
