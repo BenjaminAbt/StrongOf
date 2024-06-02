@@ -6,7 +6,9 @@ In contrast to other approaches, StrongOf is above all simple and performant - a
 
 ## Why? 
 
-Wrapping in a class is necessary because C# unfortunately still does not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations).
+This library was developed because C# did not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations) up to and including version 12.
+
+With C# 13 we finally get [Extension Types](https://devblogs.microsoft.com/dotnet/dotnet-build-2024-announcements)!
 
 See GitHub proposal: [Proposal: Type aliases / abbreviations / newtype](https://github.com/dotnet/csharplang/issues/410)
 

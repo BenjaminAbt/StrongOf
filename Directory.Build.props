@@ -34,7 +34,7 @@
         <IsPackable>false</IsPackable>
         <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
         <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <Description>Primitive Obsession with .NET</Description>
+        <Description>StrongOf - Strong Type your stuff and fight primitive Obsession with .NET</Description>
         <MinClientVersion>2.12</MinClientVersion>
         <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
         <IsPackable>false</IsPackable>
