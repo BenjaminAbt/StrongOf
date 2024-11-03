@@ -116,7 +116,7 @@ public class StrongString_Methods_Tests
             Assert.NotEmpty(invalidCharsExpected);
             HashSet<char> invalidCharsExpectedSet = new(invalidCharsExpected.ToCharArray());
 
-            Assert.Equal(invalidCharsExpectedSet, invalidChars);
+            Assert.Equal(invalidCharsExpectedSet.ToList(), invalidChars);
         }
         else
         {
