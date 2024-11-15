@@ -27,7 +27,7 @@
     </PropertyGroup>
 
     <PropertyGroup Label="Project Defaults">
-        <TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+        <TargetFrameworks>net7.0;net8.0;net9.0</TargetFrameworks>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
@@ -42,7 +42,7 @@
     </PropertyGroup>
 
     <PropertyGroup Label="C#">
-        <LangVersion>12.0</LangVersion>
+        <LangVersion>preview</LangVersion>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <TreatWarningsAsErrors>true</TreatWarningsAsErrors>

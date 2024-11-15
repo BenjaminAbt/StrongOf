@@ -1,14 +1,22 @@
 # StrongOf <a href="https://www.buymeacoffee.com/benjaminabt" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30" ></a>
 
-StrongOf helps to implement primitives as a strong type that represents a domain object (e.g. UserId, EmailAddress, etc.). It is a simple class that wraps a value and provides a few helper methods to make it easier to work with.
+[![Build](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml/badge.svg)](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml)
 
-In contrast to other approaches, StrongOf is above all simple and performant - and not over-engineered.
+||StrongOf|StrongOf.AspNetCore|StrongOf.Json|StrongOf.FluentValidation|
+|-|-|-|-|-|
+|*NuGet*|[![NuGet](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf/)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)|
+
+All [StrongOf Packages](https://www.nuget.org/packages/StrongOf)  are available for .NET 7, .NET 8 and .NET 9.
+
+---
+
+__StrongOf__ helps to implement primitives as a strong type that represents a domain object (e.g. UserId, EmailAddress, etc.). It is a simple class that wraps a value and provides a few helper methods to make it easier to work with.
+
+In contrast to other approaches, __StrongOf__ is above all simple and performant - and not over-engineered.
 
 ## Why? 
 
-This library was developed because C# did not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations) up to and including version 12.
-
-With C# 13 we finally get [Extension Types](https://devblogs.microsoft.com/dotnet/dotnet-build-2024-announcements)!
+This library was developed because C# did not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations) up to and including version 12. Originally announced for C#13, we should finally receive [Extension Types](https://devblogs.microsoft.com/dotnet/dotnet-build-2024-announcements) with C# 14.
 
 See GitHub proposal: [Proposal: Type aliases / abbreviations / newtype](https://github.com/dotnet/csharplang/issues/410)
 
@@ -182,40 +190,53 @@ public class MySubmitModelValidator : AbstractValidator<MySubmitModel>
 ```
 
 
-## Installation
-
-[![StrongOf](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf)\
-[![StrongOf.AspNetCore](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)\
-[![StrongOf.Json](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)\
-[![StrongOf.FluentValidation](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)
-
-See [StrongOf on NuGet.org](https://www.nuget.org/packages/StrongOf)
-
 ## Performance matters
 
 Since the strong types created here can still be instantiated with `new()`, this also means an enormous performance advantage over libraries that have to work with `Activator.CreateInstance` or `Expression.New`.
 
 ```shell
-BenchmarkDotNet v0.13.10, Windows 10 (10.0.19045.3803/22H2/2022Update)
-AMD Ryzen 9 5950X, 1 CPU, 32 logical and 16 physical cores
-.NET SDK 8.0.100
-  [Host]     : .NET 7.0.14 (7.0.1423.51910), X64 RyuJIT AVX2
-  DefaultJob : .NET 7.0.14 (7.0.1423.51910), X64 RyuJIT AVX2
+BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5131/22H2/2022Update)
+AMD Ryzen 9 9950X, 1 CPU, 32 logical and 16 physical cores
+.NET SDK 9.0.100
+  [Host]   : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  .NET 7.0 : .NET 7.0.20 (7.0.2024.26716), X64 RyuJIT AVX2
+  .NET 8.0 : .NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  .NET 9.0 : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
 
 
-| Method      | Mean      | Error     | StdDev    | Median    | Gen0   | Allocated |
-|------------ |----------:|----------:|----------:|----------:|-------:|----------:|
-| Guid_New    |  3.366 ns | 0.0998 ns | 0.0934 ns |  3.379 ns | 0.0019 |      32 B |
-| Guid_From   | 12.301 ns | 1.0492 ns | 3.0936 ns | 14.184 ns | 0.0019 |      32 B |
-|             |           |           |           |           |        |           |
-| Int32_New   |  2.996 ns | 0.1013 ns | 0.1167 ns |  2.954 ns | 0.0014 |      24 B |
-| Int32_From  |  9.829 ns | 0.6536 ns | 1.9273 ns | 10.486 ns | 0.0014 |      24 B |
-|             |           |           |           |           |        |           |
-| Int64_New   |  2.703 ns | 0.0867 ns | 0.0724 ns |  2.671 ns | 0.0014 |      24 B |
-| Int64_From  | 11.706 ns | 0.4101 ns | 1.2093 ns | 11.976 ns | 0.0014 |      24 B |
-|             |           |           |           |           |        |           |
-| String_New  |  3.807 ns | 0.1205 ns | 0.1127 ns |  3.837 ns | 0.0014 |      24 B |
-| String_From | 11.339 ns | 0.4997 ns | 1.4735 ns | 10.969 ns | 0.0014 |      24 B |
+| Method      | Runtime  | Mean     | Ratio |
+|------------ |--------- |---------:|------:|
+| Guid_New    | .NET 7.0 | 1.712 ns |  1.03 |
+| Guid_New    | .NET 8.0 | 1.672 ns |  1.00 |
+| Guid_New    | .NET 9.0 | 1.665 ns |  1.00 |
+|             |          |          |       |
+| Guid_From   | .NET 7.0 | 3.250 ns |  1.32 |
+| Guid_From   | .NET 8.0 | 3.165 ns |  1.29 |
+| Guid_From   | .NET 9.0 | 2.462 ns |  1.00 |
+|             |          |          |       |
+| Int32_New   | .NET 7.0 | 1.604 ns |  1.00 |
+| Int32_New   | .NET 8.0 | 1.637 ns |  1.02 |
+| Int32_New   | .NET 9.0 | 1.609 ns |  1.00 |
+|             |          |          |       |
+| Int32_From  | .NET 7.0 | 2.738 ns |  1.41 |
+| Int32_From  | .NET 8.0 | 2.636 ns |  1.36 |
+| Int32_From  | .NET 9.0 | 1.942 ns |  1.00 |
+|             |          |          |       |
+| Int64_New   | .NET 7.0 | 1.633 ns |  1.02 |
+| Int64_New   | .NET 8.0 | 1.605 ns |  1.00 |
+| Int64_New   | .NET 9.0 | 1.608 ns |  1.00 |
+|             |          |          |       |
+| Int64_From  | .NET 7.0 | 2.673 ns |  1.41 |
+| Int64_From  | .NET 8.0 | 2.648 ns |  1.40 |
+| Int64_From  | .NET 9.0 | 1.890 ns |  1.00 |
+|             |          |          |       |
+| String_New  | .NET 7.0 | 2.613 ns |  1.61 |
+| String_New  | .NET 8.0 | 1.582 ns |  0.97 |
+| String_New  | .NET 9.0 | 1.627 ns |  1.00 |
+|             |          |          |       |
+| String_From | .NET 7.0 | 3.526 ns |  1.28 |
+| String_From | .NET 8.0 | 3.596 ns |  1.31 |
+| String_From | .NET 9.0 | 2.746 ns |  1.00 |
 ```
 
 For certain scenarios, this library also has an `Expression.New` implementation (through a static From method); but not for general instantiation.
