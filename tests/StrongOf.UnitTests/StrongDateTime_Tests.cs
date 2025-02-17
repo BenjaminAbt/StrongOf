@@ -47,7 +47,7 @@ public class StrongDateTime_Tests
     {
         // Arrange
         TestDateTimeOf strong = new(new DateTime(2000, 1, 1));
-        string expected = strong.Value.ToString();
+        string expected = strong.Value.ToString(CultureInfo.InvariantCulture);
 
         // Act
         string result = strong.ToString();
