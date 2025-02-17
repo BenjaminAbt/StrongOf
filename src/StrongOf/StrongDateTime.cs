@@ -198,6 +198,13 @@ public abstract partial class StrongDateTime<TStrong>(DateTime Value)
     public string ToString(string format, IFormatProvider? provider = null) => Value.ToString(format, provider);
 
     /// <summary>
+    /// Returns a string that represents the current object.
+    /// </summary>
+    /// <param name="provider">An IFormatProvider that supplies culture-specific formatting information.</param>
+    /// <returns>A string that represents the current object.</returns>
+    public string ToString(IFormatProvider? provider) => Value!.ToString(provider)!;
+
+    /// <summary>
     /// Converts the value of the current StrongDateTime object to its equivalent string representation in ISO 8601 format.
     /// </summary>
     /// <returns>A string representation of value of the current StrongDateTime object in ISO 8601 format.</returns>

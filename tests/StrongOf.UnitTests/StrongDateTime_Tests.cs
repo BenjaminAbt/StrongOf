@@ -47,10 +47,24 @@ public class StrongDateTime_Tests
     {
         // Arrange
         TestDateTimeOf strong = new(new DateTime(2000, 1, 1));
+        string expected = strong.Value.ToString(provider: null);
+
+        // Act
+        string result = strong.ToString(provider: null);
+
+        // Assert
+        Assert.Equal(expected, result);
+    }
+
+    [Fact]
+    public void ToString_DelegatesCallToUnderlyingValue_WithProvider()
+    {
+        // Arrange
+        TestDateTimeOf strong = new(new DateTime(2000, 1, 1));
         string expected = strong.Value.ToString(CultureInfo.InvariantCulture);
 
         // Act
-        string result = strong.ToString();
+        string result = strong.ToString(CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal(expected, result);
