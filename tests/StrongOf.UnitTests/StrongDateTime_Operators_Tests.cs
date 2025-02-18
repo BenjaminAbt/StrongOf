@@ -1,3 +1,4 @@
+using System.Globalization;
 using Xunit;
 
 namespace StrongOf.Tests;
@@ -37,8 +38,8 @@ public class StrongDateTime_Operators_Tests
     public void OperatorGreaterThan_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value));
-        DateTime otherDateTime = DateTime.Parse(other);
+        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value, CultureInfo.InvariantCulture));
+        DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTime.Value > otherDateTime), (testStrongDateTime > otherDateTime));
@@ -51,8 +52,8 @@ public class StrongDateTime_Operators_Tests
     public void OperatorLessThan_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value));
-        DateTime otherDateTime = DateTime.Parse(other);
+        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value, CultureInfo.InvariantCulture));
+        DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTime.Value < otherDateTime), (testStrongDateTime < otherDateTime));
@@ -65,8 +66,8 @@ public class StrongDateTime_Operators_Tests
     public void OperatorLessThanOrEqual_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value));
-        DateTime otherDateTime = DateTime.Parse(other);
+        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value, CultureInfo.InvariantCulture));
+        DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTime.Value <= otherDateTime), (testStrongDateTime <= otherDateTime));
@@ -79,8 +80,8 @@ public class StrongDateTime_Operators_Tests
     public void OperatorGreaterThanOrEqual_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value));
-        DateTime otherDateTime = DateTime.Parse(other);
+        TestDateTimeOf testStrongDateTime = new(DateTime.Parse(value, CultureInfo.InvariantCulture));
+        DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTime.Value >= otherDateTime), (testStrongDateTime >= otherDateTime));

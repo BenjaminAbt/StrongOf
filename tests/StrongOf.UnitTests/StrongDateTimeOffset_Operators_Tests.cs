@@ -1,3 +1,4 @@
+using System.Globalization;
 using Xunit;
 
 namespace StrongOf.Tests;
@@ -36,8 +37,8 @@ public class StrongDateTimeOffset_Operators_Tests
     public void OperatorLessThan_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value));
-        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other);
+        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value, CultureInfo.InvariantCulture));
+        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTimeOffset.Value < otherDateTimeOffset), (testStrongDateTimeOffset < otherDateTimeOffset));
@@ -50,8 +51,8 @@ public class StrongDateTimeOffset_Operators_Tests
     public void OperatorGreaterThan_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value));
-        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other);
+        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value, CultureInfo.InvariantCulture));
+        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTimeOffset.Value > otherDateTimeOffset), (testStrongDateTimeOffset > otherDateTimeOffset));
@@ -64,8 +65,8 @@ public class StrongDateTimeOffset_Operators_Tests
     public void OperatorLessThanOrEqual_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value));
-        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other);
+        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value, CultureInfo.InvariantCulture));
+        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTimeOffset.Value <= otherDateTimeOffset), (testStrongDateTimeOffset <= otherDateTimeOffset));
@@ -78,8 +79,8 @@ public class StrongDateTimeOffset_Operators_Tests
     public void OperatorGreaterThanOrEqual_ReturnsCorrectResult(string value, string other)
     {
         // Arrange
-        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value));
-        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other);
+        TestDateTimeOffsetOf testStrongDateTimeOffset = new(DateTimeOffset.Parse(value, CultureInfo.InvariantCulture));
+        DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
         Assert.Equal((testStrongDateTimeOffset.Value >= otherDateTimeOffset), (testStrongDateTimeOffset >= otherDateTimeOffset));

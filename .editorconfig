@@ -288,15 +288,32 @@ dotnet_naming_style.pascal_case.capitalization = pascal_case
 
 # IDE0290: Use primary constructor
 dotnet_diagnostic.IDE0290.severity = none
+#################################################### SYSLIB Style
+
+# SYSLIB1006: Multiple logging methods are using event id x in class y
+dotnet_diagnostic.SYSLIB1006.severity = error
+
+#################################################### xUnit Style
+
+# xUnit1048: Support for 'async void' unit tests is being removed from xUnit.net v3. To simplify upgrading, convert the test to 'async Task' instead.
+dotnet_diagnostic.xUnit1048.severity = error
+
+#################################################### Project Style
 
 # MA0016: Prefer using collection abstraction instead of implementation
-dotnet_diagnostic.MA0016.severity = none
+dotnet_diagnostic.MA0016.severity = silent
 
 # MA0017: Abstract types should not have public or internal constructors
 dotnet_diagnostic.MA0017.severity = none
 
 # MA0018: Do not declare static members on generic types (deprecated; use CA1000 instead)
 dotnet_diagnostic.MA0018.severity = none
+
+# MA0048: File name must match type name
+dotnet_diagnostic.MA0048.severity = silent
+
+# MA0051: Method is too long (80 lines; maximum allowed: 60)
+dotnet_diagnostic.MA0051.severity = suggestion
 
 # MA0154: Use langword in XML comment
 dotnet_diagnostic.MA0154.severity = none

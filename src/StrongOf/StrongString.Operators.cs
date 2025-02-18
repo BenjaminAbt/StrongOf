@@ -40,4 +40,48 @@ public abstract partial class StrongString<TStrong>
     {
         return (strong == other) is false;
     }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="StrongString{TStrong}"/> instance is less than another.
+    /// </summary>
+    /// <param name="left">The left-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <param name="right">The right-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is less than <paramref name="right"/>; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool operator <(StrongString<TStrong> left, StrongString<TStrong> right)
+        => left.CompareTo(right) < 0;
+
+    /// <summary>
+    /// Determines whether the specified <see cref="StrongString{TStrong}"/> instance is greater than another.
+    /// </summary>
+    /// <param name="left">The left-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <param name="right">The right-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is greater than <paramref name="right"/>; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool operator >(StrongString<TStrong> left, StrongString<TStrong> right)
+        => left.CompareTo(right) > 0;
+
+    /// <summary>
+    /// Determines whether the specified <see cref="StrongString{TStrong}"/> instance is less than or equal to another.
+    /// </summary>
+    /// <param name="left">The left-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <param name="right">The right-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is less than or equal to <paramref name="right"/>; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool operator <=(StrongString<TStrong> left, StrongString<TStrong> right)
+        => left.CompareTo(right) <= 0;
+
+    /// <summary>
+    /// Determines whether the specified <see cref="StrongString{TStrong}"/> instance is greater than or equal to another.
+    /// </summary>
+    /// <param name="left">The left-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <param name="right">The right-hand <see cref="StrongString{TStrong}"/> instance.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="left"/> is greater than or equal to <paramref name="right"/>; otherwise, <c>false</c>.
+    /// </returns>
+    public static bool operator >=(StrongString<TStrong> left, StrongString<TStrong> right)
+        => left.CompareTo(right) >= 0;
 }

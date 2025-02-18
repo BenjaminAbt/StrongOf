@@ -4,13 +4,6 @@
         <AssemblyName>$(GlobalAssemblyNamePrefix).FluentValidation</AssemblyName>
     </PropertyGroup>
 
-    <ItemGroup Label="Analyzers">
-        <PackageReference Include="Meziantou.Analyzer">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.FluentValidation</PackageId>
         <IsPackable>true</IsPackable>

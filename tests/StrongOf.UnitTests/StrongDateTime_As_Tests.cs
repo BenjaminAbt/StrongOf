@@ -91,7 +91,7 @@ public class StrongDateTime_As_Tests
     {
         // Arrange
         ReadOnlySpan<char> content = "2022-01-02T00:00:00+00:00".AsSpan();
-        TestDateTimeOf? expected = TestDateTimeOf.From(DateTime.Parse("2022-01-02T00:00:00+00:00"));
+        TestDateTimeOf? expected = TestDateTimeOf.From(DateTime.Parse("2022-01-02T00:00:00+00:00", CultureInfo.InvariantCulture));
 
         // Act
         bool result = TestDateTimeOf.TryParseIso8601(content, out TestDateTimeOf? strong);

@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Globalization;
+using Xunit;
 
 namespace StrongOf.UnitTests;
 
@@ -24,7 +25,7 @@ public class StrongOfTests_EqualsTests
         int target = 31;
         TestOf testOf = new(target);
 
-        string expectedString = target.ToString();
+        string expectedString = target.ToString(CultureInfo.InvariantCulture);
         string testOfString = testOf.ToString();
 
         Assert.Equal(expectedString, testOfString);

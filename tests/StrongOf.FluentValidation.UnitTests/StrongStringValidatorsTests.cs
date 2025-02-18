@@ -62,7 +62,7 @@ public class StrongStringValidatorsTests
     [Fact]
     public void IsRegexMatch_ShouldFail_WhenValueDoesNotMatchRegex()
     {
-        _validator.RuleFor(x => x.Strong).IsRegexMatch(new Regex(@"^\d+$"));
+        _validator.RuleFor(x => x.Strong).IsRegexMatch(new Regex(@"^\d+$", RegexOptions.None, matchTimeout: TimeSpan.FromSeconds(1)));
         TestModel model = new () { Strong = new("test") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
