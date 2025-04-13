@@ -1,4 +1,6 @@
-﻿namespace StrongOf;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+namespace StrongOf;
 
 /// <summary>
 /// Interface for strong type of char.

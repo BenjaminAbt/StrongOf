@@ -1,4 +1,6 @@
-﻿using System.Linq.Expressions;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Linq.Expressions;
 using System.Reflection;
 
 namespace StrongOf.Factories;

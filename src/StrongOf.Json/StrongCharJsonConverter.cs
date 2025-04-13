@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace StrongOf.Json;

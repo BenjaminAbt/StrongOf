@@ -1,4 +1,6 @@
-﻿using FluentValidation;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;
 

@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Text.RegularExpressions;
 using FluentValidation;
 using FluentValidation.TestHelper;
 using Xunit;

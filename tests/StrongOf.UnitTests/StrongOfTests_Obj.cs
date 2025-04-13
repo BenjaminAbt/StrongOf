@@ -1,4 +1,6 @@
-﻿using System.Globalization;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Globalization;
 using Xunit;
 
 namespace StrongOf.UnitTests;

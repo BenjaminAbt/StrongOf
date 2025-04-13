@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Diagnostics.CodeAnalysis;
 using StrongOf.Factories;
 
 namespace StrongOf;

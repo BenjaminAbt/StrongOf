@@ -1,3 +1,5 @@
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
 using System.Globalization;
 using Xunit;
 
