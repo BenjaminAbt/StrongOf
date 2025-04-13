@@ -1,4 +1,6 @@
-﻿namespace StrongOf;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+namespace StrongOf;
 
 /// <summary>
 /// Defines a contract for a strong type of Guid.

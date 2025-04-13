@@ -1,4 +1,6 @@
-﻿namespace StrongOf;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+namespace StrongOf;
 
 /// <summary>
 /// The StrongOf namespace contains the interface definition for strong types.

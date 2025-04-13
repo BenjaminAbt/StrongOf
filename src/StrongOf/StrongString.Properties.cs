@@ -1,4 +1,6 @@
-﻿namespace StrongOf;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+namespace StrongOf;
 
 #pragma warning disable MA0097 // A class that implements IComparable<T> or IComparable should override comparison operators
 

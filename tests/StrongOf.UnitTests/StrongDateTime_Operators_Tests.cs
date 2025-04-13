@@ -1,7 +1,9 @@
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
 using System.Globalization;
 using Xunit;
 
-namespace StrongOf.Tests;
+namespace StrongOf.UnitTests;
 
 public class StrongDateTime_Operators_Tests
 {
@@ -26,10 +28,9 @@ public class StrongDateTime_Operators_Tests
     public void OperatorEquals_Null()
     {
         TestDateTimeOf strongDateTime = new(new DateTime(2000, 1, 1));
-        Assert.True(strongDateTime != null);
-        Assert.False(strongDateTime == null);
+        Assert.NotNull(strongDateTime);
+        Assert.NotNull(strongDateTime);
     }
-
 
     [Theory]
     [InlineData("2022-01-01T00:00:00", "2022-01-02T00:00:00")]
@@ -42,7 +43,7 @@ public class StrongDateTime_Operators_Tests
         DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTime.Value > otherDateTime), (testStrongDateTime > otherDateTime));
+        Assert.Equal(testStrongDateTime.Value > otherDateTime, testStrongDateTime > otherDateTime);
     }
 
     [Theory]
@@ -56,7 +57,7 @@ public class StrongDateTime_Operators_Tests
         DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTime.Value < otherDateTime), (testStrongDateTime < otherDateTime));
+        Assert.Equal(testStrongDateTime.Value < otherDateTime, testStrongDateTime < otherDateTime);
     }
 
     [Theory]
@@ -70,7 +71,7 @@ public class StrongDateTime_Operators_Tests
         DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTime.Value <= otherDateTime), (testStrongDateTime <= otherDateTime));
+        Assert.Equal(testStrongDateTime.Value <= otherDateTime, testStrongDateTime <= otherDateTime);
     }
 
     [Theory]
@@ -84,6 +85,6 @@ public class StrongDateTime_Operators_Tests
         DateTime otherDateTime = DateTime.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTime.Value >= otherDateTime), (testStrongDateTime >= otherDateTime));
+        Assert.Equal(testStrongDateTime.Value >= otherDateTime, testStrongDateTime >= otherDateTime);
     }
 }

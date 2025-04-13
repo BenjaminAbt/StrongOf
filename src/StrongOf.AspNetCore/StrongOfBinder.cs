@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace StrongOf.AspNetCore;
 

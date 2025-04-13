@@ -1,4 +1,6 @@
-﻿namespace StrongOf;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+namespace StrongOf;
 
 /// <summary>
 /// Provides utility methods for strong types.
@@ -40,9 +42,8 @@ public static class Strong
     public static bool IsNullOrEmpty<TStrong>(TStrong? strong)
         where TStrong : StrongString<TStrong>
     {
-        return strong is null || strong.IsEmpty();
+        return strong?.IsEmpty() is not false;
     }
-
 
     /// <summary>
     /// Determines whether the specified <typeparamref name="TStrong"/> instance has a value.
@@ -58,7 +59,6 @@ public static class Strong
         return IsNotNullOrEmpty(strong);
     }
 
-
     /// <summary>
     /// Determines whether the specified <typeparamref name="TStrong"/> instance is not <c>null</c> and not empty.
     /// </summary>
@@ -70,7 +70,6 @@ public static class Strong
     public static bool IsNotNullOrEmpty<TStrong>(TStrong? strong)
         where TStrong : StrongString<TStrong>
     {
-        return strong is not null && strong.IsEmpty() is false;
+        return strong?.IsEmpty() is false;
     }
-
 }

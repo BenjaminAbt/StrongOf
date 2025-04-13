@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 namespace StrongOf;
@@ -174,7 +176,6 @@ public abstract partial class StrongDateTime<TStrong>(DateTime Value)
     }
 
     // Equals
-
 
     /// <summary>
     /// Determines whether the specified object is equal to the current object.

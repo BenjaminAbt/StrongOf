@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Text;
 using System.Text.Json;
 using Xunit;
 
@@ -15,7 +17,7 @@ public class StrongGuidJsonConverterTests
     public void Read_ValidJson_ReturnsStrongGuid()
     {
         // Arrange
-        string json = "{\"Id\": \"d3dd268c-7d12-4e2a-89b9-5368f0b2f38a\"}";
+        const string json = "{\"Id\": \"d3dd268c-7d12-4e2a-89b9-5368f0b2f38a\"}";
 
         Utf8JsonReader reader = new(Encoding.UTF8.GetBytes(json));
 

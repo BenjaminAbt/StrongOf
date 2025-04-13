@@ -1,11 +1,12 @@
-﻿using Xunit;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using Xunit;
 
 namespace StrongOf.UnitTests;
 
 public class StrongString_Methods_Tests
 {
     private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
-
 
     [Fact]
     public void Trim_ShouldRemoveLeadingAndTrailingWhiteSpace()

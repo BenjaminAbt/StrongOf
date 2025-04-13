@@ -1,7 +1,9 @@
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
 using System.Globalization;
 using Xunit;
 
-namespace StrongOf.Tests;
+namespace StrongOf.UnitTests;
 
 public class StrongDateTime_Tests
 {

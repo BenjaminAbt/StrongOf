@@ -12,7 +12,6 @@
         "^refs/tags/v\\d+\\.\\d+" // we also release tags starting with vN.N
     ],
     "cloudBuild": {
-        "setVersionVariables": true,
         "buildNumber": {
             "enabled": true
         }

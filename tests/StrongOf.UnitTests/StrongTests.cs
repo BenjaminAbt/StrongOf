@@ -1,6 +1,8 @@
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
 using Xunit;
 
-namespace StrongOf.Tests;
+namespace StrongOf.UnitTests;
 
 public class StrongTests
 {

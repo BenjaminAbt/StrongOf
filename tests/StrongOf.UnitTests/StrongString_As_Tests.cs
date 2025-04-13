@@ -1,6 +1,8 @@
-﻿using Xunit;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Tests;
+using Xunit;
+
+namespace StrongOf.UnitTests;
 
 public class StrongString_As_Tests
 {

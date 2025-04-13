@@ -1,4 +1,6 @@
-﻿using BenchmarkDotNet.Attributes;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Jobs;
 
@@ -56,7 +58,6 @@ public class StrongNewBenchmark
     public TestStrongGuid Guid_From()
         => TestStrongGuid.From(s_guid);
 }
-
 
 // Test Classes
 

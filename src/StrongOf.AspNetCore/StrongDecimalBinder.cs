@@ -1,8 +1,9 @@
-﻿using System.Globalization;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace StrongOf.AspNetCore;
-
 
 /// <summary>
 /// Represents a binder for StrongDecimal type.

@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <AssemblyName>$(GlobalAssemblyNamePrefix).Json</AssemblyName>
-    </PropertyGroup>
-
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.Json</PackageId>
         <IsPackable>true</IsPackable>
@@ -14,10 +10,6 @@
     <ItemGroup>
         <None Include="readme.md" Pack="true" PackagePath=""/>
         <None Include="LICENSE.txt" Pack="true" PackagePath=""/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="System.Text.Json" />
     </ItemGroup>
 
     <ItemGroup>

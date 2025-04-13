@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Diagnostics.CodeAnalysis;
 
 namespace StrongOf;
 
@@ -10,7 +12,6 @@ public abstract partial class StrongInt64<TStrong>(long Value)
         : StrongOf<long, TStrong>(Value), IComparable, IStrongInt64
     where TStrong : StrongInt64<TStrong>
 {
-
     /// <summary>
     /// Returns the value of the strong type as a long.
     /// </summary>

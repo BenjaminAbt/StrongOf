@@ -1,4 +1,6 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
+using System.Diagnostics.CodeAnalysis;
 using StrongOf.Factories;
 
 namespace StrongOf;
@@ -10,7 +12,11 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TTarget">The type of the target.</typeparam>
 /// <typeparam name="TStrong">The type of the strong.</typeparam>
-public abstract class StrongOf<TTarget, TStrong>
+/// <remarks>
+/// Initializes a new instance of the StrongOf class.
+/// </remarks>
+/// <param name="value">The value of the strong type.</param>
+public abstract class StrongOf<TTarget, TStrong>(TTarget value)
         : IStrongOf, IEquatable<StrongOf<TTarget, TStrong>>
     where TStrong : StrongOf<TTarget, TStrong>
 {
@@ -20,20 +26,11 @@ public abstract class StrongOf<TTarget, TStrong>
     /// <summary>
     /// Gets the value of the strong type.
     /// </summary>
-    public TTarget Value { get; }
+    public TTarget Value { get; } = value;
 
     static StrongOf()
     {
         s_factoryWithParameter = StrongOfInstanceFactory.CreateWithOneParameterDelegate<TStrong, TTarget>();
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the StrongOf class.
-    /// </summary>
-    /// <param name="value">The value of the strong type.</param>
-    public StrongOf(TTarget value)
-    {
-        Value = value;
     }
 
     // From
@@ -56,7 +53,6 @@ public abstract class StrongOf<TTarget, TStrong>
     [return: NotNullIfNotNull(nameof(source))]
     public static List<TStrong>? From(IEnumerable<TTarget>? source)
         => source?.Select(e => From(e)).ToList();
-
 
     // Operators
 
@@ -96,7 +92,6 @@ public abstract class StrongOf<TTarget, TStrong>
     {
         return (strong == other) is false;
     }
-
 
     // Equals
 
