@@ -1,7 +1,7 @@
 using System.Globalization;
 using Xunit;
 
-namespace StrongOf.Tests;
+namespace StrongOf.UnitTests;
 
 public class StrongDateTimeOffset_Operators_Tests
 {
@@ -41,7 +41,7 @@ public class StrongDateTimeOffset_Operators_Tests
         DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTimeOffset.Value < otherDateTimeOffset), (testStrongDateTimeOffset < otherDateTimeOffset));
+        Assert.Equal(testStrongDateTimeOffset.Value < otherDateTimeOffset, testStrongDateTimeOffset < otherDateTimeOffset);
     }
 
     [Theory]
@@ -55,7 +55,7 @@ public class StrongDateTimeOffset_Operators_Tests
         DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTimeOffset.Value > otherDateTimeOffset), (testStrongDateTimeOffset > otherDateTimeOffset));
+        Assert.Equal(testStrongDateTimeOffset.Value > otherDateTimeOffset, testStrongDateTimeOffset > otherDateTimeOffset);
     }
 
     [Theory]
@@ -69,7 +69,7 @@ public class StrongDateTimeOffset_Operators_Tests
         DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTimeOffset.Value <= otherDateTimeOffset), (testStrongDateTimeOffset <= otherDateTimeOffset));
+        Assert.Equal(testStrongDateTimeOffset.Value <= otherDateTimeOffset, testStrongDateTimeOffset <= otherDateTimeOffset);
     }
 
     [Theory]
@@ -83,6 +83,6 @@ public class StrongDateTimeOffset_Operators_Tests
         DateTimeOffset otherDateTimeOffset = DateTimeOffset.Parse(other, CultureInfo.InvariantCulture);
 
         // Assert
-        Assert.Equal((testStrongDateTimeOffset.Value >= otherDateTimeOffset), (testStrongDateTimeOffset >= otherDateTimeOffset));
+        Assert.Equal(testStrongDateTimeOffset.Value >= otherDateTimeOffset, testStrongDateTimeOffset >= otherDateTimeOffset);
     }
 }

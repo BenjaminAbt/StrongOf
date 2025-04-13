@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace StrongOf.Tests;
+namespace StrongOf.UnitTests;
 
 public class StrongInt32_As_Tests
 {

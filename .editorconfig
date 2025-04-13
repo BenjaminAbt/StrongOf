@@ -9,6 +9,9 @@
 # top-most EditorConfig file
 root = true                               # stop .editorconfig files search on current file.
 
+# header
+file_header_template = Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+
 # All files
 # Don't use tabs for indentation.
 [*]
