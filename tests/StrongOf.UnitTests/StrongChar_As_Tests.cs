@@ -1,6 +1,6 @@
 ﻿using Xunit;
 
-namespace StrongOf.Tests;
+namespace StrongOf.UnitTests;
 
 public class StrongChar_As_Tests
 {
@@ -16,12 +16,11 @@ public class StrongChar_As_Tests
         Assert.Equal(strong.Value, strong.AsChar());
     }
 
-
     [Fact]
     public void FromNullable_WithValue_ReturnsNonNull()
     {
         // Arrange
-        char value = 'A';
+        const char value = 'A';
 
         // Act
         TestCharOf result = TestCharOf.FromNullable(value);
@@ -47,7 +46,7 @@ public class StrongChar_As_Tests
     public void FromNullable_WithNotNull_ReturnsCorrectValue()
     {
         // Arrange
-        char value = 'A';
+        const char value = 'A';
 
         // Act
         TestCharOf result = TestCharOf.FromNullable(value);
@@ -78,7 +77,7 @@ public class StrongChar_As_Tests
         object other = new ();
 
         // Act & Assert
-        Assert.Throws<System.ArgumentException>(() => instance.CompareTo(other));
+        Assert.Throws<ArgumentException>(() => instance.CompareTo(other));
     }
 
     [Fact]

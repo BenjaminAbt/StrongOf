@@ -57,7 +57,6 @@ public class StrongNewBenchmark
         => TestStrongGuid.From(s_guid);
 }
 
-
 // Test Classes
 
 public sealed class TestStrongInt32(int Value)

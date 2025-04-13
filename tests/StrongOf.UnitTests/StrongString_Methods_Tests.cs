@@ -6,7 +6,6 @@ public class StrongString_Methods_Tests
 {
     private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
 
-
     [Fact]
     public void Trim_ShouldRemoveLeadingAndTrailingWhiteSpace()
     {

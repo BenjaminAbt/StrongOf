@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace StrongOf.AspNetCore;
 
-
 /// <summary>
 /// Represents a binder for StrongDecimal type.
 /// </summary>

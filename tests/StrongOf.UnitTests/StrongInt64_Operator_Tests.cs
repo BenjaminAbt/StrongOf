@@ -29,7 +29,6 @@ public class StrongInt64_Operator_Tests
         Assert.False(strongInt == null);
     }
 
-
     [Theory]
     [InlineData(5, 10)]
     [InlineData(10, 5)]

@@ -7,7 +7,6 @@ public class StrongInt32_Operator_Tests
     private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value) { }
     private sealed class OtherTestInt32Of(int Value) : StrongInt32<OtherTestInt32Of>(Value) { }
 
-
     [Fact]
     public void OperatorEquals_ShouldReturnTrueForEqualValues()
     {

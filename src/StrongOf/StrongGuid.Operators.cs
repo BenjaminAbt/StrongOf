@@ -87,7 +87,6 @@ public abstract partial class StrongGuid<TStrong>
     /// If <paramref name="other"/> is a <see cref="Guid"/>, the method compares the value of <paramref name="strong"/> with the <see cref="Guid"/> value.
     /// If <paramref name="other"/> is a <see cref="StrongGuid{TStrong}"/> object, the method compares the value of <paramref name="strong"/> with the value of the other <see cref="StrongGuid{TStrong}"/> object.
     /// </remarks>
-
     public static bool operator <(StrongGuid<TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -122,7 +121,6 @@ public abstract partial class StrongGuid<TStrong>
     /// If <paramref name="other"/> is a <see cref="Guid"/>, the method compares the value of <paramref name="strong"/> with the <see cref="Guid"/> value.
     /// If <paramref name="other"/> is a <see cref="StrongGuid{TStrong}"/> object, the method compares the value of <paramref name="strong"/> with the value of the other <see cref="StrongGuid{TStrong}"/> object.
     /// </remarks>
-
     public static bool operator >=(StrongGuid<TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -157,7 +155,6 @@ public abstract partial class StrongGuid<TStrong>
     /// If <paramref name="other"/> is a <see cref="Guid"/>, the method compares the value of <paramref name="strong"/> with the <see cref="Guid"/> value.
     /// If <paramref name="other"/> is a <see cref="StrongGuid{TStrong}"/> object, the method compares the value of <paramref name="strong"/> with the value of the other <see cref="StrongGuid{TStrong}"/> object.
     /// </remarks>
-
     public static bool operator <=(StrongGuid<TStrong>? strong, object? other)
     {
         if (strong is null)

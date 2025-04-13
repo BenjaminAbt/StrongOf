@@ -144,5 +144,4 @@ public abstract partial class StrongGuid<TStrong>(Guid Value)
     /// </summary>
     /// <returns>A hash code for the current object.</returns>
     public override int GetHashCode() => base.GetHashCode();
-
 }

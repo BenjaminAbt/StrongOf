@@ -1,111 +1,130 @@
 <Project>
+  <PropertyGroup Label="Project">
+    <Product>BenjaminAbt.StrongOf</Product>
+    <Authors>Benjamin Abt, SchwabenCode</Authors>
+    <Company>Benjamin Abt</Company>
+    <Copyright>Benjamin Abt</Copyright>
+  </PropertyGroup>
 
-    <!-- Head -->
-    <PropertyGroup>
-        <Company>Benjamin Abt</Company>
-        <Authors>Benjamin Abt, SchwabenCode</Authors>
-        <Product>BenjaminAbt.StrongOf</Product>
-        <Copyright>Benjamin Abt</Copyright>
-        <Title>StrongOf - Strong Type your stuff!</Title>
-        <Description>
+  <PropertyGroup Label="Vars">
+    <IsWindows Condition="$([MSBuild]::IsOSPlatform('Windows'))">true</IsWindows>
+    <IsOSX Condition="$([MSBuild]::IsOSPlatform('OSX'))">true</IsOSX>
+    <IsLinux Condition="$([MSBuild]::IsOSPlatform('Linux'))">true</IsLinux>
+
+    <IsTestProject>$(MSBuildProjectName.EndsWith('Tests'))</IsTestProject>
+    <IsUnitTestProject>$(MSBuildProjectName.EndsWith('UnitTests'))</IsUnitTestProject>
+    <IsIntegrationTestProject>$(MSBuildProjectName.EndsWith('IntegrationTests'))</IsIntegrationTestProject>
+    <IsBenchmarkProject>$(MsBuildProjectName.EndsWith('Benchmarks'))</IsBenchmarkProject>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Assembly">
+    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)BenjaminAbt.StrongOf.snk</AssemblyOriginatorKeyFile>
+
+    <PublicKey>
+        0024000004800000940000000602000000240000525341310004000001000100a19f5c9b522bba
+        2b14442a92edac88ebfad09ade036005cdbcfdb574e78f5b60612a92b18b73acb1a3ecc933fb2d
+        5836f648ef15819a49eea44b6de6d9966375cc4fa08f523c18463f4ee57ef3ed63500a993e125f
+        44a374ea17b450962a1b14a13d8ccb0c36d7d3886e54a739103aa32d8c66b92aa25880e80ec088
+        1e91649c
+    </PublicKey>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Compiler">
+    <LangVersion>preview</LangVersion>
+    <DebugType>embedded</DebugType>
+    <Nullable>enable</Nullable>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Package">
+    <IsPackable>false</IsPackable>
+    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <MinClientVersion>2.12</MinClientVersion>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+    <Title>StrongOf - Strong Type your stuff!</Title>
+    <Description>
             StrongOf helps to implement primitives as a strong type that represents a domain object (e.g. UserId, EmailAddress, etc.). It is a simple class that wraps a value and provides a few helper methods to make it easier to work with.
             In contrast to other approaches, StrongOf is above all simple and performant - and not over-engineered.
-        </Description>
-        <DefaultLanguage>en-US</DefaultLanguage>
-        <NoPackageAnalysis>true</NoPackageAnalysis>
-        <DebugType>embedded</DebugType>
-    </PropertyGroup>
+    </Description>
+    <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/BenjaminAbt/StrongOf</RepositoryUrl>
+    <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Env">
-        <IsUnitTestProject>$(MSBuildProjectName.EndsWith('UnitTests'))</IsUnitTestProject>
-        <IsBenchmarkProject>$(MsBuildProjectName.Contains('Benchmark'))</IsBenchmarkProject>
-    </PropertyGroup>
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Assembly">
-        <GlobalNamespacePrefix>StrongOf</GlobalNamespacePrefix>
-        <GlobalAssemblyNamePrefix>BenjaminAbt.StrongOf</GlobalAssemblyNamePrefix>
-    </PropertyGroup>
+  <PropertyGroup Label="Visual Studio">
+    <!-- https://devblogs.microsoft.com/visualstudio/visual-studio-2022-17-5-performance-enhancements/ -->
+    <AccelerateBuildsInVisualStudio>true</AccelerateBuildsInVisualStudio>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Project Defaults">
-        <TargetFrameworks>net7.0;net8.0;net9.0</TargetFrameworks>
-    </PropertyGroup>
+  <PropertyGroup Label="NuGet Audit">
+    <NuGetAudit>true</NuGetAudit>
+    <NuGetAuditMode>all</NuGetAuditMode>
+    <NuGetAuditLevel>low</NuGetAuditLevel>
+  </PropertyGroup>
 
-    <PropertyGroup Label="Package">
-        <IsPackable>false</IsPackable>
-        <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
-        <PublishRepositoryUrl>true</PublishRepositoryUrl>
-        <Description>StrongOf - Strong Type your stuff and fight primitive Obsession with .NET</Description>
-        <MinClientVersion>2.12</MinClientVersion>
-        <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
-        <IsPackable>false</IsPackable>
-        <EmbedUntrackedSources>true</EmbedUntrackedSources>
-    </PropertyGroup>
+  <ItemGroup Label="Default Test Dependencies" Condition="'$(IsTestProject)' == 'true'">
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" />
+    <PackageReference Include="NSubstitute" />
+    <PackageReference Include="NSubstitute.Analyzers.CSharp">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.v3" />
+    <PackageReference Include="xunit.v3.extensibility.core"/>
+    <PackageReference Include="xunit.v3.assert" />
+    <PackageReference Include="xunit.runner.console">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-    <PropertyGroup Label="C#">
-        <LangVersion>preview</LangVersion>
-        <Nullable>enable</Nullable>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    </PropertyGroup>
+  <ItemGroup Label="Default Analyzers">
+    <PackageReference Include="Roslynator.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.Formatting.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Roslynator.CodeAnalysis.Analyzers">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
+    <PackageReference Include="Microsoft.CodeAnalysis.Common" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
+    <PackageReference Include="Meziantou.Analyzer">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
-    <PropertyGroup Condition="'$(IsUnitTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
-        <GenerateDocumentationFile>true</GenerateDocumentationFile>
-    </PropertyGroup>
+  <!-- Block Projects with Privacy/Security/License Concerns -->
+  <Target Name="CheckBlockedPackages" AfterTargets="ResolvePackageDependenciesForBuild">
+    <Error Code="420" Text="Blocked package dependency detected: %(PackageDependencies.Identity)"
+         Condition="'%(PackageDependencies.Identity)' == 'Devlooped.SponsorLink'" />
+    <Error Code="420" Text="Blocked package dependency detected: %(PackageDependencies.Identity)"
+         Condition="'%(PackageDependencies.Identity)' == 'FluentAssertions'" />
+  </Target>
 
-
-    <PropertyGroup>
-        <SignAssembly>true</SignAssembly>
-        <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)BenjaminAbt.StrongOf.snk</AssemblyOriginatorKeyFile>
-
-        <PublicKey>
-            0024000004800000940000000602000000240000525341310004000001000100a19f5c9b522bba
-            2b14442a92edac88ebfad09ade036005cdbcfdb574e78f5b60612a92b18b73acb1a3ecc933fb2d
-            5836f648ef15819a49eea44b6de6d9966375cc4fa08f523c18463f4ee57ef3ed63500a993e125f
-            44a374ea17b450962a1b14a13d8ccb0c36d7d3886e54a739103aa32d8c66b92aa25880e80ec088
-            1e91649c
-        </PublicKey>
-    </PropertyGroup>
-
-    <ItemGroup Label="Analyzers">
-        <PackageReference Include="Roslynator.Analyzers">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Roslynator.Formatting.Analyzers">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Roslynator.CodeAnalysis.Analyzers">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Workspaces" />
-        <PackageReference Include="Microsoft.CodeAnalysis.Common" />
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" />
-        <PackageReference Include="Meziantou.Analyzer">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(IsUnitTestProject)' == 'true'">
-        <PackageReference Include="Microsoft.NET.Test.Sdk" />
-        <PackageReference Include="NSubstitute" />
-        <PackageReference Include="NSubstitute.Analyzers.CSharp">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="xunit.v3" />
-        <PackageReference Include="xunit.v3.extensibility.core"/>
-        <PackageReference Include="xunit.v3.assert" />
-        <PackageReference Include="xunit.runner.console">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="xunit.runner.visualstudio">
-            <PrivateAssets>all</PrivateAssets>
-            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-        </PackageReference>
-        <PackageReference Include="FluentValidation" />
-    </ItemGroup>
 </Project>
