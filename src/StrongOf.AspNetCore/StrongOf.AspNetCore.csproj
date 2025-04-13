@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <AssemblyName>$(GlobalAssemblyNamePrefix).AspNetCore</AssemblyName>
-    </PropertyGroup>
-
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.AspNetCore</PackageId>
         <IsPackable>true</IsPackable>

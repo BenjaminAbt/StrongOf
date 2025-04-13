@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <AssemblyName>$(GlobalAssemblyNamePrefix).FluentValidation</AssemblyName>
-    </PropertyGroup>
-
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.FluentValidation</PackageId>
         <IsPackable>true</IsPackable>

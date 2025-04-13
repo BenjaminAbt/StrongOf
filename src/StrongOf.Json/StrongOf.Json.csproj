@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <AssemblyName>$(GlobalAssemblyNamePrefix).Json</AssemblyName>
-    </PropertyGroup>
-
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.Json</PackageId>
         <IsPackable>true</IsPackable>
