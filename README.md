@@ -195,48 +195,48 @@ public class MySubmitModelValidator : AbstractValidator<MySubmitModel>
 Since the strong types created here can still be instantiated with `new()`, this also means an enormous performance advantage over libraries that have to work with `Activator.CreateInstance` or `Expression.New`.
 
 ```shell
-BenchmarkDotNet v0.14.0, Windows 10 (10.0.19045.5131/22H2/2022Update)
-AMD Ryzen 9 9950X, 1 CPU, 32 logical and 16 physical cores
-.NET SDK 9.0.100
-  [Host]   : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 7.0 : .NET 7.0.20 (7.0.2024.26716), X64 RyuJIT AVX2
-  .NET 8.0 : .NET 8.0.11 (8.0.1124.51707), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 9.0 : .NET 9.0.0 (9.0.24.52809), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+BenchmarkDotNet v0.15.2, Windows 10 (10.0.19045.6216/22H2/2022Update)
+AMD Ryzen 9 9950X 4.30GHz, 1 CPU, 32 logical and 16 physical cores
+.NET SDK 10.0.100-preview.7.25380.108
+  [Host]    : .NET 10.0.0 (10.0.25.38108), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  .NET 10.0 : .NET 10.0.0 (10.0.25.38108), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  .NET 8.0  : .NET 8.0.19 (8.0.1925.36514), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+  .NET 9.0  : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
 
 
-| Method      | Runtime  | Mean     | Ratio |
-|------------ |--------- |---------:|------:|
-| Guid_New    | .NET 7.0 | 1.712 ns |  1.03 |
-| Guid_New    | .NET 8.0 | 1.672 ns |  1.00 |
-| Guid_New    | .NET 9.0 | 1.665 ns |  1.00 |
-|             |          |          |       |
-| Guid_From   | .NET 7.0 | 3.250 ns |  1.32 |
-| Guid_From   | .NET 8.0 | 3.165 ns |  1.29 |
-| Guid_From   | .NET 9.0 | 2.462 ns |  1.00 |
-|             |          |          |       |
-| Int32_New   | .NET 7.0 | 1.604 ns |  1.00 |
-| Int32_New   | .NET 8.0 | 1.637 ns |  1.02 |
-| Int32_New   | .NET 9.0 | 1.609 ns |  1.00 |
-|             |          |          |       |
-| Int32_From  | .NET 7.0 | 2.738 ns |  1.41 |
-| Int32_From  | .NET 8.0 | 2.636 ns |  1.36 |
-| Int32_From  | .NET 9.0 | 1.942 ns |  1.00 |
-|             |          |          |       |
-| Int64_New   | .NET 7.0 | 1.633 ns |  1.02 |
-| Int64_New   | .NET 8.0 | 1.605 ns |  1.00 |
-| Int64_New   | .NET 9.0 | 1.608 ns |  1.00 |
-|             |          |          |       |
-| Int64_From  | .NET 7.0 | 2.673 ns |  1.41 |
-| Int64_From  | .NET 8.0 | 2.648 ns |  1.40 |
-| Int64_From  | .NET 9.0 | 1.890 ns |  1.00 |
-|             |          |          |       |
-| String_New  | .NET 7.0 | 2.613 ns |  1.61 |
-| String_New  | .NET 8.0 | 1.582 ns |  0.97 |
-| String_New  | .NET 9.0 | 1.627 ns |  1.00 |
-|             |          |          |       |
-| String_From | .NET 7.0 | 3.526 ns |  1.28 |
-| String_From | .NET 8.0 | 3.596 ns |  1.31 |
-| String_From | .NET 9.0 | 2.746 ns |  1.00 |
+| Method      | Runtime   | Categories   | Mean     | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated |
+|------------ |---------- |------------- |---------:|----------:|----------:|------:|--------:|-------:|----------:|
+| Guid_New    | .NET 8.0  | StrongGuid   | 1.738 ns | 0.0645 ns | 0.0571 ns |  1.00 |    0.03 | 0.0019 |      32 B |
+| Guid_New    | .NET 9.0  | StrongGuid   | 1.701 ns | 0.0288 ns | 0.0255 ns |  0.98 |    0.02 | 0.0019 |      32 B |
+| Guid_New    | .NET 10.0 | StrongGuid   | 1.732 ns | 0.0249 ns | 0.0208 ns |  1.00 |    0.02 | 0.0019 |      32 B |
+|             |           |              |          |           |           |       |         |        |           |
+| Guid_From   | .NET 8.0  | StrongGuid   | 3.347 ns | 0.0263 ns | 0.0246 ns |  1.33 |    0.02 | 0.0019 |      32 B |
+| Guid_From   | .NET 9.0  | StrongGuid   | 2.525 ns | 0.0243 ns | 0.0203 ns |  1.00 |    0.02 | 0.0019 |      32 B |
+| Guid_From   | .NET 10.0 | StrongGuid   | 2.523 ns | 0.0472 ns | 0.0394 ns |  1.00 |    0.02 | 0.0019 |      32 B |
+|             |           |              |          |           |           |       |         |        |           |
+| Int32_New   | .NET 8.0  | StrongInt32  | 1.677 ns | 0.0315 ns | 0.0263 ns |  0.97 |    0.04 | 0.0014 |      24 B |
+| Int32_New   | .NET 9.0  | StrongInt32  | 1.737 ns | 0.0645 ns | 0.0690 ns |  1.01 |    0.05 | 0.0014 |      24 B |
+| Int32_New   | .NET 10.0 | StrongInt32  | 1.728 ns | 0.0663 ns | 0.0588 ns |  1.00 |    0.05 | 0.0014 |      24 B |
+|             |           |              |          |           |           |       |         |        |           |
+| Int32_From  | .NET 8.0  | StrongInt32  | 2.895 ns | 0.0911 ns | 0.0852 ns |  1.55 |    0.05 | 0.0014 |      24 B |
+| Int32_From  | .NET 9.0  | StrongInt32  | 1.928 ns | 0.0325 ns | 0.0304 ns |  1.03 |    0.02 | 0.0014 |      24 B |
+| Int32_From  | .NET 10.0 | StrongInt32  | 1.872 ns | 0.0182 ns | 0.0161 ns |  1.00 |    0.01 | 0.0014 |      24 B |
+|             |           |              |          |           |           |       |         |        |           |
+| Int64_New   | .NET 8.0  | StrongInt64  | 1.684 ns | 0.0255 ns | 0.0213 ns |  0.95 |    0.06 | 0.0014 |      24 B |
+| Int64_New   | .NET 9.0  | StrongInt64  | 1.746 ns | 0.0530 ns | 0.0496 ns |  0.99 |    0.06 | 0.0014 |      24 B |
+| Int64_New   | .NET 10.0 | StrongInt64  | 1.776 ns | 0.0700 ns | 0.1089 ns |  1.00 |    0.09 | 0.0014 |      24 B |
+|             |           |              |          |           |           |       |         |        |           |
+| Int64_From  | .NET 8.0  | StrongInt64  | 2.764 ns | 0.0379 ns | 0.0354 ns |  1.42 |    0.03 | 0.0014 |      24 B |
+| Int64_From  | .NET 9.0  | StrongInt64  | 1.978 ns | 0.0289 ns | 0.0256 ns |  1.02 |    0.02 | 0.0014 |      24 B |
+| Int64_From  | .NET 10.0 | StrongInt64  | 1.943 ns | 0.0369 ns | 0.0345 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+|             |           |              |          |           |           |       |         |        |           |
+| String_New  | .NET 8.0  | StrongString | 1.667 ns | 0.0367 ns | 0.0326 ns |  0.97 |    0.02 | 0.0014 |      24 B |
+| String_New  | .NET 9.0  | StrongString | 1.646 ns | 0.0292 ns | 0.0273 ns |  0.96 |    0.02 | 0.0014 |      24 B |
+| String_New  | .NET 10.0 | StrongString | 1.710 ns | 0.0237 ns | 0.0198 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+|             |           |              |          |           |           |       |         |        |           |
+| String_From | .NET 8.0  | StrongString | 3.638 ns | 0.0637 ns | 0.0596 ns |  1.26 |    0.03 | 0.0014 |      24 B |
+| String_From | .NET 9.0  | StrongString | 2.803 ns | 0.0401 ns | 0.0376 ns |  0.97 |    0.02 | 0.0014 |      24 B |
+| String_From | .NET 10.0 | StrongString | 2.882 ns | 0.0695 ns | 0.0650 ns |  1.00 |    0.03 | 0.0014 |      24 B |
 ```
 
 For certain scenarios, this library also has an `Expression.New` implementation (through a static From method); but not for general instantiation.
