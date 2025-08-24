@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup Label="Project">
     <Product>BenjaminAbt.StrongOf</Product>
-    <Authors>Benjamin Abt, SchwabenCode</Authors>
+    <Authors>BenjaminAbt, SchwabenCode</Authors>
     <Company>Benjamin Abt</Company>
     <Copyright>Benjamin Abt</Copyright>
   </PropertyGroup>

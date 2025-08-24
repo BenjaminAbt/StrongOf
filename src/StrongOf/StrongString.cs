@@ -1,6 +1,7 @@
 ﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 
 namespace StrongOf;
 
@@ -17,6 +18,7 @@ public abstract partial class StrongString<TStrong>(string Value)
     /// <summary>
     /// Returns the value of the strong type as a string.
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string AsString() => Value;
 
     /// <summary>
@@ -25,6 +27,7 @@ public abstract partial class StrongString<TStrong>(string Value)
     /// <param name="value">The nullable char value.</param>
     /// <returns>A new instance of StrongString if the value has a value, null otherwise.</returns>
     [return: NotNullIfNotNull(nameof(value))]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TStrong? FromNullable(string? value)
     {
         if (value is not null)
@@ -41,14 +44,19 @@ public abstract partial class StrongString<TStrong>(string Value)
     /// </summary>
     /// <param name="value">The value to create the strong string from.</param>
     /// <returns>A new instance of the strong string.</returns>
-    public static TStrong FromTrimmed(string value)
-      => From(value.Trim());
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public static TStrong FromTrimmed(string value)
+        {
+            string trimmed = value.Trim();
+            return trimmed.Length == 0 ? Empty() : From(trimmed);
+        }
 
     /// <summary>
     /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
     /// <returns>A value that indicates the relative order of the objects being compared.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int CompareTo(object? other)
     {
         if (other is null)
@@ -68,13 +76,21 @@ public abstract partial class StrongString<TStrong>(string Value)
     /// Creates a new instance of the strong string that is empty.
     /// </summary>
     /// <returns>A new instance of the strong string.</returns>
+    private static readonly TStrong s_empty = From("");
+
+    /// <summary>
+    /// Creates a new instance of the strong string that is empty.
+    /// </summary>
+    /// <returns>A cached empty instance of the strong string.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TStrong Empty()
-        => From("");
+        => s_empty;
 
     /// <summary>
     /// Determines whether the current instance is empty.
     /// </summary>
     /// <returns>True if the current instance is empty; otherwise, false.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool IsEmpty()
         => Value is "";
 
@@ -85,11 +101,13 @@ public abstract partial class StrongString<TStrong>(string Value)
     /// </summary>
     /// <param name="obj">The object to compare with the current object.</param>
     /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object? obj) => base.Equals(obj);
 
     /// <summary>
     /// Serves as the default hash function.
     /// </summary>
     /// <returns>A hash code for the current object.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode() => base.GetHashCode();
 }

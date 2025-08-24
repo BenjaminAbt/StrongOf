@@ -9,9 +9,9 @@ namespace StrongOf.Benchmarks.StrongNew;
 #pragma warning disable CA1822 // Mark members as static
 
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net70)] // PGO enabled by default
 [SimpleJob(RuntimeMoniker.Net80)]
-[SimpleJob(RuntimeMoniker.Net90, baseline: true)]
+[SimpleJob(RuntimeMoniker.Net90)]
+[SimpleJob(RuntimeMoniker.Net10_0, baseline: true)]
 [CategoriesColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class StrongNewBenchmark
