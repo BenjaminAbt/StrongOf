@@ -87,7 +87,7 @@ jobs:
       if: steps.check-tag.outputs.exists == 'false'
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      run: gh release upload v${{ needs.calculate-version.outputs.version }} nupkgs/*.nupkg
+      run: gh release upload v${{ needs.calculate-version.outputs.version }} nupkgs/*.nupkg --clobber
 
     - name: Summary
       if: steps.check-tag.outputs.exists == 'false'
