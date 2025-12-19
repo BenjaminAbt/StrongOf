@@ -1,0 +1,108 @@
+name: Main Build
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  calculate-version:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Required for Nerdbank.GitVersioning
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 9.0.x
+
+    - name: Install NBGV tool
+      run: dotnet tool install -g nbgv
+
+    - name: Set Version
+      id: version
+      run: |
+        echo "version=$(nbgv get-version -v NuGetPackageVersion)" >> $GITHUB_OUTPUT
+
+  build-test-release:
+    needs: calculate-version
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: read
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0 # Required for Nerdbank.GitVersioning
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: |
+          8.0.x
+          9.0.x
+          10.0.x
+
+    - name: Restore dependencies
+      run: dotnet restore
+
+    - name: Build
+      run: dotnet build --no-restore --configuration Release
+
+    - name: Test
+      run: dotnet test --no-build --configuration Release
+
+    - name: Pack
+      run: dotnet pack --no-build --configuration Release --output nupkgs
+
+    - name: Check if tag exists
+      id: check-tag
+      run: |
+        TAG="v${{ needs.calculate-version.outputs.version }}"
+        if git rev-parse "$TAG" >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+          echo "⚠️ Tag $TAG already exists"
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+          echo "✅ Tag $TAG does not exist yet"
+        fi
+
+    - name: Create/Update Draft PROD Release
+      if: steps.check-tag.outputs.exists == 'false'
+      uses: release-drafter/release-drafter@v6
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        config-name: release-drafter.yml
+        version: v${{ needs.calculate-version.outputs.version }}
+        tag: v${{ needs.calculate-version.outputs.version }}
+        name: Version ${{ needs.calculate-version.outputs.version }}
+        publish: false
+        prerelease: false
+
+    - name: Upload Release Assets
+      if: steps.check-tag.outputs.exists == 'false'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: gh release upload v${{ needs.calculate-version.outputs.version }} nupkgs/*.nupkg
+
+    - name: Summary
+      if: steps.check-tag.outputs.exists == 'false'
+      run: |
+        echo "✅ Draft release created/updated" >> $GITHUB_STEP_SUMMARY
+        echo "Version: v${{ needs.calculate-version.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Next steps:" >> $GITHUB_STEP_SUMMARY
+        echo "1. Go to [Releases](../../releases)" >> $GITHUB_STEP_SUMMARY
+        echo "2. Review the draft release" >> $GITHUB_STEP_SUMMARY
+        echo "3. Edit release notes if needed" >> $GITHUB_STEP_SUMMARY
+        echo "4. Publish release to trigger production deployment" >> $GITHUB_STEP_SUMMARY
+
+    - name: Release already exists
+      if: steps.check-tag.outputs.exists == 'true'
+      run: |
+        echo "ℹ️ Release v${{ needs.calculate-version.outputs.version }} already exists" >> $GITHUB_STEP_SUMMARY
+        echo "No action taken" >> $GITHUB_STEP_SUMMARY
