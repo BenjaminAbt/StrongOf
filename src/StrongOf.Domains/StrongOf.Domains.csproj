@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Package">
+        <PackageId>StrongOf.Domains</PackageId>
+        <IsPackable>true</IsPackable>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    </PropertyGroup>
+
+    <!-- Suppress MA0095 - Base classes (StrongString, StrongGuid, etc.) already implement Equals(object) correctly -->
+    <PropertyGroup Label="Analyzers">
+        <NoWarn>$(NoWarn);MA0095</NoWarn>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="readme.md" Pack="true" PackagePath="" />
+        <None Include="LICENSE.txt" Pack="true" PackagePath="" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
+    </ItemGroup>
+
+</Project>
