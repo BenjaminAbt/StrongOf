@@ -10,8 +10,8 @@ public class StrongCharJsonConverterTests
 {
     private sealed class TestCharOf(char value) : StrongChar<TestCharOf>(value) { }
 
-    private readonly StrongCharJsonConverter<TestCharOf> _converter = new ();
-    private readonly JsonSerializerOptions _options = new ();
+    private readonly StrongCharJsonConverter<TestCharOf> _converter = new();
+    private readonly JsonSerializerOptions _options = new();
 
     [Fact]
     public void Read_ValidJson_ReturnsStrongChar()

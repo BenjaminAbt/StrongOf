@@ -2,44 +2,101 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 
 namespace StrongOf;
 
 /// <summary>
-/// Represents a strongly typed decimal.
+/// Represents a strongly-typed wrapper around a <see cref="decimal"/> value, providing compile-time type safety
+/// and preventing parameter order mistakes when working with monetary or precise decimal values.
 /// </summary>
-/// <typeparam name="TStrong">The type of the strong decimal.</typeparam>
+/// <typeparam name="TStrong">The concrete strong type that derives from this class (CRTP pattern).</typeparam>
+/// <remarks>
+/// <para>
+/// Use this class to create domain-specific decimal types like <c>Price</c>, <c>Amount</c>, <c>Percentage</c>, etc.
+/// The compiler will prevent accidental mixing of different decimal types.
+/// </para>
+/// <para>
+/// <b>Performance Note:</b> Prefer <c>new()</c> over <see cref="StrongOf{TTarget,TStrong}.From(TTarget)"/>
+/// for instantiation.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// // Define strongly-typed decimal types
+/// public sealed class Price(decimal value) : StrongDecimal&lt;Price&gt;(value) { }
+/// public sealed class Discount(decimal value) : StrongDecimal&lt;Discount&gt;(value) { }
+///
+/// // Usage - compiler prevents mixing up parameters
+/// public decimal CalculateTotal(Price price, Discount discount)
+/// {
+///     // Cannot accidentally swap price and discount!
+///     return price.Value - discount.Value;
+/// }
+///
+/// // Create instances
+/// var price = new Price(99.99m);         // Fastest
+/// var price = Price.From(99.99m);        // For generic scenarios
+/// </code>
+/// </example>
+/// <param name="Value">The underlying <see cref="decimal"/> value.</param>
 public abstract partial class StrongDecimal<TStrong>(decimal Value)
-        : StrongOf<decimal, TStrong>(Value), IComparable, IStrongDecimal
+        : StrongOf<decimal, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDecimal
     where TStrong : StrongDecimal<TStrong>
 {
     /// <summary>
-    /// Returns the value of the strong type as a Decimal.
+    /// Gets the underlying <see cref="decimal"/> value.
     /// </summary>
+    /// <returns>The underlying <see cref="decimal"/> value.</returns>
+    /// <example>
+    /// <code>
+    /// var price = new Price(99.99m);
+    /// decimal rawValue = price.AsDecimal(); // 99.99
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public decimal AsDecimal() => Value;
 
     /// <summary>
-    /// Creates a new instance of StrongDecimal from a nullable decimal value.
+    /// Creates a strong type instance from a nullable <see cref="decimal"/> value.
     /// </summary>
-    /// <param name="value">The nullable char value.</param>
-    /// <returns>A new instance of StrongDecimal if the value has a value, null otherwise.</returns>
+    /// <param name="value">The nullable <see cref="decimal"/> value to convert.</param>
+    /// <returns>
+    /// A new instance of <typeparamref name="TStrong"/> if <paramref name="value"/> has a value;
+    /// otherwise, <c>null</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// decimal? nullablePrice = GetOptionalPrice();
+    /// Price? price = Price.FromNullable(nullablePrice);
+    /// </code>
+    /// </example>
     [return: NotNullIfNotNull(nameof(value))]
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong? FromNullable(decimal? value)
     {
         if (value.HasValue)
         {
-            TStrong strong = From(value.Value);
-            return strong;
+            return From(value.Value);
         }
 
         return null;
     }
 
     /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// Compares the current instance with another object and returns an integer indicating
+    /// their relative position in the sort order.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
-    /// <returns>A value that indicates the relative order of the objects being compared.</returns>
+    /// <returns>
+    /// A negative value if this instance precedes <paramref name="other"/>;
+    /// zero if they are equal;
+    /// a positive value if this instance follows <paramref name="other"/>.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="other"/> is not of type <typeparamref name="TStrong"/>.
+    /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public int CompareTo(object? other)
     {
         if (other is null)
@@ -56,12 +113,88 @@ public abstract partial class StrongDecimal<TStrong>(decimal Value)
     }
 
     /// <summary>
-    /// Tries to parse the specified content into a <typeparamref name="TStrong"/> object.
+    /// Compares the current instance with another strong type of the same kind.
     /// </summary>
-    /// <param name="content">The content to parse.</param>
-    /// <param name="strong">When this method returns, contains the parsed value if the parsing succeeded, or <c>null</c> if the parsing failed. The parsing is case-sensitive.</param>
-    /// <param name="formatProvider">An optional <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-    /// <returns><c>true</c> if the parsing was successful; otherwise, <c>false</c>.</returns>
+    /// <param name="other">The strong type to compare with this instance.</param>
+    /// <returns>
+    /// A negative value if this instance precedes <paramref name="other"/>;
+    /// zero if they are equal;
+    /// a positive value if this instance follows <paramref name="other"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public int CompareTo(TStrong? other)
+    {
+        if (other is null)
+        {
+            return 1;
+        }
+
+        return Value.CompareTo(other.Value);
+    }
+
+    /// <summary>
+    /// Determines whether the specified strong type instance is equal to the current instance.
+    /// </summary>
+    /// <param name="other">The strong type to compare with the current instance.</param>
+    /// <returns>
+    /// <c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// var price1 = new Price(99.99m);
+    /// var price2 = new Price(99.99m);
+    /// bool areEqual = price1.Equals(price2); // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool Equals(TStrong? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        return Value.Equals(other.Value);
+    }
+
+    /// <summary>
+    /// Determines whether the specified object is equal to the current instance.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns>
+    /// <c>true</c> if the specified object is equal to the current instance; otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override bool Equals(object? obj)
+        => obj is TStrong other && Equals(other);
+
+    /// <summary>
+    /// Returns a hash code for this instance.
+    /// </summary>
+    /// <returns>A hash code for this instance.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override int GetHashCode()
+        => Value.GetHashCode();
+
+    /// <summary>
+    /// Tries to parse a <see cref="decimal"/> from a character span and creates a strong type instance.
+    /// </summary>
+    /// <param name="content">The character span containing the number to parse.</param>
+    /// <param name="strong">
+    /// When this method returns, contains the parsed strong type if successful;
+    /// otherwise, <c>null</c>.
+    /// </param>
+    /// <param name="formatProvider">An optional format provider for culture-specific parsing.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    /// <example>
+    /// <code>
+    /// if (Price.TryParse("99.99", out Price? price))
+    /// {
+    ///     Console.WriteLine($"Price: {price}");
+    /// }
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
         if (decimal.TryParse(content, formatProvider, out decimal value))
@@ -75,12 +208,16 @@ public abstract partial class StrongDecimal<TStrong>(decimal Value)
     }
 
     /// <summary>
-    /// Tries to parse a decimal from a ReadOnlySpan of char using the provided IFormatProvider and returns a value that indicates whether the operation succeeded.
+    /// Tries to parse a <see cref="decimal"/> from a character span using the provided format provider.
     /// </summary>
-    /// <param name="content">A ReadOnlySpan of char containing a decimal to convert.</param>
-    /// <param name="provider">An IFormatProvider that supplies culture-specific formatting information.</param>
-    /// <param name="strong">When this method returns, contains the decimal value equivalent to the decimal contained in content, if the conversion succeeded, or null if the conversion failed.</param>
-    /// <returns>True if content was converted successfully; otherwise, false.</returns>
+    /// <param name="content">The character span containing the number to parse.</param>
+    /// <param name="provider">The format provider for culture-specific parsing.</param>
+    /// <param name="strong">
+    /// When this method returns, contains the parsed strong type if successful;
+    /// otherwise, <c>null</c>.
+    /// </param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> content, IFormatProvider? provider, [NotNullWhen(true)] out TStrong? strong)
     {
         if (decimal.TryParse(content, provider, out decimal value))
@@ -94,13 +231,25 @@ public abstract partial class StrongDecimal<TStrong>(decimal Value)
     }
 
     /// <summary>
-    /// Tries to parse a decimal from a ReadOnlySpan of char using the provided NumberStyles and IFormatProvider and returns a value that indicates whether the operation succeeded.
+    /// Tries to parse a <see cref="decimal"/> from a character span using the specified style and format provider.
     /// </summary>
-    /// <param name="content">A ReadOnlySpan of char containing a decimal to convert.</param>
-    /// <param name="numberStyles">A bitwise combination of enumeration values that defines how to interpret the parsed number. A typical value to specify is NumberStyles.Number.</param>
-    /// <param name="provider">An IFormatProvider that supplies culture-specific formatting information.</param>
-    /// <param name="strong">When this method returns, contains the decimal value equivalent to the decimal contained in content, if the conversion succeeded, or null if the conversion failed.</param>
-    /// <returns>True if content was converted successfully; otherwise, false.</returns>
+    /// <param name="content">The character span containing the number to parse.</param>
+    /// <param name="numberStyles">The number styles to allow during parsing.</param>
+    /// <param name="provider">The format provider for culture-specific parsing.</param>
+    /// <param name="strong">
+    /// When this method returns, contains the parsed strong type if successful;
+    /// otherwise, <c>null</c>.
+    /// </param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    /// <example>
+    /// <code>
+    /// if (Price.TryParse("$1,234.56", NumberStyles.Currency, CultureInfo.GetCultureInfo("en-US"), out Price? price))
+    /// {
+    ///     Console.WriteLine($"Price: {price.Value}"); // 1234.56
+    /// }
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> content, NumberStyles numberStyles, IFormatProvider? provider, [NotNullWhen(true)] out TStrong? strong)
     {
         if (decimal.TryParse(content, numberStyles, provider, out decimal value))
@@ -113,25 +262,18 @@ public abstract partial class StrongDecimal<TStrong>(decimal Value)
         return false;
     }
 
-    // Equals
-
     /// <summary>
-    /// Determines whether the specified object is equal to the current object.
+    /// Returns the string representation of the underlying value using the specified format.
     /// </summary>
-    /// <param name="obj">The object to compare with the current object.</param>
-    /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
-    public override bool Equals(object? obj) => base.Equals(obj);
-
-    /// <summary>
-    /// Serves as the default hash function.
-    /// </summary>
-    /// <returns>A hash code for the current object.</returns>
-    public override int GetHashCode() => base.GetHashCode();
-
-    /// <summary>
-    /// Converts the value of the current StrongDecimal object to its equivalent string representation using the specified format.
-    /// </summary>
-    /// <param name="format">A standard or custom date and time format string.</param>
-    /// <returns>A string representation of value of the current StrongDecimal object as specified by format.</returns>
+    /// <param name="format">A standard or custom numeric format string.</param>
+    /// <returns>The formatted string representation of the value.</returns>
+    /// <example>
+    /// <code>
+    /// var price = new Price(1234.5m);
+    /// string formatted = price.ToString("C2"); // "$1,234.50" (culture-dependent)
+    /// string fixed2 = price.ToString("F2");    // "1234.50"
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToString(string format) => Value.ToString(format);
 }

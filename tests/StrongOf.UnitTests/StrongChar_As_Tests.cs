@@ -76,7 +76,7 @@ public class StrongChar_As_Tests
     {
         // Arrange
         TestCharOf instance = new('A');
-        object other = new ();
+        object other = new();
 
         // Act & Assert
         Assert.Throws<ArgumentException>(() => instance.CompareTo(other));

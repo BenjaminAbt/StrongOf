@@ -37,7 +37,7 @@ public class StrongStringValidatorsTests
     public void HasMinimumLength_ShouldFail_WhenLengthIsLessThanMinLength()
     {
         _validator.RuleFor(x => x.Strong).HasMinimumLength(5);
-        TestModel model = new() { Strong = new("test")};
+        TestModel model = new() { Strong = new("test") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
     }
@@ -46,7 +46,7 @@ public class StrongStringValidatorsTests
     public void HasMaximumLength_ShouldFail_WhenLengthIsGreaterThanMaxLength()
     {
         _validator.RuleFor(x => x.Strong).HasMaximumLength(5);
-        TestModel model = new () { Strong = new("testing") };
+        TestModel model = new() { Strong = new("testing") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
     }
@@ -65,7 +65,7 @@ public class StrongStringValidatorsTests
     public void IsRegexMatch_ShouldFail_WhenValueDoesNotMatchRegex()
     {
         _validator.RuleFor(x => x.Strong).IsRegexMatch(new Regex(@"^\d+$", RegexOptions.None, matchTimeout: TimeSpan.FromSeconds(1)));
-        TestModel model = new () { Strong = new("test") };
+        TestModel model = new() { Strong = new("test") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
     }
@@ -75,7 +75,7 @@ public class StrongStringValidatorsTests
     {
         _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other!);
 
-        TestModel model = new () { Strong = new("test"), Other = new("other") };
+        TestModel model = new() { Strong = new("test"), Other = new("other") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
     }
@@ -84,7 +84,7 @@ public class StrongStringValidatorsTests
     public void AllowedChars_ShouldFail_WhenValueContainsNotAllowedChars()
     {
         _validator.RuleFor(x => x.Strong).AllowedChars(['a', 'b', 'c'], "Invalid characters: {0}");
-        TestModel model = new () { Strong = new("test") };
+        TestModel model = new() { Strong = new("test") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
     }

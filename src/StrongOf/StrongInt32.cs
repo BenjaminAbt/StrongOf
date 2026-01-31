@@ -6,49 +6,102 @@ using System.Runtime.CompilerServices;
 namespace StrongOf;
 
 /// <summary>
-/// Represents a strong type of Int32.
+/// Represents a strongly-typed wrapper around an <see cref="int"/> (Int32) value, providing compile-time type safety
+/// and preventing parameter order mistakes when working with multiple integer values.
 /// </summary>
-/// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
+/// <typeparam name="TStrong">The concrete strong type that derives from this class (CRTP pattern).</typeparam>
+/// <remarks>
+/// <para>
+/// Use this class to create domain-specific integer types like <c>Age</c>, <c>Quantity</c>, <c>Priority</c>, etc.
+/// The compiler will prevent accidental mixing of different integer types.
+/// </para>
+/// <para>
+/// <b>Performance Note:</b> Prefer <c>new()</c> over <see cref="StrongOf{TTarget,TStrong}.From(TTarget)"/>
+/// for instantiation.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// // Define strongly-typed integer types
+/// public sealed class Age(int value) : StrongInt32&lt;Age&gt;(value) { }
+/// public sealed class Quantity(int value) : StrongInt32&lt;Quantity&gt;(value) { }
+///
+/// // Usage - compiler prevents mixing up parameters
+/// public void CreateProduct(Quantity quantity, Age minAge)
+/// {
+///     // Cannot accidentally swap quantity and minAge!
+/// }
+///
+/// // Create instances
+/// var quantity = new Quantity(10);         // Fastest
+/// var quantity = Quantity.From(10);        // For generic scenarios
+/// </code>
+/// </example>
+/// <param name="Value">The underlying <see cref="int"/> value.</param>
 public abstract partial class StrongInt32<TStrong>(int Value)
-        : StrongOf<int, TStrong>(Value), IComparable, IStrongInt32
+        : StrongOf<int, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt32
     where TStrong : StrongInt32<TStrong>
 {
     /// <summary>
-    /// Returns the value of the strong type as a int.
+    /// Gets the underlying <see cref="int"/> value.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    /// <returns>The underlying <see cref="int"/> value.</returns>
+    /// <example>
+    /// <code>
+    /// var quantity = new Quantity(10);
+    /// int rawValue = quantity.AsInt(); // 10
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public int AsInt() => Value;
 
     /// <summary>
-    /// Returns the value of the strong type as a int.
+    /// Gets the underlying <see cref="int"/> value.
     /// </summary>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    /// <returns>The underlying <see cref="int"/> value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public int AsInt32() => Value;
 
     /// <summary>
-    /// Creates a new instance of StrongInt32 from a nullable Int32 value.
+    /// Creates a strong type instance from a nullable <see cref="int"/> value.
     /// </summary>
-    /// <param name="value">The nullable char value.</param>
-    /// <returns>A new instance of StrongInt32 if the value has a value, null otherwise.</returns>
+    /// <param name="value">The nullable <see cref="int"/> value to convert.</param>
+    /// <returns>
+    /// A new instance of <typeparamref name="TStrong"/> if <paramref name="value"/> has a value;
+    /// otherwise, <c>null</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// int? nullableQty = GetOptionalQuantity();
+    /// Quantity? quantity = Quantity.FromNullable(nullableQty);
+    /// </code>
+    /// </example>
     [return: NotNullIfNotNull(nameof(value))]
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong? FromNullable(int? value)
     {
         if (value.HasValue)
         {
-            TStrong strong = From(value.Value);
-            return strong;
+            return From(value.Value);
         }
 
         return null;
     }
 
     /// <summary>
-    /// Compares the current instance with another object of the same type and returns an integer that indicates whether the current instance precedes, follows, or occurs in the same position in the sort order as the other object.
+    /// Compares the current instance with another object and returns an integer indicating
+    /// their relative position in the sort order.
     /// </summary>
     /// <param name="other">An object to compare with this instance.</param>
-    /// <returns>A value that indicates the relative order of the objects being compared.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    /// <returns>
+    /// A negative value if this instance precedes <paramref name="other"/>;
+    /// zero if they are equal;
+    /// a positive value if this instance follows <paramref name="other"/>.
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    /// <paramref name="other"/> is not of type <typeparamref name="TStrong"/>.
+    /// </exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public int CompareTo(object? other)
     {
         if (other is null)
@@ -65,13 +118,88 @@ public abstract partial class StrongInt32<TStrong>(int Value)
     }
 
     /// <summary>
-    /// Tries to parse the specified content into a <typeparamref name="TStrong"/> object.
+    /// Compares the current instance with another strong type of the same kind.
     /// </summary>
-    /// <param name="content">The content to parse.</param>
-    /// <param name="strong">When this method returns, contains the parsed value if the parsing succeeded, or <c>null</c> if the parsing failed. The parsing is case-sensitive.</param>
-    /// <param name="formatProvider">An optional <see cref="IFormatProvider"/> that supplies culture-specific formatting information.</param>
-    /// <returns><c>true</c> if the parsing was successful; otherwise, <c>false</c>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    /// <param name="other">The strong type to compare with this instance.</param>
+    /// <returns>
+    /// A negative value if this instance precedes <paramref name="other"/>;
+    /// zero if they are equal;
+    /// a positive value if this instance follows <paramref name="other"/>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public int CompareTo(TStrong? other)
+    {
+        if (other is null)
+        {
+            return 1;
+        }
+
+        return Value.CompareTo(other.Value);
+    }
+
+    /// <summary>
+    /// Determines whether the specified strong type instance is equal to the current instance.
+    /// </summary>
+    /// <param name="other">The strong type to compare with the current instance.</param>
+    /// <returns>
+    /// <c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// var qty1 = new Quantity(10);
+    /// var qty2 = new Quantity(10);
+    /// bool areEqual = qty1.Equals(qty2); // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool Equals(TStrong? other)
+    {
+        if (other is null)
+        {
+            return false;
+        }
+
+        return Value.Equals(other.Value);
+    }
+
+    /// <summary>
+    /// Determines whether the specified object is equal to the current instance.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns>
+    /// <c>true</c> if the specified object is equal to the current instance; otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override bool Equals(object? obj)
+        => obj is TStrong other && Equals(other);
+
+    /// <summary>
+    /// Returns a hash code for this instance.
+    /// </summary>
+    /// <returns>A hash code for this instance.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override int GetHashCode()
+        => Value.GetHashCode();
+
+    /// <summary>
+    /// Tries to parse an <see cref="int"/> from a character span and creates a strong type instance.
+    /// </summary>
+    /// <param name="content">The character span containing the number to parse.</param>
+    /// <param name="strong">
+    /// When this method returns, contains the parsed strong type if successful;
+    /// otherwise, <c>null</c>.
+    /// </param>
+    /// <param name="formatProvider">An optional format provider for culture-specific parsing.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    /// <example>
+    /// <code>
+    /// if (Quantity.TryParse("42", out Quantity? quantity))
+    /// {
+    ///     Console.WriteLine($"Parsed: {quantity}"); // 42
+    /// }
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
         if (int.TryParse(content, formatProvider, out int value))
@@ -83,21 +211,4 @@ public abstract partial class StrongInt32<TStrong>(int Value)
         strong = null;
         return false;
     }
-
-    // Equals
-
-    /// <summary>
-    /// Determines whether the specified object is equal to the current object.
-    /// </summary>
-    /// <param name="obj">The object to compare with the current object.</param>
-    /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override bool Equals(object? obj) => base.Equals(obj);
-
-    /// <summary>
-    /// Serves as the default hash function.
-    /// </summary>
-    /// <returns>A hash code for the current object.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public override int GetHashCode() => base.GetHashCode();
 }

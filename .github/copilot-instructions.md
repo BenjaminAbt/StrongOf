@@ -75,6 +75,30 @@ string rawEmail = email.AsString();
 2. **Use `From()` for generic scenarios** - When you need to create instances in generic code
 3. **Avoid boxing** - Strong types are reference types; use generics to avoid boxing operations
 4. **Pre-size collections** - When converting lists, the library automatically pre-sizes based on source collection
+5. **Use `Equals(TStrong?)` for comparisons** - Prefer the typed method over `Equals(object?)` for better performance
+6. **Use `CompareTo(TStrong?)` for sorting** - Enables efficient sorting without boxing
+
+## Comparison & Equality
+
+All strong types support comparison and equality:
+
+```csharp
+// Equality (IEquatable<T>)
+var id1 = new UserId(guid);
+var id2 = new UserId(guid);
+bool areEqual = id1.Equals(id2);  // true
+bool useOperator = id1 == id2;    // true
+
+// Comparison (IComparable<T>)
+var low = new Priority(1);
+var high = new Priority(10);
+int compare = low.CompareTo(high); // negative value
+bool isLess = low < high;          // true
+
+// Sorting
+var ids = new List<UserId> { userId3, userId1, userId2 };
+ids.Sort(); // Works because of IComparable<T>
+```
 
 ## Testing Conventions
 
@@ -218,10 +242,12 @@ just ci        # Full CI pipeline
 ## Important Design Decisions
 
 1. **Classes over Records** - Records cannot properly inherit `GetHashCode` in unsealed scenarios
-2. **Classes over Structs** - Structs have limitations with ASP.NET Core action parameters
+2. **Classes over Structs** - Structs have limitations with ASP.NET Core action parameters (require default constructors)
 3. **No Code Generator** - Generators complicate generic extensions and implementations
 4. **Factory Delegate Caching** - `StrongOf<T>` caches a factory delegate for efficient `From()` calls
 5. **Nullable Annotations** - Full nullable reference type support with `[NotNullIfNotNull]` attributes
+6. **Aggressive Optimization** - All methods use `[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]`
+7. **IEquatable & IComparable** - All strong types implement `IEquatable<TStrong>` and `IComparable<TStrong>` for proper sorting and equality
 
 ## Interfaces
 
@@ -236,6 +262,11 @@ Each strong type implements corresponding interfaces for generic constraints:
 - `IStrongChar` - For char-based strong types
 - `IStrongDateTime` - For DateTime-based strong types
 - `IStrongDateTimeOffset` - For DateTimeOffset-based strong types
+
+Additionally, all strong types implement:
+- `IComparable` - Non-generic interface for sorting
+- `IComparable<TStrong>` - Generic interface for type-safe sorting
+- `IEquatable<TStrong>` - Generic interface for type-safe equality
 
 ## File Organization
 
