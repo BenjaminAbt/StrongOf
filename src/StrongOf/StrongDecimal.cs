@@ -276,4 +276,13 @@ public abstract partial class StrongDecimal<TStrong>(decimal Value)
     /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToString(string format) => Value.ToString(format);
+
+    /// <summary>
+    /// Formats the value using the specified format and culture-specific format information.
+    /// </summary>
+    /// <param name="format">A standard or custom numeric format string.</param>
+    /// <param name="formatProvider">An object that provides culture-specific formatting information.</param>
+    /// <returns>The formatted string representation of the value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public string ToString(string? format, IFormatProvider? formatProvider) => Value.ToString(format, formatProvider);
 }

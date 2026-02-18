@@ -120,7 +120,7 @@ public class StrongDecimalTests
     public void ToString_WithFormat_ReturnsFormattedString()
     {
         TestDecimalOf strong = new(1234.5m);
-        Assert.Equal("1234.50", strong.ToString("F2"));
+        Assert.Equal("1234.50", strong.ToString("F2", System.Globalization.CultureInfo.InvariantCulture));
     }
 
     [Fact]

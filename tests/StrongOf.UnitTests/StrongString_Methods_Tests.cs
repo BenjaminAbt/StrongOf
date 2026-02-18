@@ -126,6 +126,16 @@ public class StrongString_Methods_Tests
         }
     }
 
+    public static TheoryData<bool, string, string> ContainsInvalidBytesTestsData =>
+        new()
+        {
+            { false, "", "Hello World" },
+            { false, "", "test123" },
+            { false, "", "" },
+            { true, "🎉", "Hello🎉World" },
+            { true, "☀", "Sun☀shine" },
+        };
+
     [Fact]
     public void IsNullOrWhiteSpace_WithWhitespace_ReturnsTrue()
     {
@@ -165,7 +175,7 @@ public class StrongString_Methods_Tests
     public void Contains_String_ReturnsTrue()
     {
         TestStringOf strongString = new("Hello World");
-        Assert.True(strongString.Contains("World"));
+        Assert.True(strongString.Contains("World", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -186,14 +196,14 @@ public class StrongString_Methods_Tests
     public void StartsWith_String_ReturnsTrue()
     {
         TestStringOf strongString = new("Hello World");
-        Assert.True(strongString.StartsWith("Hello"));
+        Assert.True(strongString.StartsWith("Hello", StringComparison.Ordinal));
     }
 
     [Fact]
     public void StartsWith_String_ReturnsFalse()
     {
         TestStringOf strongString = new("Hello World");
-        Assert.False(strongString.StartsWith("World"));
+        Assert.False(strongString.StartsWith("World", StringComparison.Ordinal));
     }
 
     [Fact]
@@ -214,14 +224,14 @@ public class StrongString_Methods_Tests
     public void EndsWith_String_ReturnsTrue()
     {
         TestStringOf strongString = new("Hello World");
-        Assert.True(strongString.EndsWith("World"));
+        Assert.True(strongString.EndsWith("World", StringComparison.Ordinal));
     }
 
     [Fact]
     public void EndsWith_String_ReturnsFalse()
     {
         TestStringOf strongString = new("Hello World");
-        Assert.False(strongString.EndsWith("Hello"));
+        Assert.False(strongString.EndsWith("Hello", StringComparison.Ordinal));
     }
 
     [Fact]

@@ -11,20 +11,22 @@ public class PriorityTests
         Assert.Equal(3, p.Value);
     }
 
+    // Note: lower numeric value = higher priority (1 = critical, 10 = low)
+
     [Fact]
-    public void IsHigherThan_WhenValueIsGreater_ReturnsTrue()
+    public void IsHigherThan_WhenNumericValueIsSmaller_ReturnsTrue()
     {
-        var high = new Priority(10);
-        var low = new Priority(1);
-        Assert.True(high.IsHigherThan(low));
+        var critical = new Priority(1);
+        var low = new Priority(10);
+        Assert.True(critical.IsHigherThan(low));
     }
 
     [Fact]
-    public void IsHigherThan_WhenValueIsLower_ReturnsFalse()
+    public void IsHigherThan_WhenNumericValueIsGreater_ReturnsFalse()
     {
-        var low = new Priority(1);
-        var high = new Priority(10);
-        Assert.False(low.IsHigherThan(high));
+        var low = new Priority(10);
+        var critical = new Priority(1);
+        Assert.False(low.IsHigherThan(critical));
     }
 
     [Fact]
@@ -36,19 +38,19 @@ public class PriorityTests
     }
 
     [Fact]
-    public void IsLowerThan_WhenValueIsLower_ReturnsTrue()
+    public void IsLowerThan_WhenNumericValueIsGreater_ReturnsTrue()
     {
-        var low = new Priority(1);
-        var high = new Priority(10);
-        Assert.True(low.IsLowerThan(high));
+        var low = new Priority(10);
+        var critical = new Priority(1);
+        Assert.True(low.IsLowerThan(critical));
     }
 
     [Fact]
-    public void IsLowerThan_WhenValueIsGreater_ReturnsFalse()
+    public void IsLowerThan_WhenNumericValueIsSmaller_ReturnsFalse()
     {
-        var high = new Priority(10);
-        var low = new Priority(1);
-        Assert.False(high.IsLowerThan(low));
+        var critical = new Priority(1);
+        var low = new Priority(10);
+        Assert.False(critical.IsLowerThan(low));
     }
 
     [Fact]

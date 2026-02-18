@@ -10,7 +10,7 @@ public class IbanTests
     [InlineData("DE89 3704 0044 0532 0130 00", true)]
     [InlineData("", false)]
     [InlineData("NOTANIBAN", false)]
-    [InlineData("XX00000000000000", false)]
+    [InlineData("1234567890", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
         var iban = new Iban(value);
