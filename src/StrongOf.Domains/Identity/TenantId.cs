@@ -21,7 +21,7 @@ namespace StrongOf.Domains.Identity;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(TenantIdTypeConverter))]
+[TypeConverter(typeof(StrongGuidTypeConverter<TenantId>))]
 public sealed class TenantId(Guid value) : StrongGuid<TenantId>(value)
 {
     /// <summary>
@@ -37,23 +37,4 @@ public sealed class TenantId(Guid value) : StrongGuid<TenantId>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool HasValue()
         => Value != Guid.Empty;
-}
-
-/// <summary>
-/// Type converter for <see cref="TenantId"/>.
-/// </summary>
-public sealed class TenantIdTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(Guid) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value switch
-        {
-            Guid g => new TenantId(g),
-            string s when Guid.TryParse(s, out Guid parsed) => new TenantId(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
 }

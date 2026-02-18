@@ -24,8 +24,8 @@ namespace StrongOf.Domains.Network;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(EmailAddressTypeConverter))]
-public sealed partial class EmailAddress(string value) : StrongString<EmailAddress>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<EmailAddress>))]
+public sealed partial class EmailAddress(string value) : StrongString<EmailAddress>(value), IValidatable
 {
     /// <summary>
     /// Regular expression pattern for validating email addresses.
@@ -83,18 +83,28 @@ public sealed partial class EmailAddress(string value) : StrongString<EmailAddre
         int atIndex = Value.IndexOf('@');
         return atIndex >= 0 ? Value[..atIndex] : Value;
     }
-}
-
-/// <summary>
-/// Type converter for <see cref="EmailAddress"/>.
-/// </summary>
-public sealed class EmailAddressTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new EmailAddress(stringValue) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out EmailAddress? result)
+    {
+        if (value is not null)
+        {
+            EmailAddress candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

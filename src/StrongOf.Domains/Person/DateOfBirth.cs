@@ -21,7 +21,7 @@ namespace StrongOf.Domains.Person;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(DateOfBirthTypeConverter))]
+[TypeConverter(typeof(StrongDateTimeTypeConverter<DateOfBirth>))]
 public sealed class DateOfBirth(DateTime value) : StrongDateTime<DateOfBirth>(value)
 {
     /// <summary>
@@ -45,25 +45,4 @@ public sealed class DateOfBirth(DateTime value) : StrongDateTime<DateOfBirth>(va
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsReasonableAge(int maxYears = 130)
         => Value >= DateTime.UtcNow.AddYears(-maxYears) && Value <= DateTime.UtcNow;
-}
-
-/// <summary>
-/// Type converter for <see cref="DateOfBirth"/>.
-/// </summary>
-public sealed class DateOfBirthTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(DateTime) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            DateTime dt => new DateOfBirth(dt),
-            string s when DateTime.TryParse(s, culture, System.Globalization.DateTimeStyles.RoundtripKind, out DateTime parsed) => new DateOfBirth(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

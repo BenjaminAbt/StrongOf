@@ -22,7 +22,7 @@ namespace StrongOf.Domains.Finance;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}%")]
-[TypeConverter(typeof(PercentageTypeConverter))]
+[TypeConverter(typeof(StrongDecimalTypeConverter<Percentage>))]
 public sealed class Percentage(decimal value) : StrongDecimal<Percentage>(value)
 {
     /// <summary>
@@ -87,28 +87,4 @@ public sealed class Percentage(decimal value) : StrongDecimal<Percentage>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public Percentage Clamp()
         => new(Math.Clamp(Value, MinValue, MaxValue));
-}
-
-/// <summary>
-/// Type converter for <see cref="Percentage"/>.
-/// </summary>
-public sealed class PercentageTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(decimal) || sourceType == typeof(double) || sourceType == typeof(int) ||
-           sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            decimal d => new Percentage(d),
-            double d => new Percentage((decimal)d),
-            int i => new Percentage(i),
-            string s when decimal.TryParse(s, System.Globalization.NumberStyles.Number, culture, out decimal parsed) => new Percentage(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

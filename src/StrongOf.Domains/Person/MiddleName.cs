@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Person;
 /// Represents a strongly-typed middle name.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(MiddleNameTypeConverter))]
+[TypeConverter(typeof(StrongStringTypeConverter<MiddleName>))]
 public sealed class MiddleName(string value) : StrongString<MiddleName>(value)
 {
     /// <summary>
@@ -36,18 +36,4 @@ public sealed class MiddleName(string value) : StrongString<MiddleName>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string Trimmed()
         => Value.Trim();
-}
-
-/// <summary>
-/// Type converter for <see cref="MiddleName"/>.
-/// </summary>
-public sealed class MiddleNameTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new MiddleName(stringValue) : base.ConvertFrom(context, culture, value);
 }

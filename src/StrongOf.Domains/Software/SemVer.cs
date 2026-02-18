@@ -11,8 +11,8 @@ namespace StrongOf.Domains.Software;
 /// Represents a strongly-typed semantic version (SemVer 2.0.0).
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(SemVerTypeConverter))]
-public sealed partial class SemVer(string value) : StrongString<SemVer>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<SemVer>))]
+public sealed partial class SemVer(string value) : StrongString<SemVer>(value), IValidatable
 {
     [GeneratedRegex(@"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex SemVerRegex();
@@ -38,18 +38,28 @@ public sealed partial class SemVer(string value) : StrongString<SemVer>(value)
         string[] parts = Value.Split('.', 3, StringSplitOptions.RemoveEmptyEntries);
         return parts.Length >= 1 && int.TryParse(parts[0], System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out major);
     }
-}
-
-/// <summary>
-/// Type converter for <see cref="SemVer"/>.
-/// </summary>
-public sealed class SemVerTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new SemVer(stringValue) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out SemVer? result)
+    {
+        if (value is not null)
+        {
+            SemVer candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

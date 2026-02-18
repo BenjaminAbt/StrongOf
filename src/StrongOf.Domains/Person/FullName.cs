@@ -21,8 +21,8 @@ namespace StrongOf.Domains.Person;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(FullNameTypeConverter))]
-public sealed class FullName(string value) : StrongString<FullName>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<FullName>))]
+public sealed class FullName(string value) : StrongString<FullName>(value), IValidatable
 {
     /// <summary>
     /// Creates a <see cref="FullName"/> from a <see cref="FirstName"/> and <see cref="LastName"/>.
@@ -97,18 +97,28 @@ public sealed class FullName(string value) : StrongString<FullName>(value)
         }
         return new string(initials);
     }
-}
-
-/// <summary>
-/// Type converter for <see cref="FullName"/>.
-/// </summary>
-public sealed class FullNameTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new FullName(stringValue) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out FullName? result)
+    {
+        if (value is not null)
+        {
+            FullName candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

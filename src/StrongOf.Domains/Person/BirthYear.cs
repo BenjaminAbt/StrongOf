@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Person;
 /// Represents a strongly-typed year of birth.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(BirthYearTypeConverter))]
+[TypeConverter(typeof(StrongInt32TypeConverter<BirthYear>))]
 public sealed class BirthYear(int value) : StrongInt32<BirthYear>(value)
 {
     /// <summary>
@@ -36,25 +36,4 @@ public sealed class BirthYear(int value) : StrongInt32<BirthYear>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsLeapYear()
         => DateTime.IsLeapYear(Value);
-}
-
-/// <summary>
-/// Type converter for <see cref="BirthYear"/>.
-/// </summary>
-public sealed class BirthYearTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(int) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            int i => new BirthYear(i),
-            string s when int.TryParse(s, System.Globalization.NumberStyles.Integer, culture, out int parsed) => new BirthYear(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

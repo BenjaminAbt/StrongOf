@@ -25,8 +25,8 @@ namespace StrongOf.Domains.Media;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(IsbnTypeConverter))]
-public sealed partial class Isbn(string value) : StrongString<Isbn>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<Isbn>))]
+public sealed partial class Isbn(string value) : StrongString<Isbn>(value), IValidatable
 {
     /// <summary>
     /// Regular expression for ISBN-10.
@@ -67,18 +67,28 @@ public sealed partial class Isbn(string value) : StrongString<Isbn>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToNormalizedString()
         => Value.Replace("-", "").Replace(" ", "");
-}
-
-/// <summary>
-/// Type converter for <see cref="Isbn"/>.
-/// </summary>
-public sealed class IsbnTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string s ? new Isbn(s) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out Isbn? result)
+    {
+        if (value is not null)
+        {
+            Isbn candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

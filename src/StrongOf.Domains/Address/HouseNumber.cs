@@ -11,8 +11,8 @@ namespace StrongOf.Domains.Address;
 /// Represents a strongly-typed house number.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(HouseNumberTypeConverter))]
-public sealed partial class HouseNumber(string value) : StrongString<HouseNumber>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<HouseNumber>))]
+public sealed partial class HouseNumber(string value) : StrongString<HouseNumber>(value), IValidatable
 {
     /// <summary>
     /// Regular expression for house numbers such as "12", "12A", "12/3".
@@ -41,18 +41,28 @@ public sealed partial class HouseNumber(string value) : StrongString<HouseNumber
 
         return i == 0 ? 0 : int.Parse(Value[..i], System.Globalization.CultureInfo.InvariantCulture);
     }
-}
-
-/// <summary>
-/// Type converter for <see cref="HouseNumber"/>.
-/// </summary>
-public sealed class HouseNumberTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new HouseNumber(stringValue) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out HouseNumber? result)
+    {
+        if (value is not null)
+        {
+            HouseNumber candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

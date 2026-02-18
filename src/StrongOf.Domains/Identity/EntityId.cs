@@ -21,7 +21,7 @@ namespace StrongOf.Domains.Identity;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(EntityIdTypeConverter))]
+[TypeConverter(typeof(StrongGuidTypeConverter<EntityId>))]
 public sealed class EntityId(Guid value) : StrongGuid<EntityId>(value)
 {
     /// <summary>
@@ -77,25 +77,4 @@ public sealed class EntityId(Guid value) : StrongGuid<EntityId>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToShortString()
         => Value.ToString("N")[..8];
-}
-
-/// <summary>
-/// Type converter for <see cref="EntityId"/>.
-/// </summary>
-public sealed class EntityIdTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(Guid) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            Guid g => new EntityId(g),
-            string s when Guid.TryParse(s, out Guid parsed) => new EntityId(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

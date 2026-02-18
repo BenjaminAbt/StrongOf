@@ -23,8 +23,8 @@ namespace StrongOf.Domains.Localization;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(LocaleTypeConverter))]
-public sealed partial class Locale(string value) : StrongString<Locale>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<Locale>))]
+public sealed partial class Locale(string value) : StrongString<Locale>(value), IValidatable
 {
     /// <summary>
     /// Regular expression pattern validating BCP 47 locale format.
@@ -55,18 +55,45 @@ public sealed partial class Locale(string value) : StrongString<Locale>(value)
             return null;
         }
     }
-}
-
-/// <summary>
-/// Type converter for <see cref="Locale"/>.
-/// </summary>
-public sealed class LocaleTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
 
     /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string s ? new Locale(s) : base.ConvertFrom(context, culture, value);
+    /// <remarks>Comparison is case-insensitive because Locale is defined as case-insensitive by its specification.</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool Equals(Locale? other)
+        => other is not null && string.Equals(Value, other.Value, StringComparison.OrdinalIgnoreCase);
+
+    /// <inheritdoc />
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override bool Equals(object? obj)
+        => obj is Locale other && Equals(other);
+
+    /// <inheritdoc />
+    /// <remarks>Hash code is case-insensitive to match <see cref="Equals(Locale?)"/>.</remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public override int GetHashCode()
+        => Value.GetHashCode(StringComparison.OrdinalIgnoreCase);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out Locale? result)
+    {
+        if (value is not null)
+        {
+            Locale candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

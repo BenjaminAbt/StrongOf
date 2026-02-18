@@ -23,8 +23,8 @@ namespace StrongOf.Domains.Identity;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(UsernameTypeConverter))]
-public sealed partial class Username(string value) : StrongString<Username>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<Username>))]
+public sealed partial class Username(string value) : StrongString<Username>(value), IValidatable
 {
     /// <summary>
     /// The minimum length for a valid username.
@@ -70,18 +70,28 @@ public sealed partial class Username(string value) : StrongString<Username>(valu
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToLowerCase()
         => Value.ToLowerInvariant();
-}
-
-/// <summary>
-/// Type converter for <see cref="Username"/>.
-/// </summary>
-public sealed class UsernameTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new Username(stringValue) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out Username? result)
+    {
+        if (value is not null)
+        {
+            Username candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

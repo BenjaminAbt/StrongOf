@@ -21,8 +21,8 @@ namespace StrongOf.Domains.Address;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(CityTypeConverter))]
-public sealed class City(string value) : StrongString<City>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<City>))]
+public sealed class City(string value) : StrongString<City>(value), IValidatable
 {
     /// <summary>
     /// Validates whether the city name has a valid format.
@@ -45,18 +45,28 @@ public sealed class City(string value) : StrongString<City>(value)
         }
         return true;
     }
-}
-
-/// <summary>
-/// Type converter for <see cref="City"/>.
-/// </summary>
-public sealed class CityTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new City(stringValue) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out City? result)
+    {
+        if (value is not null)
+        {
+            City candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

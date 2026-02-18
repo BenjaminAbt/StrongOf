@@ -11,7 +11,7 @@ namespace StrongOf.Domains.Media;
 /// Represents a strongly-typed file path.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(FilePathTypeConverter))]
+[TypeConverter(typeof(StrongStringTypeConverter<FilePath>))]
 public sealed class FilePath(string value) : StrongString<FilePath>(value)
 {
     /// <summary>
@@ -41,18 +41,4 @@ public sealed class FilePath(string value) : StrongString<FilePath>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string GetFileName()
         => Path.GetFileName(Value);
-}
-
-/// <summary>
-/// Type converter for <see cref="FilePath"/>.
-/// </summary>
-public sealed class FilePathTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new FilePath(stringValue) : base.ConvertFrom(context, culture, value);
 }

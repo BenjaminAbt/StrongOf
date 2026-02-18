@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Network;
 /// Represents a strongly-typed HTTP method.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(HttpMethodTypeConverter))]
+[TypeConverter(typeof(StrongStringTypeConverter<HttpMethod>))]
 public sealed class HttpMethod(string value) : StrongString<HttpMethod>(value)
 {
     private static readonly HashSet<string> s_standardMethods = new(StringComparer.OrdinalIgnoreCase)
@@ -31,18 +31,4 @@ public sealed class HttpMethod(string value) : StrongString<HttpMethod>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToUpperCase()
         => Value.ToUpperInvariant();
-}
-
-/// <summary>
-/// Type converter for <see cref="HttpMethod"/>.
-/// </summary>
-public sealed class HttpMethodTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new HttpMethod(stringValue) : base.ConvertFrom(context, culture, value);
 }

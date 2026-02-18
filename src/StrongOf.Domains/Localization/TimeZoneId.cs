@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Localization;
 /// Represents a strongly-typed time zone identifier.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(TimeZoneIdTypeConverter))]
+[TypeConverter(typeof(StrongStringTypeConverter<TimeZoneId>))]
 public sealed class TimeZoneId(string value) : StrongString<TimeZoneId>(value)
 {
     /// <summary>
@@ -36,18 +36,4 @@ public sealed class TimeZoneId(string value) : StrongString<TimeZoneId>(value)
             return false;
         }
     }
-}
-
-/// <summary>
-/// Type converter for <see cref="TimeZoneId"/>.
-/// </summary>
-public sealed class TimeZoneIdTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new TimeZoneId(stringValue) : base.ConvertFrom(context, culture, value);
 }

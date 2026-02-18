@@ -21,7 +21,7 @@ namespace StrongOf.Domains.Person;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value} years")]
-[TypeConverter(typeof(AgeTypeConverter))]
+[TypeConverter(typeof(StrongInt32TypeConverter<Age>))]
 public sealed class Age(int value) : StrongInt32<Age>(value)
 {
     /// <summary>
@@ -94,25 +94,4 @@ public sealed class Age(int value) : StrongInt32<Age>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsMinor(int adultAge = AdultAge)
         => Value < adultAge;
-}
-
-/// <summary>
-/// Type converter for <see cref="Age"/>.
-/// </summary>
-public sealed class AgeTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(int) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            int i => new Age(i),
-            string s when int.TryParse(s, System.Globalization.NumberStyles.Integer, culture, out int parsed) => new Age(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

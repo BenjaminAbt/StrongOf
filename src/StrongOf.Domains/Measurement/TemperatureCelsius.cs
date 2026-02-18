@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Measurement;
 /// Represents a strongly-typed temperature in Celsius.
 /// </summary>
 [DebuggerDisplay("{Value} °C")]
-[TypeConverter(typeof(TemperatureCelsiusTypeConverter))]
+[TypeConverter(typeof(StrongDecimalTypeConverter<TemperatureCelsius>))]
 public sealed class TemperatureCelsius(decimal value) : StrongDecimal<TemperatureCelsius>(value)
 {
     /// <summary>
@@ -43,28 +43,4 @@ public sealed class TemperatureCelsius(decimal value) : StrongDecimal<Temperatur
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public decimal ToKelvin()
         => Value + 273.15m;
-}
-
-/// <summary>
-/// Type converter for <see cref="TemperatureCelsius"/>.
-/// </summary>
-public sealed class TemperatureCelsiusTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(decimal) || sourceType == typeof(double) || sourceType == typeof(int) ||
-           sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            decimal d => new TemperatureCelsius(d),
-            double d => new TemperatureCelsius((decimal)d),
-            int i => new TemperatureCelsius(i),
-            string s when decimal.TryParse(s, System.Globalization.NumberStyles.Number, culture, out decimal parsed) => new TemperatureCelsius(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

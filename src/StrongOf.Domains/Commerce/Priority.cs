@@ -22,7 +22,7 @@ namespace StrongOf.Domains.Commerce;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(PriorityTypeConverter))]
+[TypeConverter(typeof(StrongInt32TypeConverter<Priority>))]
 public sealed class Priority(int value) : StrongInt32<Priority>(value)
 {
     /// <summary>
@@ -38,23 +38,4 @@ public sealed class Priority(int value) : StrongInt32<Priority>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsLowerThan(Priority other)
         => Value > other.Value;
-}
-
-/// <summary>
-/// Type converter for <see cref="Priority"/>.
-/// </summary>
-public sealed class PriorityTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(int) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value switch
-        {
-            int i => new Priority(i),
-            string s when int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int parsed) => new Priority(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
 }

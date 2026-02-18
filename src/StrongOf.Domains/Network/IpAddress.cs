@@ -23,8 +23,8 @@ namespace StrongOf.Domains.Network;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(IpAddressTypeConverter))]
-public sealed class IpAddress(string value) : StrongString<IpAddress>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<IpAddress>))]
+public sealed class IpAddress(string value) : StrongString<IpAddress>(value), IValidatable
 {
     /// <summary>
     /// Validates whether the IP address has a valid format.
@@ -85,18 +85,28 @@ public sealed class IpAddress(string value) : StrongString<IpAddress>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public IPAddress? ToIPAddress()
         => IPAddress.TryParse(Value, out IPAddress? ip) ? ip : null;
-}
-
-/// <summary>
-/// Type converter for <see cref="IpAddress"/>.
-/// </summary>
-public sealed class IpAddressTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new IpAddress(stringValue) : base.ConvertFrom(context, culture, value);
+    /// <summary>
+    /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
+    /// </summary>
+    /// <param name="value">The input string to validate and wrap.</param>
+    /// <param name="result">
+    /// When this method returns, contains the created instance if the format is valid;
+    /// otherwise, <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out IpAddress? result)
+    {
+        if (value is not null)
+        {
+            IpAddress candidate = new(value);
+            if (candidate.IsValidFormat())
+            {
+                result = candidate;
+                return true;
+            }
+        }
+        result = null;
+        return false;
+    }
 }

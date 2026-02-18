@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Geography;
 /// Represents a strongly-typed longitude value.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(LongitudeTypeConverter))]
+[TypeConverter(typeof(StrongDecimalTypeConverter<Longitude>))]
 public sealed class Longitude(decimal value) : StrongDecimal<Longitude>(value)
 {
     /// <summary>
@@ -36,28 +36,4 @@ public sealed class Longitude(decimal value) : StrongDecimal<Longitude>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public Longitude Clamp()
         => new(Math.Clamp(Value, MinValue, MaxValue));
-}
-
-/// <summary>
-/// Type converter for <see cref="Longitude"/>.
-/// </summary>
-public sealed class LongitudeTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(decimal) || sourceType == typeof(double) || sourceType == typeof(int) ||
-           sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            decimal d => new Longitude(d),
-            double d => new Longitude((decimal)d),
-            int i => new Longitude(i),
-            string s when decimal.TryParse(s, System.Globalization.NumberStyles.Number, culture, out decimal parsed) => new Longitude(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

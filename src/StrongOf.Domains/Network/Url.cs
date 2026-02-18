@@ -23,8 +23,8 @@ namespace StrongOf.Domains.Network;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(UrlTypeConverter))]
-public sealed class Url(string value) : StrongString<Url>(value)
+[TypeConverter(typeof(StrongStringTypeConverter<Url>))]
+public sealed class Url(string value) : StrongString<Url>(value), IValidatable
 {
     /// <summary>
     /// Validates whether the URL has a valid format.
@@ -99,18 +99,4 @@ public sealed class Url(string value) : StrongString<Url>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public Uri? ToUri()
         => Uri.TryCreate(Value, UriKind.Absolute, out Uri? uri) ? uri : null;
-}
-
-/// <summary>
-/// Type converter for <see cref="Url"/>.
-/// </summary>
-public sealed class UrlTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value is string stringValue ? new Url(stringValue) : base.ConvertFrom(context, culture, value);
 }

@@ -21,7 +21,7 @@ namespace StrongOf.Domains.Identity;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(CorrelationIdTypeConverter))]
+[TypeConverter(typeof(StrongGuidTypeConverter<CorrelationId>))]
 public sealed class CorrelationId(Guid value) : StrongGuid<CorrelationId>(value)
 {
     /// <summary>
@@ -37,23 +37,4 @@ public sealed class CorrelationId(Guid value) : StrongGuid<CorrelationId>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool HasValue()
         => Value != Guid.Empty;
-}
-
-/// <summary>
-/// Type converter for <see cref="CorrelationId"/>.
-/// </summary>
-public sealed class CorrelationIdTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(Guid) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value switch
-        {
-            Guid g => new CorrelationId(g),
-            string s when Guid.TryParse(s, out Guid parsed) => new CorrelationId(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
 }

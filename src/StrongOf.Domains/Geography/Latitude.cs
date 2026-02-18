@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Geography;
 /// Represents a strongly-typed latitude value.
 /// </summary>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(LatitudeTypeConverter))]
+[TypeConverter(typeof(StrongDecimalTypeConverter<Latitude>))]
 public sealed class Latitude(decimal value) : StrongDecimal<Latitude>(value)
 {
     /// <summary>
@@ -36,28 +36,4 @@ public sealed class Latitude(decimal value) : StrongDecimal<Latitude>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public Latitude Clamp()
         => new(Math.Clamp(Value, MinValue, MaxValue));
-}
-
-/// <summary>
-/// Type converter for <see cref="Latitude"/>.
-/// </summary>
-public sealed class LatitudeTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(decimal) || sourceType == typeof(double) || sourceType == typeof(int) ||
-           sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            decimal d => new Latitude(d),
-            double d => new Latitude((decimal)d),
-            int i => new Latitude(i),
-            string s when decimal.TryParse(s, System.Globalization.NumberStyles.Number, culture, out decimal parsed) => new Latitude(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

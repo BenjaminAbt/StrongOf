@@ -21,7 +21,7 @@ namespace StrongOf.Domains.Network;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(PortTypeConverter))]
+[TypeConverter(typeof(StrongInt32TypeConverter<Port>))]
 public sealed class Port(int value) : StrongInt32<Port>(value)
 {
     /// <summary>
@@ -101,25 +101,4 @@ public sealed class Port(int value) : StrongInt32<Port>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsDynamicPort()
         => Value > RegisteredPortMax && Value <= MaxValue;
-}
-
-/// <summary>
-/// Type converter for <see cref="Port"/>.
-/// </summary>
-public sealed class PortTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(int) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            int i => new Port(i),
-            string s when int.TryParse(s, System.Globalization.NumberStyles.Integer, culture, out int parsed) => new Port(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

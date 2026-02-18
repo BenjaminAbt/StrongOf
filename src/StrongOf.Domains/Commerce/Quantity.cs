@@ -21,7 +21,7 @@ namespace StrongOf.Domains.Commerce;
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(QuantityTypeConverter))]
+[TypeConverter(typeof(StrongInt32TypeConverter<Quantity>))]
 public sealed class Quantity(int value) : StrongInt32<Quantity>(value)
 {
     /// <summary>
@@ -42,23 +42,4 @@ public sealed class Quantity(int value) : StrongInt32<Quantity>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsZero()
         => Value == 0;
-}
-
-/// <summary>
-/// Type converter for <see cref="Quantity"/>.
-/// </summary>
-public sealed class QuantityTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(int) || sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-        => value switch
-        {
-            int i => new Quantity(i),
-            string s when int.TryParse(s, System.Globalization.NumberStyles.Integer, System.Globalization.CultureInfo.InvariantCulture, out int parsed) => new Quantity(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
 }

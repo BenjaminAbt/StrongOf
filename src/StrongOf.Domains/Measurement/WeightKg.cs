@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Measurement;
 /// Represents a strongly-typed weight in kilograms.
 /// </summary>
 [DebuggerDisplay("{Value} kg")]
-[TypeConverter(typeof(WeightKgTypeConverter))]
+[TypeConverter(typeof(StrongDecimalTypeConverter<WeightKg>))]
 public sealed class WeightKg(decimal value) : StrongDecimal<WeightKg>(value)
 {
     /// <summary>
@@ -43,28 +43,4 @@ public sealed class WeightKg(decimal value) : StrongDecimal<WeightKg>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public WeightKg Clamp()
         => new(Math.Clamp(Value, MinValue, MaxValue));
-}
-
-/// <summary>
-/// Type converter for <see cref="WeightKg"/>.
-/// </summary>
-public sealed class WeightKgTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(decimal) || sourceType == typeof(double) || sourceType == typeof(int) ||
-           sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            decimal d => new WeightKg(d),
-            double d => new WeightKg((decimal)d),
-            int i => new WeightKg(i),
-            string s when decimal.TryParse(s, System.Globalization.NumberStyles.Number, culture, out decimal parsed) => new WeightKg(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }

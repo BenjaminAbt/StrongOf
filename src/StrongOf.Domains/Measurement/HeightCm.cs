@@ -10,7 +10,7 @@ namespace StrongOf.Domains.Measurement;
 /// Represents a strongly-typed height in centimeters.
 /// </summary>
 [DebuggerDisplay("{Value} cm")]
-[TypeConverter(typeof(HeightCmTypeConverter))]
+[TypeConverter(typeof(StrongDecimalTypeConverter<HeightCm>))]
 public sealed class HeightCm(decimal value) : StrongDecimal<HeightCm>(value)
 {
     /// <summary>
@@ -43,28 +43,4 @@ public sealed class HeightCm(decimal value) : StrongDecimal<HeightCm>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public HeightCm Clamp()
         => new(Math.Clamp(Value, MinValue, MaxValue));
-}
-
-/// <summary>
-/// Type converter for <see cref="HeightCm"/>.
-/// </summary>
-public sealed class HeightCmTypeConverter : TypeConverter
-{
-    /// <inheritdoc />
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
-        => sourceType == typeof(decimal) || sourceType == typeof(double) || sourceType == typeof(int) ||
-           sourceType == typeof(string) || base.CanConvertFrom(context, sourceType);
-
-    /// <inheritdoc />
-    public override object? ConvertFrom(ITypeDescriptorContext? context, System.Globalization.CultureInfo? culture, object value)
-    {
-        return value switch
-        {
-            decimal d => new HeightCm(d),
-            double d => new HeightCm((decimal)d),
-            int i => new HeightCm(i),
-            string s when decimal.TryParse(s, System.Globalization.NumberStyles.Number, culture, out decimal parsed) => new HeightCm(parsed),
-            _ => base.ConvertFrom(context, culture, value)
-        };
-    }
 }
