@@ -9,8 +9,24 @@ using System.Text.RegularExpressions;
 namespace StrongOf.Domains.Software;
 
 /// <summary>
-/// Represents a strongly-typed semantic version (SemVer 2.0.0).
+/// Represents a strongly-typed semantic version string following SemVer 2.0.0.
 /// </summary>
+/// <remarks>
+/// <para>
+/// A valid SemVer string has the form <c>MAJOR.MINOR.PATCH[-pre][+build]</c>.
+/// Use <see cref="IsValidFormat"/> to validate and <see cref="TryGetMajor"/> to extract the major version.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// SemVer version = new("2.1.0-beta.1");
+/// bool valid = version.IsValidFormat(); // true
+/// if (version.TryGetMajor(out int major))
+/// {
+///     // major == 2
+/// }
+/// </code>
+/// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<SemVer>))]
 public sealed partial class SemVer(string value) : StrongString<SemVer>(value), IValidatable
@@ -21,13 +37,16 @@ public sealed partial class SemVer(string value) : StrongString<SemVer>(value), 
     /// <summary>
     /// Determines whether the semantic version has a valid format.
     /// </summary>
+    /// <returns><see langword="true"/> if the value matches the SemVer 2.0.0 pattern; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
         => !string.IsNullOrWhiteSpace(Value) && SemVerRegex().IsMatch(Value);
 
     /// <summary>
-    /// Tries to read the major version component.
+    /// Tries to read the major version component from the version string.
     /// </summary>
+    /// <param name="major">When this method returns <see langword="true"/>, contains the major version number; otherwise, 0.</param>
+    /// <returns><see langword="true"/> if the major component could be parsed; otherwise, <see langword="false"/>.</returns>
     public bool TryGetMajor(out int major)
     {
         major = 0;

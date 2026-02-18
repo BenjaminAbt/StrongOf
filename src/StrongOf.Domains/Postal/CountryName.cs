@@ -9,8 +9,21 @@ using System.Text.RegularExpressions;
 namespace StrongOf.Domains.Postal;
 
 /// <summary>
-/// Represents a strongly-typed country name.
+/// Represents a strongly-typed country name (e.g. "Germany", "United States").
 /// </summary>
+/// <remarks>
+/// <para>
+/// Valid country names are between <see cref="MinLength"/> and <see cref="MaxLength"/> characters
+/// and consist only of Unicode letters, spaces, hyphens, and apostrophes.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// CountryName name = new("Germany");
+/// bool valid = name.IsValidFormat(); // true
+/// string upper = name.ToUpperCase(); // "GERMANY"
+/// </code>
+/// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<CountryName>))]
 public sealed partial class CountryName(string value) : StrongString<CountryName>(value), IValidatable
@@ -31,6 +44,10 @@ public sealed partial class CountryName(string value) : StrongString<CountryName
     /// <summary>
     /// Determines whether the country name has a valid format.
     /// </summary>
+    /// <returns>
+    /// <see langword="true"/> if the value is non-empty, within length bounds, and matches the
+    /// allowed character pattern; otherwise, <see langword="false"/>.
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
         => !string.IsNullOrWhiteSpace(Value) && Value.Length >= MinLength && Value.Length <= MaxLength && CountryNameRegex().IsMatch(Value);
@@ -38,6 +55,7 @@ public sealed partial class CountryName(string value) : StrongString<CountryName
     /// <summary>
     /// Returns the country name in uppercase.
     /// </summary>
+    /// <returns>The country name converted to uppercase using the invariant culture.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToUpperCase()
         => Value.ToUpperInvariant();

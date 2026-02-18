@@ -9,8 +9,22 @@ using System.Text.RegularExpressions;
 namespace StrongOf.Domains.Media;
 
 /// <summary>
-/// Represents a strongly-typed MIME type.
+/// Represents a strongly-typed MIME type (e.g. <c>application/json</c>, <c>text/html</c>).
 /// </summary>
+/// <remarks>
+/// <para>
+/// A valid MIME type consists of a type and subtype separated by <c>/</c>.
+/// Equality and hash code comparisons are case-insensitive per RFC 2045.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// MimeType mime = new("application/json");
+/// bool valid   = mime.IsValidFormat(); // true
+/// string type  = mime.GetTypePart();   // "application"
+/// string sub   = mime.GetSubtypePart(); // "json"
+/// </code>
+/// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<MimeType>))]
 public sealed partial class MimeType(string value) : StrongString<MimeType>(value), IValidatable
@@ -21,6 +35,7 @@ public sealed partial class MimeType(string value) : StrongString<MimeType>(valu
     /// <summary>
     /// Determines whether the MIME type has a valid format.
     /// </summary>
+    /// <returns><see langword="true"/> if the value matches the MIME type pattern (type/subtype); otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
         => !string.IsNullOrWhiteSpace(Value) && MimeTypeRegex().IsMatch(Value);
@@ -28,6 +43,7 @@ public sealed partial class MimeType(string value) : StrongString<MimeType>(valu
     /// <summary>
     /// Gets the type part of the MIME type.
     /// </summary>
+    /// <returns>The substring before the first <c>/</c>, or an empty string if there is no slash.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string GetTypePart()
     {
@@ -38,6 +54,7 @@ public sealed partial class MimeType(string value) : StrongString<MimeType>(valu
     /// <summary>
     /// Gets the subtype part of the MIME type.
     /// </summary>
+    /// <returns>The substring after the first <c>/</c>, or an empty string if there is no slash.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string GetSubtypePart()
     {

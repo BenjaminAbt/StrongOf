@@ -28,6 +28,8 @@ public sealed class Priority(int value) : StrongInt32<Priority>(value)
     /// <summary>
     /// Determines whether this priority is higher than another (lower numeric value = higher priority).
     /// </summary>
+    /// <param name="other">The priority to compare against.</param>
+    /// <returns><see langword="true"/> if this priority's numeric value is less than <paramref name="other"/>'s; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsHigherThan(Priority other)
         => Value < other.Value;
@@ -35,6 +37,8 @@ public sealed class Priority(int value) : StrongInt32<Priority>(value)
     /// <summary>
     /// Determines whether this priority is lower than another (higher numeric value = lower priority).
     /// </summary>
+    /// <param name="other">The priority to compare against.</param>
+    /// <returns><see langword="true"/> if this priority's numeric value is greater than <paramref name="other"/>'s; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsLowerThan(Priority other)
         => Value > other.Value;

@@ -9,8 +9,20 @@ using System.Text.RegularExpressions;
 namespace StrongOf.Domains.Postal;
 
 /// <summary>
-/// Represents a strongly-typed house number.
+/// Represents a strongly-typed house number (e.g. <c>"12"</c>, <c>"12A"</c>, <c>"12/3"</c>).
 /// </summary>
+/// <remarks>
+/// <para>
+/// Valid house numbers consist of one or more digits optionally followed by a letter and/or a separated numeric suffix.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// HouseNumber hn = new("42A");
+/// bool valid = hn.IsValidFormat();  // true
+/// int numeric = hn.GetNumericPart(); // 42
+/// </code>
+/// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<HouseNumber>))]
 public sealed partial class HouseNumber(string value) : StrongString<HouseNumber>(value), IValidatable
@@ -24,6 +36,7 @@ public sealed partial class HouseNumber(string value) : StrongString<HouseNumber
     /// <summary>
     /// Determines whether the house number has a valid format.
     /// </summary>
+    /// <returns><see langword="true"/> if the value matches the pattern (digits, optional letter, optional separator and digits); otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
         => !string.IsNullOrWhiteSpace(Value) && HouseNumberRegex().IsMatch(Value);
@@ -31,6 +44,7 @@ public sealed partial class HouseNumber(string value) : StrongString<HouseNumber
     /// <summary>
     /// Gets the numeric part of the house number.
     /// </summary>
+    /// <returns>The leading integer portion of the house number, or 0 if the value does not start with a digit.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public int GetNumericPart()
     {

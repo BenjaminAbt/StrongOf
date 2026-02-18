@@ -1,51 +1,70 @@
 # StrongOf.Domains
 
-Predefined domain models based on StrongOf for common use cases.
+Predefined strongly-typed domain models based on [StrongOf](https://www.nuget.org/packages/StrongOf) for common use cases.
+
+The namespace structure is deliberately designed so that namespace names do **not** collide with common class names you might use in your own codebase (e.g. `Address`, `Person`, `Network`).
 
 ## Available Domain Types
 
-### Contact & Identity
-- `EmailAddress` - Email address validation
-- `PhoneNumber` - Phone number representation
-- `FirstName` - Person's first name
-- `LastName` - Person's last name
-- `FullName` - Person's full name
-- `Username` - User account name
+| Namespace | Types |
+|-----------|-------|
+| `StrongOf.Domains.Identity` | `CorrelationId`, `EntityId`, `TenantId`, `Token`, `Username` |
+| `StrongOf.Domains.People` | `Age`, `BirthYear`, `DateOfBirth`, `FirstName`, `FullName`, `LastName`, `MiddleName`, `PhoneNumber` |
+| `StrongOf.Domains.Postal` | `City`, `CountryCode`, `CountryName`, `HouseNumber`, `Street`, `ZipCode` |
+| `StrongOf.Domains.Geography` | `GeoCoordinate`, `Latitude`, `Longitude` |
+| `StrongOf.Domains.Networking` | `EmailAddress`, `HostName`, `HttpMethod`, `IpAddress`, `MacAddress`, `Port`, `Url` |
+| `StrongOf.Domains.Finance` | `CurrencyCode`, `Iban`, `Percentage` |
+| `StrongOf.Domains.Commerce` | `Priority`, `Quantity`, `Sku` |
+| `StrongOf.Domains.Localization` | `LanguageCode`, `Locale`, `TimeZoneId` |
+| `StrongOf.Domains.Measurement` | `HeightCm`, `TemperatureCelsius`, `WeightKg` |
+| `StrongOf.Domains.Media` | `ColorHex`, `FileExtension`, `FilePath`, `Isbn`, `MimeType`, `Slug` |
+| `StrongOf.Domains.Software` | `SemVer` |
 
-### Location
-- `CountryCode` - ISO 3166-1 alpha-2 country code (e.g., "US", "DE")
-- `ZipCode` - Postal/ZIP code
-- `City` - City name
-- `Street` - Street address
+## Recommended: Global Usings
 
-### Finance
-- `CurrencyCode` - ISO 4217 currency code (e.g., "USD", "EUR")
-- `Percentage` - Percentage value (0-100)
+Add a single `GlobalUsings.cs` to your project to avoid per-file using directives:
 
-### Network
-- `Url` - URL/URI representation
-- `IpAddress` - IP address (v4 or v6)
-- `MacAddress` - MAC address
-- `HostName` - Network host name
-- `Port` - Network port number
+```csharp
+// GlobalUsings.cs
+global using StrongOf.Domains.Identity;
+global using StrongOf.Domains.People;
+global using StrongOf.Domains.Postal;
+global using StrongOf.Domains.Geography;
+global using StrongOf.Domains.Networking;
+global using StrongOf.Domains.Finance;
+global using StrongOf.Domains.Commerce;
+global using StrongOf.Domains.Localization;
+global using StrongOf.Domains.Measurement;
+global using StrongOf.Domains.Media;
+global using StrongOf.Domains.Software;
+```
 
-### Identifiers
-- `EntityId` - Generic entity identifier (Guid)
+## Key Features
+
+- **Format validation** via `IsValidFormat()` for types with format constraints (e.g. `EmailAddress`, `CountryCode`, `Iban`)
+- **Safe factory** via `TryCreate(string?, out T?)` — returns `false` instead of creating an invalid instance
+- **Range validation** via `IsValidRange()` for numeric and geographic types
+- **Conversion helpers** e.g. `ToMeters()`, `ToFahrenheit()`, `ToKelvin()`, `ToCultureInfo()`, `TryGetTimeZone()`
+- **Case-insensitive equality** for `CountryCode`, `CurrencyCode`, `LanguageCode`, `Locale`, `FileExtension`, `MimeType`, `HostName`, `MacAddress`
 
 ## Usage
 
 ```csharp
-using StrongOf.Domains;
-
 // Create domain objects
-var email = new EmailAddress("user@example.com");
-var phone = new PhoneNumber("+1-555-123-4567");
-var country = new CountryCode("US");
-var currency = new CurrencyCode("USD");
+EmailAddress email = new("user@example.com");
+bool isValidEmail = email.IsValidFormat();
 
-// Access values
-string emailValue = email.Value;
-bool isValid = email.IsValidFormat();
+// Safe factory — does not create an invalid instance
+bool created = EmailAddress.TryCreate("bad-input", out EmailAddress? result); // false
+
+CountryCode country = new("US");
+CurrencyCode currency = new("USD");
+GeoCoordinate berlin = GeoCoordinate.From(52.52m, 13.405m);
+bool inRange = berlin.IsValidRange();
+
+// Temperature conversion
+TemperatureCelsius temp = new(100m);
+decimal fahrenheit = temp.ToFahrenheit(); // 212
 ```
 
 ## Installation

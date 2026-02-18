@@ -31,6 +31,7 @@ public sealed class Token(string value) : StrongString<Token>(value)
     /// <summary>
     /// Determines whether the token has a non-empty value.
     /// </summary>
+    /// <returns><see langword="true"/> if the token string is not <see langword="null"/>, empty, or whitespace; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool HasValue()
         => !string.IsNullOrWhiteSpace(Value);

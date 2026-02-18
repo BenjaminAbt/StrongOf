@@ -9,8 +9,21 @@ using System.Text.RegularExpressions;
 namespace StrongOf.Domains.Media;
 
 /// <summary>
-/// Represents a strongly-typed file extension.
+/// Represents a strongly-typed file extension (e.g. <c>.txt</c>, <c>.json</c>).
 /// </summary>
+/// <remarks>
+/// <para>
+/// A valid extension starts with a dot followed by 1–10 alphanumeric characters.
+/// Equality and hash code comparisons are case-insensitive.
+/// </para>
+/// </remarks>
+/// <example>
+/// <code>
+/// FileExtension ext = new(".json");
+/// bool valid   = ext.IsValidFormat(); // true
+/// string noDot = ext.WithoutDot();   // "json"
+/// </code>
+/// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<FileExtension>))]
 public sealed partial class FileExtension(string value) : StrongString<FileExtension>(value), IValidatable
@@ -21,6 +34,7 @@ public sealed partial class FileExtension(string value) : StrongString<FileExten
     /// <summary>
     /// Determines whether the file extension has a valid format.
     /// </summary>
+    /// <returns><see langword="true"/> if the value matches <c>^\.[A-Za-z0-9]{1,10}$</c>; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
         => !string.IsNullOrWhiteSpace(Value) && FileExtensionRegex().IsMatch(Value);
@@ -28,6 +42,7 @@ public sealed partial class FileExtension(string value) : StrongString<FileExten
     /// <summary>
     /// Returns the extension without the leading dot.
     /// </summary>
+    /// <returns>The value without the leading <c>.</c>, or the original value if it does not start with a dot.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string WithoutDot()
         => Value.StartsWith(".", StringComparison.Ordinal) ? Value[1..] : Value;

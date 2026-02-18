@@ -27,6 +27,7 @@ public sealed class TenantId(Guid value) : StrongGuid<TenantId>(value)
     /// <summary>
     /// Creates a new <see cref="TenantId"/> with a randomly generated GUID.
     /// </summary>
+    /// <returns>A new <see cref="TenantId"/> backed by a freshly created <see cref="Guid"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static new TenantId New()
         => new(Guid.NewGuid());
@@ -34,6 +35,7 @@ public sealed class TenantId(Guid value) : StrongGuid<TenantId>(value)
     /// <summary>
     /// Determines whether the tenant ID has a non-empty value.
     /// </summary>
+    /// <returns><see langword="true"/> if the underlying GUID is not <see cref="Guid.Empty"/>; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool HasValue()
         => Value != Guid.Empty;

@@ -32,6 +32,7 @@ public sealed class Quantity(int value) : StrongInt32<Quantity>(value)
     /// <summary>
     /// Determines whether this quantity is greater than zero.
     /// </summary>
+    /// <returns><see langword="true"/> if the value is greater than 0; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsPositive()
         => Value > 0;
@@ -39,6 +40,7 @@ public sealed class Quantity(int value) : StrongInt32<Quantity>(value)
     /// <summary>
     /// Determines whether this quantity is zero.
     /// </summary>
+    /// <returns><see langword="true"/> if the value equals 0; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsZero()
         => Value == 0;
