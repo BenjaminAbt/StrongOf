@@ -2,7 +2,7 @@
 
 using System.Net;
 
-namespace StrongOf.Domains.UnitTests;
+namespace StrongOf.Domains.Network.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="IpAddress"/>.

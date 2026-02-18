@@ -1,6 +1,6 @@
 // Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.UnitTests;
+namespace StrongOf.Domains.Address.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="CountryCode"/>.
