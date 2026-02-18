@@ -19,6 +19,7 @@ jobs:
         8.0.x
         9.0.x
         10.0.x
+        11.0.x
 
     secrets:
       NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
