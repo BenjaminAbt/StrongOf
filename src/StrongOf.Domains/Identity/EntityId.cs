@@ -25,36 +25,9 @@ namespace StrongOf.Domains.Identity;
 public sealed class EntityId(Guid value) : StrongGuid<EntityId>(value)
 {
     /// <summary>
-    /// Creates a new <see cref="EntityId"/> with a randomly generated GUID.
-    /// </summary>
-    /// <returns>A new <see cref="EntityId"/> with a new GUID.</returns>
-    /// <example>
-    /// <code>
-    /// var entityId = EntityId.New();
-    /// </code>
-    /// </example>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static new EntityId New()
-        => new(Guid.NewGuid());
-
-    /// <summary>
     /// Gets an empty <see cref="EntityId"/>.
     /// </summary>
     public static new EntityId Empty => new(Guid.Empty);
-
-    /// <summary>
-    /// Determines whether the entity ID is empty (Guid.Empty).
-    /// </summary>
-    /// <returns><c>true</c> if the entity ID is empty; otherwise, <c>false</c>.</returns>
-    /// <example>
-    /// <code>
-    /// var entityId = EntityId.Empty;
-    /// bool isEmpty = entityId.IsEmpty(); // true
-    /// </code>
-    /// </example>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public new bool IsEmpty()
-        => Value == Guid.Empty;
 
     /// <summary>
     /// Determines whether the entity ID has a value (not empty).

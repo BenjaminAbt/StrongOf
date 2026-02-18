@@ -25,14 +25,6 @@ namespace StrongOf.Domains.Identity;
 public sealed class CorrelationId(Guid value) : StrongGuid<CorrelationId>(value)
 {
     /// <summary>
-    /// Creates a new <see cref="CorrelationId"/> with a randomly generated GUID.
-    /// </summary>
-    /// <returns>A new <see cref="CorrelationId"/> backed by a freshly created <see cref="Guid"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static new CorrelationId New()
-        => new(Guid.NewGuid());
-
-    /// <summary>
     /// Determines whether the correlation ID has a non-empty value.
     /// </summary>
     /// <returns><see langword="true"/> if the underlying GUID is not <see cref="Guid.Empty"/>; otherwise, <see langword="false"/>.</returns>
