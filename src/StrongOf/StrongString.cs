@@ -117,6 +117,36 @@ public abstract partial class StrongString<TStrong>(string Value)
     }
 
     /// <summary>
+    /// Tries to create a strong type instance from the specified string and creates a strong type instance.
+    /// </summary>
+    /// <param name="content">The string to wrap.</param>
+    /// <param name="strong">
+    /// When this method returns, contains the parsed strong type if the input is not <c>null</c>;
+    /// otherwise, <c>null</c>.
+    /// </param>
+    /// <returns><c>true</c> if <paramref name="content"/> is not <c>null</c>; otherwise, <c>false</c>.</returns>
+    /// <example>
+    /// <code>
+    /// if (Email.TryParse(input, out Email? email))
+    /// {
+    ///     Console.WriteLine($"Email: {email}");
+    /// }
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse(string? content, [NotNullWhen(true)] out TStrong? strong)
+    {
+        if (content is not null)
+        {
+            strong = From(content);
+            return true;
+        }
+
+        strong = null;
+        return false;
+    }
+
+    /// <summary>
     /// Compares the current instance with another object and returns an integer indicating
     /// their relative position in the sort order.
     /// </summary>

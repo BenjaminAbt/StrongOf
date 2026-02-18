@@ -230,7 +230,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// <param name="other">The object to compare.</param>
     /// <returns><c>true</c> if the values are not equal; otherwise, <c>false</c>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool operator !=(StrongOf<TTarget, TStrong> strong, object? other)
+    public static bool operator !=(StrongOf<TTarget, TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }

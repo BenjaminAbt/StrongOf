@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright ï¿½ Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using System.Globalization;
 using Xunit;
@@ -89,5 +89,51 @@ public class StrongDecimalTests
     {
         TestDecimalOf strongDecimal = new(1.23m);
         Assert.True(strongDecimal != 2.34m);
+    }
+
+    [Fact]
+    public void AsDecimal_ReturnsValue()
+    {
+        TestDecimalOf strong = new(3.14m);
+        Assert.Equal(3.14m, strong.AsDecimal());
+        Assert.Equal(strong.Value, strong.AsDecimal());
+    }
+
+    [Fact]
+    public void FromNullable_WithValue_ReturnsNonNull()
+    {
+        decimal value = 1.5m;
+        TestDecimalOf result = TestDecimalOf.FromNullable(value);
+        Assert.NotNull(result);
+        Assert.Equal(value, result.Value);
+    }
+
+    [Fact]
+    public void FromNullable_WithNull_ReturnsNull()
+    {
+        decimal? value = null;
+        TestDecimalOf? result = TestDecimalOf.FromNullable(value);
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void ToString_WithFormat_ReturnsFormattedString()
+    {
+        TestDecimalOf strong = new(1234.5m);
+        Assert.Equal("1234.50", strong.ToString("F2"));
+    }
+
+    [Fact]
+    public void CompareTo_WithNull_Returns1()
+    {
+        TestDecimalOf strong = new(1.0m);
+        Assert.Equal(1, strong.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_WithDifferentType_ThrowsArgumentException()
+    {
+        TestDecimalOf strong = new(1.0m);
+        Assert.Throws<ArgumentException>(() => strong.CompareTo(new object()));
     }
 }
