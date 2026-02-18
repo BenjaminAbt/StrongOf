@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
-namespace StrongOf.Domains.Person;
+namespace StrongOf.Domains.People;
 
 /// <summary>
 /// Represents a strongly-typed phone number.

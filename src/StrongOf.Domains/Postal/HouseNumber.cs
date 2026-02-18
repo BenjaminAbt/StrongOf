@@ -4,47 +4,43 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
-namespace StrongOf.Domains.Address;
+namespace StrongOf.Domains.Postal;
 
 /// <summary>
-/// Represents a strongly-typed city name.
+/// Represents a strongly-typed house number.
 /// </summary>
-/// <remarks>
-/// <para>
-/// This type wraps a string value representing a city name.
-/// </para>
-/// </remarks>
-/// <example>
-/// <code>
-/// var city = new City("New York");
-/// bool isValid = city.IsValidFormat();
-/// </code>
-/// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(StrongStringTypeConverter<City>))]
-public sealed class City(string value) : StrongString<City>(value), IValidatable
+[TypeConverter(typeof(StrongStringTypeConverter<HouseNumber>))]
+public sealed partial class HouseNumber(string value) : StrongString<HouseNumber>(value), IValidatable
 {
     /// <summary>
-    /// Validates whether the city name has a valid format.
+    /// Regular expression for house numbers such as "12", "12A", "12/3".
     /// </summary>
-    /// <returns><c>true</c> if the city name format is valid; otherwise, <c>false</c>.</returns>
+    [GeneratedRegex(@"^\d+[A-Za-z]?(?:[-/]\d+)?$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
+    private static partial Regex HouseNumberRegex();
+
+    /// <summary>
+    /// Determines whether the house number has a valid format.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
+        => !string.IsNullOrWhiteSpace(Value) && HouseNumberRegex().IsMatch(Value);
+
+    /// <summary>
+    /// Gets the numeric part of the house number.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public int GetNumericPart()
     {
-        if (string.IsNullOrWhiteSpace(Value))
+        int i = 0;
+        while (i < Value.Length && char.IsDigit(Value[i]))
         {
-            return false;
+            i++;
         }
 
-        foreach (char c in Value)
-        {
-            if (!char.IsLetter(c) && c != ' ' && c != '-' && c != '\'')
-            {
-                return false;
-            }
-        }
-        return true;
+        return i == 0 ? 0 : int.Parse(Value[..i], System.Globalization.CultureInfo.InvariantCulture);
     }
     /// <summary>
     /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
@@ -56,11 +52,11 @@ public sealed class City(string value) : StrongString<City>(value), IValidatable
     /// </param>
     /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool TryCreate(string? value, [NotNullWhen(true)] out City? result)
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out HouseNumber? result)
     {
         if (value is not null)
         {
-            City candidate = new(value);
+            HouseNumber candidate = new(value);
             if (candidate.IsValidFormat())
             {
                 result = candidate;

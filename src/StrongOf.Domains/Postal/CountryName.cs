@@ -4,42 +4,43 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
 
-namespace StrongOf.Domains.Address;
+namespace StrongOf.Domains.Postal;
 
 /// <summary>
-/// Represents a strongly-typed street address.
+/// Represents a strongly-typed country name.
 /// </summary>
-/// <remarks>
-/// <para>
-/// This type wraps a string value representing a street address.
-/// </para>
-/// </remarks>
-/// <example>
-/// <code>
-/// var street = new Street("123 Main Street");
-/// bool isValid = street.IsValidFormat();
-/// </code>
-/// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(StrongStringTypeConverter<Street>))]
-public sealed class Street(string value) : StrongString<Street>(value), IValidatable
+[TypeConverter(typeof(StrongStringTypeConverter<CountryName>))]
+public sealed partial class CountryName(string value) : StrongString<CountryName>(value), IValidatable
 {
     /// <summary>
-    /// Validates whether the street address has a valid format (non-empty).
+    /// Minimum length for a country name.
     /// </summary>
-    /// <returns><c>true</c> if the street address format is valid; otherwise, <c>false</c>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public bool IsValidFormat()
-        => !string.IsNullOrWhiteSpace(Value);
+    public const int MinLength = 2;
 
     /// <summary>
-    /// Gets a normalized version of the street address (trimmed).
+    /// Maximum length for a country name.
     /// </summary>
-    /// <returns>The normalized street address.</returns>
+    public const int MaxLength = 56;
+
+    [GeneratedRegex(@"^[\p{L}][\p{L} '\-]{1,55}$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
+    private static partial Regex CountryNameRegex();
+
+    /// <summary>
+    /// Determines whether the country name has a valid format.
+    /// </summary>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public string GetNormalized()
-        => Value.Trim();
+    public bool IsValidFormat()
+        => !string.IsNullOrWhiteSpace(Value) && Value.Length >= MinLength && Value.Length <= MaxLength && CountryNameRegex().IsMatch(Value);
+
+    /// <summary>
+    /// Returns the country name in uppercase.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public string ToUpperCase()
+        => Value.ToUpperInvariant();
     /// <summary>
     /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
     /// </summary>
@@ -50,11 +51,11 @@ public sealed class Street(string value) : StrongString<Street>(value), IValidat
     /// </param>
     /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool TryCreate(string? value, [NotNullWhen(true)] out Street? result)
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out CountryName? result)
     {
         if (value is not null)
         {
-            Street candidate = new(value);
+            CountryName candidate = new(value);
             if (candidate.IsValidFormat())
             {
                 result = candidate;

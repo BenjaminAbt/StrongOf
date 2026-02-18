@@ -1,10 +1,10 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace StrongOf.Domains.Person;
+namespace StrongOf.Domains.People;
 
 /// <summary>
 /// Represents a strongly-typed age value.

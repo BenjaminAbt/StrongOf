@@ -1,6 +1,6 @@
 ﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Network.UnitTests;
+namespace StrongOf.Domains.Networking.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="Port"/>.

@@ -74,6 +74,66 @@ The clearest distinction to other approaches is that all `StrongOf` types inheri
 private sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
 ```
 
+## Usage with StrongOf.Domains
+
+`StrongOf.Domains` ships a collection of ready-to-use strong types organized into namespaces by domain area:
+
+| Namespace | Types |
+|-----------|-------|
+| `StrongOf.Domains.Identity` | `CorrelationId`, `EntityId`, `TenantId`, `Token`, `Username` |
+| `StrongOf.Domains.People` | `Age`, `BirthYear`, `DateOfBirth`, `FirstName`, `FullName`, `LastName`, `MiddleName`, `PhoneNumber` |
+| `StrongOf.Domains.Postal` | `City`, `CountryCode`, `CountryName`, `HouseNumber`, `Street`, `ZipCode` |
+| `StrongOf.Domains.Geography` | `GeoCoordinate`, `Latitude`, `Longitude` |
+| `StrongOf.Domains.Networking` | `EmailAddress`, `HostName`, `HttpMethod`, `IpAddress`, `MacAddress`, `Port`, `Url` |
+| `StrongOf.Domains.Finance` | `CurrencyCode`, `Iban`, `Percentage` |
+| `StrongOf.Domains.Commerce` | `Priority`, `Quantity`, `Sku` |
+| `StrongOf.Domains.Localization` | `LanguageCode`, `Locale`, `TimeZoneId` |
+| `StrongOf.Domains.Measurement` | `HeightCm`, `TemperatureCelsius`, `WeightKg` |
+| `StrongOf.Domains.Media` | `ColorHex`, `FileExtension`, `FilePath`, `Isbn`, `MimeType`, `Slug` |
+| `StrongOf.Domains.Software` | `SemVer` |
+
+### Global Usings — avoid repetitive `using` directives
+
+Because domain types are spread across multiple namespaces, we strongly recommend adding a single `GlobalUsings.cs` file at the root of your project. This is a standard C# feature that applies `using` directives project-wide, so you never have to repeat them in individual files.
+
+Create `GlobalUsings.cs` in your project root and include only the namespaces you actually use:
+
+```csharp
+// GlobalUsings.cs
+global using StrongOf.Domains.Identity;
+global using StrongOf.Domains.People;
+global using StrongOf.Domains.Postal;
+global using StrongOf.Domains.Geography;
+global using StrongOf.Domains.Networking;
+global using StrongOf.Domains.Finance;
+global using StrongOf.Domains.Commerce;
+global using StrongOf.Domains.Localization;
+global using StrongOf.Domains.Measurement;
+global using StrongOf.Domains.Media;
+global using StrongOf.Domains.Software;
+```
+
+After this one-time setup, all domain types are available everywhere in your project without any further imports:
+
+```csharp
+// No using directives needed — GlobalUsings.cs already covers them
+public class User
+{
+    public TenantId   TenantId   { get; set; }
+    public UserId     UserId     { get; set; }
+    public FirstName  FirstName  { get; set; }
+    public LastName   LastName   { get; set; }
+    public EmailAddress Email    { get; set; }
+    public CountryCode Country   { get; set; }
+}
+```
+
+> **Tip:** Global usings are evaluated at compile-time and have zero runtime overhead. They were introduced in C# 10 / .NET 6 and are a first-class language feature — not a workaround.
+
+### Namespace naming rationale
+
+The namespace names are deliberately chosen to **not conflict** with common domain class names (`Address`, `Person`, `Network`, `Location` etc. are all typical class names in business applications). Using plural or domain-specific nouns (`Postal`, `People`, `Networking`) means you can safely have both a `namespace StrongOf.Domains.Postal` import and a `class Address` in the same file without any ambiguity.
+
 ## Usage with Json
 
 You can just use [StrongOf.Json](https://www.nuget.org/packages/StrongOf.Json) and use one of the pre-defined converters

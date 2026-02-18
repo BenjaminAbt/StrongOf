@@ -1,10 +1,10 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 
-namespace StrongOf.Domains.Network;
+namespace StrongOf.Domains.Networking;
 
 /// <summary>
 /// Represents a strongly-typed network port number.

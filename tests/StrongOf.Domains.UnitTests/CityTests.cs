@@ -1,6 +1,6 @@
 ﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Address.UnitTests;
+namespace StrongOf.Domains.Postal.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="City"/>.

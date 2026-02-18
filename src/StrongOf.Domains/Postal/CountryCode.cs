@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 
-namespace StrongOf.Domains.Address;
+namespace StrongOf.Domains.Postal;
 
 /// <summary>
 /// Represents a strongly-typed ISO 3166-1 alpha-2 country code.

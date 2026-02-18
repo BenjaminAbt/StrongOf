@@ -6,7 +6,7 @@ using System.Net;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 
-namespace StrongOf.Domains.Network;
+namespace StrongOf.Domains.Networking;
 
 /// <summary>
 /// Represents a strongly-typed IP address (v4 or v6).

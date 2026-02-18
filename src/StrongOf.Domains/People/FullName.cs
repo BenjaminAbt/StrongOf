@@ -5,7 +5,7 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 
-namespace StrongOf.Domains.Person;
+namespace StrongOf.Domains.People;
 
 /// <summary>
 /// Represents a strongly-typed full name combining first and last name.

@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
-namespace StrongOf.Domains.Network;
+namespace StrongOf.Domains.Networking;
 
 /// <summary>
 /// Represents a strongly-typed network host name.

@@ -5,30 +5,30 @@ using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
 
-namespace StrongOf.Domains.Person;
+namespace StrongOf.Domains.Postal;
 
 /// <summary>
-/// Represents a strongly-typed last name.
+/// Represents a strongly-typed ZIP/postal code.
 /// </summary>
 /// <remarks>
 /// <para>
-/// This type wraps a string value representing a person's last name (surname).
+/// This type wraps a string value representing a postal or ZIP code.
 /// </para>
 /// </remarks>
 /// <example>
 /// <code>
-/// var lastName = new LastName("Smith");
-/// string value = lastName.Value;
+/// var zipCode = new ZipCode("12345");
+/// bool isValid = zipCode.IsValidFormat();
 /// </code>
 /// </example>
 [DebuggerDisplay("{Value}")]
-[TypeConverter(typeof(StrongStringTypeConverter<LastName>))]
-public sealed class LastName(string value) : StrongString<LastName>(value), IValidatable
+[TypeConverter(typeof(StrongStringTypeConverter<ZipCode>))]
+public sealed class ZipCode(string value) : StrongString<ZipCode>(value), IValidatable
 {
     /// <summary>
-    /// Validates whether the last name has a valid format (non-empty and contains only letters, spaces, hyphens, or apostrophes).
+    /// Validates whether the ZIP code has a valid format (non-empty alphanumeric with optional spaces/hyphens).
     /// </summary>
-    /// <returns><c>true</c> if the last name format is valid; otherwise, <c>false</c>.</returns>
+    /// <returns><c>true</c> if the ZIP code format is valid; otherwise, <c>false</c>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
     {
@@ -39,7 +39,7 @@ public sealed class LastName(string value) : StrongString<LastName>(value), IVal
 
         foreach (char c in Value)
         {
-            if (!char.IsLetter(c) && c != ' ' && c != '-' && c != '\'')
+            if (!char.IsLetterOrDigit(c) && c != ' ' && c != '-')
             {
                 return false;
             }
@@ -48,39 +48,48 @@ public sealed class LastName(string value) : StrongString<LastName>(value), IVal
     }
 
     /// <summary>
-    /// Gets the last name with proper title case formatting.
+    /// Validates whether the ZIP code has a valid US format (5 digits or 5+4 format).
     /// </summary>
-    /// <returns>The last name formatted with title case.</returns>
+    /// <returns><c>true</c> if the ZIP code is a valid US format; otherwise, <c>false</c>.</returns>
     /// <example>
     /// <code>
-    /// var name = new LastName("smith");
-    /// string formatted = name.ToTitleCase(); // "Smith"
+    /// var zip = new ZipCode("12345");
+    /// bool isValid = zip.IsValidUsFormat(); // true
+    ///
+    /// var zip2 = new ZipCode("12345-6789");
+    /// bool isValid2 = zip2.IsValidUsFormat(); // true
     /// </code>
     /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public string ToTitleCase()
+    public bool IsValidUsFormat()
     {
         if (string.IsNullOrWhiteSpace(Value))
         {
-            return Value;
+            return false;
         }
 
-        return char.ToUpperInvariant(Value[0]) + Value[1..].ToLowerInvariant();
+        // 5-digit format
+        if (Value.Length == 5 && Value.All(char.IsDigit))
+        {
+            return true;
+        }
+
+        // 5+4 format (12345-6789)
+        if (Value.Length == 10 && Value[5] == '-')
+        {
+            return Value[..5].All(char.IsDigit) && Value[6..].All(char.IsDigit);
+        }
+
+        return false;
     }
 
     /// <summary>
-    /// Gets the last name in uppercase format.
+    /// Gets a normalized version of the ZIP code (uppercase, trimmed).
     /// </summary>
-    /// <returns>The last name in uppercase.</returns>
-    /// <example>
-    /// <code>
-    /// var name = new LastName("Smith");
-    /// string upper = name.ToUpperCase(); // "SMITH"
-    /// </code>
-    /// </example>
+    /// <returns>The normalized ZIP code.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public string ToUpperCase()
-        => Value.ToUpperInvariant();
+    public string GetNormalized()
+        => Value.Trim().ToUpperInvariant();
     /// <summary>
     /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
     /// </summary>
@@ -91,11 +100,11 @@ public sealed class LastName(string value) : StrongString<LastName>(value), IVal
     /// </param>
     /// <returns><see langword="true"/> if the value is non-null and passes <see cref="IsValidFormat"/>; otherwise, <see langword="false"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool TryCreate(string? value, [NotNullWhen(true)] out LastName? result)
+    public static bool TryCreate(string? value, [NotNullWhen(true)] out ZipCode? result)
     {
         if (value is not null)
         {
-            LastName candidate = new(value);
+            ZipCode candidate = new(value);
             if (candidate.IsValidFormat())
             {
                 result = candidate;
