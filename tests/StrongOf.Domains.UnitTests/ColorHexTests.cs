@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Media.UnitTests;
 
@@ -36,7 +36,7 @@ public class ColorHexTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new ColorHexTypeConverter();
+        var converter = new StrongStringTypeConverter<ColorHex>();
         var result = converter.ConvertFrom("#FFFFFF") as ColorHex;
 
         Assert.NotNull(result);
@@ -46,7 +46,7 @@ public class ColorHexTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new ColorHexTypeConverter();
+        var converter = new StrongStringTypeConverter<ColorHex>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

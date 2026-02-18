@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Address.UnitTests;
 
@@ -35,7 +35,7 @@ public class CountryNameTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new CountryNameTypeConverter();
+        var converter = new StrongStringTypeConverter<CountryName>();
         var result = converter.ConvertFrom("Germany") as CountryName;
 
         Assert.NotNull(result);
@@ -45,7 +45,7 @@ public class CountryNameTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new CountryNameTypeConverter();
+        var converter = new StrongStringTypeConverter<CountryName>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

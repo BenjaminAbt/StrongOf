@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Localization.UnitTests;
 
@@ -39,7 +39,7 @@ public class TimeZoneIdTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new TimeZoneIdTypeConverter();
+        var converter = new StrongStringTypeConverter<TimeZoneId>();
         var result = converter.ConvertFrom(TimeZoneInfo.Utc.Id) as TimeZoneId;
 
         Assert.NotNull(result);
@@ -49,7 +49,7 @@ public class TimeZoneIdTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new TimeZoneIdTypeConverter();
+        var converter = new StrongStringTypeConverter<TimeZoneId>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

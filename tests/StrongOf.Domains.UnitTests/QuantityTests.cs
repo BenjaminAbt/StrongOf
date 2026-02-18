@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Commerce.UnitTests;
 
@@ -50,21 +50,21 @@ public class QuantityTests
     [Fact]
     public void TypeConverter_CanConvertFromInt()
     {
-        var converter = new QuantityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Quantity>();
         Assert.True(converter.CanConvertFrom(typeof(int)));
     }
 
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new QuantityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Quantity>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsQuantity()
     {
-        var converter = new QuantityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Quantity>();
         var result = converter.ConvertFrom(42) as Quantity;
         Assert.NotNull(result);
         Assert.Equal(42, result.Value);
@@ -73,7 +73,7 @@ public class QuantityTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsQuantity()
     {
-        var converter = new QuantityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Quantity>();
         var result = converter.ConvertFrom("42") as Quantity;
         Assert.NotNull(result);
         Assert.Equal(42, result.Value);

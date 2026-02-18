@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Measurement.UnitTests;
 
@@ -44,7 +44,7 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new HeightCmTypeConverter();
+        var converter = new StrongDecimalTypeConverter<HeightCm>();
         var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "180") as HeightCm;
 
         Assert.NotNull(result);
@@ -54,7 +54,7 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_ConvertFromDecimal_ReturnsInstance()
     {
-        var converter = new HeightCmTypeConverter();
+        var converter = new StrongDecimalTypeConverter<HeightCm>();
         var result = converter.ConvertFrom(180m) as HeightCm;
 
         Assert.NotNull(result);
@@ -64,7 +64,7 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_ConvertFromDouble_ReturnsInstance()
     {
-        var converter = new HeightCmTypeConverter();
+        var converter = new StrongDecimalTypeConverter<HeightCm>();
         var result = converter.ConvertFrom(180.5) as HeightCm;
 
         Assert.NotNull(result);
@@ -74,7 +74,7 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsInstance()
     {
-        var converter = new HeightCmTypeConverter();
+        var converter = new StrongDecimalTypeConverter<HeightCm>();
         var result = converter.ConvertFrom(180) as HeightCm;
 
         Assert.NotNull(result);
@@ -84,7 +84,7 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new HeightCmTypeConverter();
+        var converter = new StrongDecimalTypeConverter<HeightCm>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

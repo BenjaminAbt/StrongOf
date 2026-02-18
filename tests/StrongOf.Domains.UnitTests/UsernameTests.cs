@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Identity.UnitTests;
 
@@ -165,7 +165,7 @@ public class UsernameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new UsernameTypeConverter();
+        var converter = new StrongStringTypeConverter<Username>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -178,7 +178,7 @@ public class UsernameTests
     public void TypeConverter_ConvertFromString_ReturnsUsername()
     {
         // Arrange
-        var converter = new UsernameTypeConverter();
+        var converter = new StrongStringTypeConverter<Username>();
         const string name = "john_doe";
 
         // Act
@@ -193,7 +193,7 @@ public class UsernameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new UsernameTypeConverter();
+        var converter = new StrongStringTypeConverter<Username>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Media.UnitTests;
 
@@ -81,14 +81,14 @@ public class IsbnTests
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new IsbnTypeConverter();
+        var converter = new StrongStringTypeConverter<Isbn>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsIsbn()
     {
-        var converter = new IsbnTypeConverter();
+        var converter = new StrongStringTypeConverter<Isbn>();
         var result = converter.ConvertFrom("9780306406157") as Isbn;
         Assert.NotNull(result);
         Assert.Equal("9780306406157", result.Value);

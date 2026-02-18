@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Finance.UnitTests;
 
@@ -66,14 +66,14 @@ public class IbanTests
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new IbanTypeConverter();
+        var converter = new StrongStringTypeConverter<Iban>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsIban()
     {
-        var converter = new IbanTypeConverter();
+        var converter = new StrongStringTypeConverter<Iban>();
         var result = converter.ConvertFrom("DE89370400440532013000") as Iban;
         Assert.NotNull(result);
         Assert.Equal("DE89370400440532013000", result.Value);

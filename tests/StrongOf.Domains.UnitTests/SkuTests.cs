@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Commerce.UnitTests;
 
@@ -45,14 +45,14 @@ public class SkuTests
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new SkuTypeConverter();
+        var converter = new StrongStringTypeConverter<Sku>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsSku()
     {
-        var converter = new SkuTypeConverter();
+        var converter = new StrongStringTypeConverter<Sku>();
         var result = converter.ConvertFrom("PROD-001") as Sku;
         Assert.NotNull(result);
         Assert.Equal("PROD-001", result.Value);

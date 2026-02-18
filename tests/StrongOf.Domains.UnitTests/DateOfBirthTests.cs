@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Person.UnitTests;
 
@@ -51,14 +51,14 @@ public class DateOfBirthTests
     [Fact]
     public void TypeConverter_CanConvertFromDateTime()
     {
-        var converter = new DateOfBirthTypeConverter();
+        var converter = new StrongDateTimeTypeConverter<DateOfBirth>();
         Assert.True(converter.CanConvertFrom(typeof(DateTime)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromDateTime_ReturnsInstance()
     {
-        var converter = new DateOfBirthTypeConverter();
+        var converter = new StrongDateTimeTypeConverter<DateOfBirth>();
         var value = new DateTime(2000, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
         var result = converter.ConvertFrom(value) as DateOfBirth;
@@ -70,7 +70,7 @@ public class DateOfBirthTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new DateOfBirthTypeConverter();
+        var converter = new StrongDateTimeTypeConverter<DateOfBirth>();
         var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "2000-01-01") as DateOfBirth;
 
         Assert.NotNull(result);
@@ -80,7 +80,7 @@ public class DateOfBirthTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new DateOfBirthTypeConverter();
+        var converter = new StrongDateTimeTypeConverter<DateOfBirth>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

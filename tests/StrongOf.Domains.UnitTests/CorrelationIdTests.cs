@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Identity.UnitTests;
 
@@ -54,14 +54,14 @@ public class CorrelationIdTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid()
     {
-        var converter = new CorrelationIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<CorrelationId>();
         Assert.True(converter.CanConvertFrom(typeof(Guid)));
     }
 
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new CorrelationIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<CorrelationId>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
@@ -69,7 +69,7 @@ public class CorrelationIdTests
     public void TypeConverter_ConvertFromGuid_ReturnsCorrelationId()
     {
         Guid guid = Guid.NewGuid();
-        var converter = new CorrelationIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<CorrelationId>();
         var result = converter.ConvertFrom(guid) as CorrelationId;
         Assert.NotNull(result);
         Assert.Equal(guid, result.Value);
@@ -79,7 +79,7 @@ public class CorrelationIdTests
     public void TypeConverter_ConvertFromString_ReturnsCorrelationId()
     {
         Guid guid = Guid.NewGuid();
-        var converter = new CorrelationIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<CorrelationId>();
         var result = converter.ConvertFrom(guid.ToString()) as CorrelationId;
         Assert.NotNull(result);
         Assert.Equal(guid, result.Value);

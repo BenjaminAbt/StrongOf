@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Localization.UnitTests;
 
@@ -55,14 +55,14 @@ public class LocaleTests
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new LocaleTypeConverter();
+        var converter = new StrongStringTypeConverter<Locale>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsLocale()
     {
-        var converter = new LocaleTypeConverter();
+        var converter = new StrongStringTypeConverter<Locale>();
         var result = converter.ConvertFrom("en-US") as Locale;
         Assert.NotNull(result);
         Assert.Equal("en-US", result.Value);

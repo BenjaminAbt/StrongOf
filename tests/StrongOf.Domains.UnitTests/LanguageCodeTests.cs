@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Localization.UnitTests;
 
@@ -36,7 +36,7 @@ public class LanguageCodeTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new LanguageCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<LanguageCode>();
         var result = converter.ConvertFrom("en") as LanguageCode;
 
         Assert.NotNull(result);
@@ -46,7 +46,7 @@ public class LanguageCodeTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new LanguageCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<LanguageCode>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

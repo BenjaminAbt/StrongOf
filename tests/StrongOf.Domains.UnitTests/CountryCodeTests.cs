@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Address.UnitTests;
 
@@ -130,7 +130,7 @@ public class CountryCodeTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new CountryCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<CountryCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -143,7 +143,7 @@ public class CountryCodeTests
     public void TypeConverter_ConvertFromString_ReturnsCountryCode()
     {
         // Arrange
-        var converter = new CountryCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<CountryCode>();
         const string code = "US";
 
         // Act
@@ -158,7 +158,7 @@ public class CountryCodeTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new CountryCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<CountryCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Identity.UnitTests;
 
@@ -45,14 +45,14 @@ public class TokenTests
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new TokenTypeConverter();
+        var converter = new StrongStringTypeConverter<Token>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsToken()
     {
-        var converter = new TokenTypeConverter();
+        var converter = new StrongStringTypeConverter<Token>();
         var result = converter.ConvertFrom("my-token") as Token;
         Assert.NotNull(result);
         Assert.Equal("my-token", result.Value);

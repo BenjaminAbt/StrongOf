@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Person.UnitTests;
 
@@ -203,7 +203,7 @@ public class AgeTests
     public void TypeConverter_CanConvertFromInt()
     {
         // Arrange
-        var converter = new AgeTypeConverter();
+        var converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));
@@ -216,7 +216,7 @@ public class AgeTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new AgeTypeConverter();
+        var converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -229,7 +229,7 @@ public class AgeTests
     public void TypeConverter_ConvertFromInt_ReturnsAge()
     {
         // Arrange
-        var converter = new AgeTypeConverter();
+        var converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         var result = converter.ConvertFrom(25) as Age;
@@ -243,7 +243,7 @@ public class AgeTests
     public void TypeConverter_ConvertFromString_ReturnsAge()
     {
         // Arrange
-        var converter = new AgeTypeConverter();
+        var converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         var result = converter.ConvertFrom("25") as Age;
@@ -257,7 +257,7 @@ public class AgeTests
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
         // Arrange
-        var converter = new AgeTypeConverter();
+        var converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(Guid));

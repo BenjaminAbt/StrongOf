@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Identity.UnitTests;
 
@@ -63,14 +63,14 @@ public class TenantIdTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid()
     {
-        var converter = new TenantIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<TenantId>();
         Assert.True(converter.CanConvertFrom(typeof(Guid)));
     }
 
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new TenantIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<TenantId>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
@@ -78,7 +78,7 @@ public class TenantIdTests
     public void TypeConverter_ConvertFromGuid_ReturnsTenantId()
     {
         Guid guid = Guid.NewGuid();
-        var converter = new TenantIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<TenantId>();
         var result = converter.ConvertFrom(guid) as TenantId;
         Assert.NotNull(result);
         Assert.Equal(guid, result.Value);
@@ -88,7 +88,7 @@ public class TenantIdTests
     public void TypeConverter_ConvertFromString_ReturnsTenantId()
     {
         Guid guid = Guid.NewGuid();
-        var converter = new TenantIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<TenantId>();
         var result = converter.ConvertFrom(guid.ToString()) as TenantId;
         Assert.NotNull(result);
         Assert.Equal(guid, result.Value);

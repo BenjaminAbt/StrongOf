@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Media.UnitTests;
 
@@ -35,7 +35,7 @@ public class FileExtensionTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new FileExtensionTypeConverter();
+        var converter = new StrongStringTypeConverter<FileExtension>();
         var result = converter.ConvertFrom(".txt") as FileExtension;
 
         Assert.NotNull(result);
@@ -45,7 +45,7 @@ public class FileExtensionTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new FileExtensionTypeConverter();
+        var converter = new StrongStringTypeConverter<FileExtension>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

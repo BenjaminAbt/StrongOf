@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Software.UnitTests;
 
@@ -44,7 +44,7 @@ public class SemVerTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new SemVerTypeConverter();
+        var converter = new StrongStringTypeConverter<SemVer>();
         var result = converter.ConvertFrom("1.2.3") as SemVer;
 
         Assert.NotNull(result);
@@ -54,7 +54,7 @@ public class SemVerTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new SemVerTypeConverter();
+        var converter = new StrongStringTypeConverter<SemVer>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Person.UnitTests;
 
@@ -35,7 +35,7 @@ public class MiddleNameTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new MiddleNameTypeConverter();
+        var converter = new StrongStringTypeConverter<MiddleName>();
         var result = converter.ConvertFrom("Ann") as MiddleName;
 
         Assert.NotNull(result);
@@ -45,7 +45,7 @@ public class MiddleNameTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new MiddleNameTypeConverter();
+        var converter = new StrongStringTypeConverter<MiddleName>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

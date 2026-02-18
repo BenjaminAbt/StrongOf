@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Media.UnitTests;
 
@@ -49,14 +49,14 @@ public class SlugTests
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new SlugTypeConverter();
+        var converter = new StrongStringTypeConverter<Slug>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsSlug()
     {
-        var converter = new SlugTypeConverter();
+        var converter = new StrongStringTypeConverter<Slug>();
         var result = converter.ConvertFrom("my-page") as Slug;
         Assert.NotNull(result);
         Assert.Equal("my-page", result.Value);

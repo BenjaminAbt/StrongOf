@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Media.UnitTests;
 
@@ -41,7 +41,7 @@ public class MimeTypeTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new MimeTypeTypeConverter();
+        var converter = new StrongStringTypeConverter<MimeType>();
         var result = converter.ConvertFrom("text/plain") as MimeType;
 
         Assert.NotNull(result);
@@ -51,7 +51,7 @@ public class MimeTypeTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new MimeTypeTypeConverter();
+        var converter = new StrongStringTypeConverter<MimeType>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

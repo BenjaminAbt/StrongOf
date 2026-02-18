@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Commerce.UnitTests;
 
@@ -82,21 +82,21 @@ public class PriorityTests
     [Fact]
     public void TypeConverter_CanConvertFromInt()
     {
-        var converter = new PriorityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Priority>();
         Assert.True(converter.CanConvertFrom(typeof(int)));
     }
 
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new PriorityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Priority>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsPriority()
     {
-        var converter = new PriorityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Priority>();
         var result = converter.ConvertFrom(5) as Priority;
         Assert.NotNull(result);
         Assert.Equal(5, result.Value);
@@ -105,7 +105,7 @@ public class PriorityTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsPriority()
     {
-        var converter = new PriorityTypeConverter();
+        var converter = new StrongInt32TypeConverter<Priority>();
         var result = converter.ConvertFrom("5") as Priority;
         Assert.NotNull(result);
         Assert.Equal(5, result.Value);

@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Person.UnitTests;
 
@@ -141,7 +141,7 @@ public class LastNameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new LastNameTypeConverter();
+        var converter = new StrongStringTypeConverter<LastName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -154,7 +154,7 @@ public class LastNameTests
     public void TypeConverter_ConvertFromString_ReturnsLastName()
     {
         // Arrange
-        var converter = new LastNameTypeConverter();
+        var converter = new StrongStringTypeConverter<LastName>();
         const string name = "Smith";
 
         // Act
@@ -169,7 +169,7 @@ public class LastNameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new LastNameTypeConverter();
+        var converter = new StrongStringTypeConverter<LastName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

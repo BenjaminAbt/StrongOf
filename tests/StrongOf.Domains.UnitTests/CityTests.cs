@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Address.UnitTests;
 
@@ -107,7 +107,7 @@ public class CityTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new CityTypeConverter();
+        var converter = new StrongStringTypeConverter<City>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -120,7 +120,7 @@ public class CityTests
     public void TypeConverter_ConvertFromString_ReturnsCity()
     {
         // Arrange
-        var converter = new CityTypeConverter();
+        var converter = new StrongStringTypeConverter<City>();
         const string value = "New York";
 
         // Act
@@ -135,7 +135,7 @@ public class CityTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new CityTypeConverter();
+        var converter = new StrongStringTypeConverter<City>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

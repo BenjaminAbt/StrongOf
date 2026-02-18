@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Network.UnitTests;
 
@@ -167,7 +167,7 @@ public class HostNameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new HostNameTypeConverter();
+        var converter = new StrongStringTypeConverter<HostName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -180,7 +180,7 @@ public class HostNameTests
     public void TypeConverter_ConvertFromString_ReturnsHostName()
     {
         // Arrange
-        var converter = new HostNameTypeConverter();
+        var converter = new StrongStringTypeConverter<HostName>();
         const string value = "www.example.com";
 
         // Act
@@ -195,7 +195,7 @@ public class HostNameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new HostNameTypeConverter();
+        var converter = new StrongStringTypeConverter<HostName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Identity.UnitTests;
 
@@ -161,7 +161,7 @@ public class EntityIdTests
     public void TypeConverter_CanConvertFromGuid()
     {
         // Arrange
-        var converter = new EntityIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<EntityId>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(Guid));
@@ -174,7 +174,7 @@ public class EntityIdTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new EntityIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<EntityId>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -187,7 +187,7 @@ public class EntityIdTests
     public void TypeConverter_ConvertFromGuid_ReturnsEntityId()
     {
         // Arrange
-        var converter = new EntityIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<EntityId>();
         Guid guid = Guid.NewGuid();
 
         // Act
@@ -202,7 +202,7 @@ public class EntityIdTests
     public void TypeConverter_ConvertFromString_ReturnsEntityId()
     {
         // Arrange
-        var converter = new EntityIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<EntityId>();
         Guid guid = Guid.NewGuid();
         string guidString = guid.ToString();
 
@@ -218,7 +218,7 @@ public class EntityIdTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new EntityIdTypeConverter();
+        var converter = new StrongGuidTypeConverter<EntityId>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

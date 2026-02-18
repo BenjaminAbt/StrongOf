@@ -1,8 +1,9 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 using System.Text.RegularExpressions;
 
 namespace StrongOf.Domains.Localization;
@@ -34,7 +35,7 @@ public sealed partial class LanguageCode(string value) : StrongString<LanguageCo
     /// <inheritdoc />
     /// <remarks>Comparison is case-insensitive because LanguageCode is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public bool Equals(LanguageCode? other)
+    public new bool Equals(LanguageCode? other)
         => other is not null && string.Equals(Value, other.Value, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />

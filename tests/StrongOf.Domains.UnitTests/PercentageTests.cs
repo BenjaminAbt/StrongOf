@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Finance.UnitTests;
 
@@ -151,7 +151,7 @@ public class PercentageTests
     public void TypeConverter_CanConvertFromDecimal()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(decimal));
@@ -164,7 +164,7 @@ public class PercentageTests
     public void TypeConverter_CanConvertFromDouble()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(double));
@@ -177,7 +177,7 @@ public class PercentageTests
     public void TypeConverter_CanConvertFromInt()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));
@@ -190,7 +190,7 @@ public class PercentageTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -203,7 +203,7 @@ public class PercentageTests
     public void TypeConverter_ConvertFromDecimal_ReturnsPercentage()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         var result = converter.ConvertFrom(75.5m) as Percentage;
@@ -217,7 +217,7 @@ public class PercentageTests
     public void TypeConverter_ConvertFromDouble_ReturnsPercentage()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         var result = converter.ConvertFrom(75.5) as Percentage;
@@ -231,7 +231,7 @@ public class PercentageTests
     public void TypeConverter_ConvertFromInt_ReturnsPercentage()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         var result = converter.ConvertFrom(75) as Percentage;
@@ -245,7 +245,7 @@ public class PercentageTests
     public void TypeConverter_ConvertFromString_ReturnsPercentage()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "75.5") as Percentage;
@@ -259,7 +259,7 @@ public class PercentageTests
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
         // Arrange
-        var converter = new PercentageTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Percentage>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(Guid));

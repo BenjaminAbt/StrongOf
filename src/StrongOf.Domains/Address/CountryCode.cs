@@ -1,8 +1,9 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace StrongOf.Domains.Address;
 
@@ -64,7 +65,7 @@ public sealed class CountryCode(string value) : StrongString<CountryCode>(value)
     /// <inheritdoc />
     /// <remarks>Comparison is case-insensitive because CountryCode is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public bool Equals(CountryCode? other)
+    public new bool Equals(CountryCode? other)
         => other is not null && string.Equals(Value, other.Value, StringComparison.OrdinalIgnoreCase);
 
     /// <inheritdoc />

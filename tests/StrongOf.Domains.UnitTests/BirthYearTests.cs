@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Person.UnitTests;
 
@@ -39,14 +39,14 @@ public class BirthYearTests
     [Fact]
     public void TypeConverter_CanConvertFromInt()
     {
-        var converter = new BirthYearTypeConverter();
+        var converter = new StrongInt32TypeConverter<BirthYear>();
         Assert.True(converter.CanConvertFrom(typeof(int)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new BirthYearTypeConverter();
+        var converter = new StrongInt32TypeConverter<BirthYear>();
         var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "1990") as BirthYear;
 
         Assert.NotNull(result);
@@ -56,7 +56,7 @@ public class BirthYearTests
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsInstance()
     {
-        var converter = new BirthYearTypeConverter();
+        var converter = new StrongInt32TypeConverter<BirthYear>();
         var result = converter.ConvertFrom(1990) as BirthYear;
 
         Assert.NotNull(result);
@@ -66,7 +66,7 @@ public class BirthYearTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new BirthYearTypeConverter();
+        var converter = new StrongInt32TypeConverter<BirthYear>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

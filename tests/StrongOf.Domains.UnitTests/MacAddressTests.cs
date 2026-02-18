@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Network.UnitTests;
 
@@ -145,7 +145,7 @@ public class MacAddressTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new MacAddressTypeConverter();
+        var converter = new StrongStringTypeConverter<MacAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -158,7 +158,7 @@ public class MacAddressTests
     public void TypeConverter_ConvertFromString_ReturnsMacAddress()
     {
         // Arrange
-        var converter = new MacAddressTypeConverter();
+        var converter = new StrongStringTypeConverter<MacAddress>();
         const string value = "00:11:22:33:44:55";
 
         // Act
@@ -173,7 +173,7 @@ public class MacAddressTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new MacAddressTypeConverter();
+        var converter = new StrongStringTypeConverter<MacAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

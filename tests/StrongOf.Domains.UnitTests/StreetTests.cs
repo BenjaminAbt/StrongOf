@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Address.UnitTests;
 
@@ -119,7 +119,7 @@ public class StreetTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StreetTypeConverter();
+        var converter = new StrongStringTypeConverter<Street>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -132,7 +132,7 @@ public class StreetTests
     public void TypeConverter_ConvertFromString_ReturnsStreet()
     {
         // Arrange
-        var converter = new StreetTypeConverter();
+        var converter = new StrongStringTypeConverter<Street>();
         const string value = "123 Main Street";
 
         // Act
@@ -147,7 +147,7 @@ public class StreetTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StreetTypeConverter();
+        var converter = new StrongStringTypeConverter<Street>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

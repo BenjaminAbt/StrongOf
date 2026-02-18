@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Network.UnitTests;
 
@@ -188,7 +188,7 @@ public class UrlTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new UrlTypeConverter();
+        var converter = new StrongStringTypeConverter<Url>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -201,7 +201,7 @@ public class UrlTests
     public void TypeConverter_ConvertFromString_ReturnsUrl()
     {
         // Arrange
-        var converter = new UrlTypeConverter();
+        var converter = new StrongStringTypeConverter<Url>();
         const string urlValue = "https://example.com";
 
         // Act
@@ -216,7 +216,7 @@ public class UrlTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new UrlTypeConverter();
+        var converter = new StrongStringTypeConverter<Url>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

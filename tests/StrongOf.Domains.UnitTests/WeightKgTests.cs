@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Measurement.UnitTests;
 
@@ -44,7 +44,7 @@ public class WeightKgTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new WeightKgTypeConverter();
+        var converter = new StrongDecimalTypeConverter<WeightKg>();
         var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "80") as WeightKg;
 
         Assert.NotNull(result);
@@ -54,7 +54,7 @@ public class WeightKgTests
     [Fact]
     public void TypeConverter_ConvertFromDecimal_ReturnsInstance()
     {
-        var converter = new WeightKgTypeConverter();
+        var converter = new StrongDecimalTypeConverter<WeightKg>();
         var result = converter.ConvertFrom(80m) as WeightKg;
 
         Assert.NotNull(result);
@@ -64,7 +64,7 @@ public class WeightKgTests
     [Fact]
     public void TypeConverter_ConvertFromDouble_ReturnsInstance()
     {
-        var converter = new WeightKgTypeConverter();
+        var converter = new StrongDecimalTypeConverter<WeightKg>();
         var result = converter.ConvertFrom(80.5) as WeightKg;
 
         Assert.NotNull(result);
@@ -74,7 +74,7 @@ public class WeightKgTests
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsInstance()
     {
-        var converter = new WeightKgTypeConverter();
+        var converter = new StrongDecimalTypeConverter<WeightKg>();
         var result = converter.ConvertFrom(80) as WeightKg;
 
         Assert.NotNull(result);
@@ -84,7 +84,7 @@ public class WeightKgTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new WeightKgTypeConverter();
+        var converter = new StrongDecimalTypeConverter<WeightKg>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

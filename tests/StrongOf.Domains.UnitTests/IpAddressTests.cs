@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 using System.Net;
 
@@ -190,7 +190,7 @@ public class IpAddressTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new IpAddressTypeConverter();
+        var converter = new StrongStringTypeConverter<IpAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -203,7 +203,7 @@ public class IpAddressTests
     public void TypeConverter_ConvertFromString_ReturnsIpAddress()
     {
         // Arrange
-        var converter = new IpAddressTypeConverter();
+        var converter = new StrongStringTypeConverter<IpAddress>();
         const string value = "192.168.1.1";
 
         // Act
@@ -218,7 +218,7 @@ public class IpAddressTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new IpAddressTypeConverter();
+        var converter = new StrongStringTypeConverter<IpAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

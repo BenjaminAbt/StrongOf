@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Finance.UnitTests;
 
@@ -130,7 +130,7 @@ public class CurrencyCodeTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new CurrencyCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<CurrencyCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -143,7 +143,7 @@ public class CurrencyCodeTests
     public void TypeConverter_ConvertFromString_ReturnsCurrencyCode()
     {
         // Arrange
-        var converter = new CurrencyCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<CurrencyCode>();
         const string code = "USD";
 
         // Act
@@ -158,7 +158,7 @@ public class CurrencyCodeTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new CurrencyCodeTypeConverter();
+        var converter = new StrongStringTypeConverter<CurrencyCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

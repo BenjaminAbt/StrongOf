@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Address.UnitTests;
 
@@ -37,7 +37,7 @@ public class HouseNumberTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new HouseNumberTypeConverter();
+        var converter = new StrongStringTypeConverter<HouseNumber>();
         var result = converter.ConvertFrom("12") as HouseNumber;
 
         Assert.NotNull(result);
@@ -47,7 +47,7 @@ public class HouseNumberTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new HouseNumberTypeConverter();
+        var converter = new StrongStringTypeConverter<HouseNumber>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

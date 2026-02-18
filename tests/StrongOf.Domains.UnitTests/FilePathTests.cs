@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Media.UnitTests;
 
@@ -45,7 +45,7 @@ public class FilePathTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new FilePathTypeConverter();
+        var converter = new StrongStringTypeConverter<FilePath>();
         var result = converter.ConvertFrom("C:\\temp\\file.txt") as FilePath;
 
         Assert.NotNull(result);
@@ -55,7 +55,7 @@ public class FilePathTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new FilePathTypeConverter();
+        var converter = new StrongStringTypeConverter<FilePath>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

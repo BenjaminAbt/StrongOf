@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Person.UnitTests;
 
@@ -168,7 +168,7 @@ public class FullNameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new FullNameTypeConverter();
+        var converter = new StrongStringTypeConverter<FullName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -181,7 +181,7 @@ public class FullNameTests
     public void TypeConverter_ConvertFromString_ReturnsFullName()
     {
         // Arrange
-        var converter = new FullNameTypeConverter();
+        var converter = new StrongStringTypeConverter<FullName>();
         const string name = "John Smith";
 
         // Act
@@ -196,7 +196,7 @@ public class FullNameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new FullNameTypeConverter();
+        var converter = new StrongStringTypeConverter<FullName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

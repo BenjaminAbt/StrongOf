@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Network.UnitTests;
 
@@ -35,7 +35,7 @@ public class HttpMethodTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new HttpMethodTypeConverter();
+        var converter = new StrongStringTypeConverter<HttpMethod>();
         var result = converter.ConvertFrom("GET") as HttpMethod;
 
         Assert.NotNull(result);
@@ -45,7 +45,7 @@ public class HttpMethodTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new HttpMethodTypeConverter();
+        var converter = new StrongStringTypeConverter<HttpMethod>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Geography.UnitTests;
 
@@ -37,7 +37,7 @@ public class LongitudeTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new LongitudeTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Longitude>();
         var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "20.5") as Longitude;
 
         Assert.NotNull(result);
@@ -47,7 +47,7 @@ public class LongitudeTests
     [Fact]
     public void TypeConverter_ConvertFromDecimal_ReturnsInstance()
     {
-        var converter = new LongitudeTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Longitude>();
         var result = converter.ConvertFrom(20.5m) as Longitude;
 
         Assert.NotNull(result);
@@ -57,7 +57,7 @@ public class LongitudeTests
     [Fact]
     public void TypeConverter_ConvertFromDouble_ReturnsInstance()
     {
-        var converter = new LongitudeTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Longitude>();
         var result = converter.ConvertFrom(20.25) as Longitude;
 
         Assert.NotNull(result);
@@ -67,7 +67,7 @@ public class LongitudeTests
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsInstance()
     {
-        var converter = new LongitudeTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Longitude>();
         var result = converter.ConvertFrom(20) as Longitude;
 
         Assert.NotNull(result);
@@ -77,7 +77,7 @@ public class LongitudeTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new LongitudeTypeConverter();
+        var converter = new StrongDecimalTypeConverter<Longitude>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

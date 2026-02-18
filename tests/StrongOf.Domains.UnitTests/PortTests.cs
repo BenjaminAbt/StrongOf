@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Network.UnitTests;
 
@@ -210,7 +210,7 @@ public class PortTests
     public void TypeConverter_CanConvertFromInt()
     {
         // Arrange
-        var converter = new PortTypeConverter();
+        var converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));
@@ -223,7 +223,7 @@ public class PortTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new PortTypeConverter();
+        var converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -236,7 +236,7 @@ public class PortTests
     public void TypeConverter_ConvertFromInt_ReturnsPort()
     {
         // Arrange
-        var converter = new PortTypeConverter();
+        var converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         var result = converter.ConvertFrom(443) as Port;
@@ -250,7 +250,7 @@ public class PortTests
     public void TypeConverter_ConvertFromString_ReturnsPort()
     {
         // Arrange
-        var converter = new PortTypeConverter();
+        var converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         var result = converter.ConvertFrom("443") as Port;
@@ -264,7 +264,7 @@ public class PortTests
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
         // Arrange
-        var converter = new PortTypeConverter();
+        var converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(Guid));

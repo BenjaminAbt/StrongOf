@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © Benjamin Abt 2025. All rights reserved.
 
 namespace StrongOf.Domains.Person.UnitTests;
 
@@ -126,7 +126,7 @@ public class PhoneNumberTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new PhoneNumberTypeConverter();
+        var converter = new StrongStringTypeConverter<PhoneNumber>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -139,7 +139,7 @@ public class PhoneNumberTests
     public void TypeConverter_ConvertFromString_ReturnsPhoneNumber()
     {
         // Arrange
-        var converter = new PhoneNumberTypeConverter();
+        var converter = new StrongStringTypeConverter<PhoneNumber>();
         const string phone = "+1-555-123-4567";
 
         // Act
@@ -154,7 +154,7 @@ public class PhoneNumberTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new PhoneNumberTypeConverter();
+        var converter = new StrongStringTypeConverter<PhoneNumber>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));
