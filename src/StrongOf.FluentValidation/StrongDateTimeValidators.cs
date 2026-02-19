@@ -42,11 +42,11 @@ public static class StrongDateTimeValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="min">The maximum value.</param>
+    /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTime min)
+    public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTime max)
         where TStrong : StrongDateTime<TStrong>
-        => rule.Must(strong => strong is not null && strong.Value <= min);
+        => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
     /// Checks if the StrongDateTime is within a specified range.
@@ -59,7 +59,7 @@ public static class StrongDateTimeValidators
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTime min, DateTime max)
         where TStrong : StrongDateTime<TStrong>
-        => rule.Must(strong => strong is not null && strong.Value <= min && strong.Value >= max);
+        => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);
 
     /// <summary>
     /// Validates that the strong DateTime is equal to another strong DateTime.

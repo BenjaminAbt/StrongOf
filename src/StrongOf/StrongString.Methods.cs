@@ -157,7 +157,7 @@ public abstract partial class StrongString<TStrong>
     /// Returns the first character of the string.
     /// </summary>
     /// <returns>The first character of the underlying string.</returns>
-    /// <exception cref="InvalidOperationException">Thrown if the string is empty.</exception>
+    /// <exception cref="IndexOutOfRangeException">Thrown if the string is empty.</exception>
     /// <example>
     /// <code>
     /// var name = new FirstName("John");
@@ -172,6 +172,7 @@ public abstract partial class StrongString<TStrong>
     /// Returns the first character converted to uppercase using invariant culture rules.
     /// </summary>
     /// <returns>The first character in uppercase.</returns>
+    /// <exception cref="IndexOutOfRangeException">Thrown if the string is empty.</exception>
     /// <example>
     /// <code>
     /// var name = new FirstName("john");

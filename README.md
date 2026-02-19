@@ -6,7 +6,7 @@
 |-|-|-|-|-|
 |*NuGet*|[![NuGet](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf/)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)|
 
-All [StrongOf Packages](https://www.nuget.org/packages/StrongOf)  are available for .NET 7, .NET 8 and .NET 9.
+All [StrongOf Packages](https://www.nuget.org/packages/StrongOf)  are available for .NET 8, .NET 9, .NET 10, and .NET 11.
 
 ---
 

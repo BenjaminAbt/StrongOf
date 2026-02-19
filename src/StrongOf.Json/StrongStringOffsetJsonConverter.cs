@@ -9,6 +9,11 @@ namespace StrongOf.Json;
 /// A JSON converter for StrongString.
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongString.</typeparam>
+/// <remarks>
+/// This converter is functionally identical to <see cref="StrongStringJsonConverter{TStrong}"/>.
+/// Prefer using <see cref="StrongStringJsonConverter{TStrong}"/> for new code.
+/// </remarks>
+[Obsolete("Use StrongStringJsonConverter<TStrong> instead.")]
 public class StrongStringOffsetJsonConverter<TStrong> : JsonConverter<TStrong>
     where TStrong : StrongString<TStrong>
 {
@@ -37,5 +42,5 @@ public class StrongStringOffsetJsonConverter<TStrong> : JsonConverter<TStrong>
     /// <param name="strong">The value to write.</param>
     /// <param name="options">Options to control the serializer behavior during writing.</param>
     public override void Write(Utf8JsonWriter writer, TStrong strong, JsonSerializerOptions options)
-        => writer.WriteStringValue(strong.Value.ToString());
+        => writer.WriteStringValue(strong.Value);
 }

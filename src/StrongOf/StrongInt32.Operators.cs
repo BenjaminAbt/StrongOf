@@ -27,7 +27,7 @@ public abstract partial class StrongInt32<TStrong>
             return strong.Value == otherStrong.Value;
         }
 
-        if (other is int uintValue)
+        if (other is uint uintValue)
         {
             return strong.Value == uintValue;
         }
@@ -107,7 +107,7 @@ public abstract partial class StrongInt32<TStrong>
 
         if (other is StrongInt32<TStrong> otherStrong)
         {
-            return strong.Value < otherStrong.Value;
+            return strong.Value > otherStrong.Value;
         }
 
         if (other is uint uintValue)
@@ -189,7 +189,7 @@ public abstract partial class StrongInt32<TStrong>
 
         if (other is StrongInt32<TStrong> otherStrong)
         {
-            return strong.Value <= otherStrong.Value;
+            return strong.Value >= otherStrong.Value;
         }
 
         if (other is uint uintValue)

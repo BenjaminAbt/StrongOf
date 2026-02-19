@@ -74,7 +74,7 @@ public abstract partial class StrongGuid<TStrong>
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is Guid guidValue)
@@ -101,7 +101,7 @@ public abstract partial class StrongGuid<TStrong>
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is Guid guidValue)

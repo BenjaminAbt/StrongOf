@@ -71,4 +71,34 @@ public class StrongDateTimeValidatorsTests
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Strong);
     }
+
+    [Fact]
+    public void HasRange_ShouldNotFail_WhenStrongDateTimeIsWithinRange()
+    {
+        _validator.RuleFor(x => x.Strong).HasRange(new(2021, 1, 1), new(2023, 1, 1));
+
+        TestModel model = new() { Strong = new(new DateTime(2022, 6, 15)) };
+        TestValidationResult<TestModel> result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Strong);
+    }
+
+    [Fact]
+    public void HasRange_ShouldFail_WhenStrongDateTimeIsBeforeMin()
+    {
+        _validator.RuleFor(x => x.Strong).HasRange(new(2021, 1, 1), new(2023, 1, 1));
+
+        TestModel model = new() { Strong = new(new DateTime(2020, 1, 1)) };
+        TestValidationResult<TestModel> result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Strong);
+    }
+
+    [Fact]
+    public void HasRange_ShouldFail_WhenStrongDateTimeIsAfterMax()
+    {
+        _validator.RuleFor(x => x.Strong).HasRange(new(2021, 1, 1), new(2023, 1, 1));
+
+        TestModel model = new() { Strong = new(new DateTime(2024, 1, 1)) };
+        TestValidationResult<TestModel> result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Strong);
+    }
 }

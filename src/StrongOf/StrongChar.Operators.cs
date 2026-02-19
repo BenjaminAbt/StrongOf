@@ -79,7 +79,7 @@ public abstract partial class StrongChar<TStrong>
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is char charValue)
@@ -115,7 +115,7 @@ public abstract partial class StrongChar<TStrong>
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is char charValue)

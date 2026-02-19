@@ -79,7 +79,7 @@ public abstract partial class StrongDecimal<TStrong>
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is decimal decimalValue)
@@ -130,7 +130,7 @@ public abstract partial class StrongDecimal<TStrong>
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is decimal decimalValue)
