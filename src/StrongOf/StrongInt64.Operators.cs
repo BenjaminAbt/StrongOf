@@ -112,7 +112,7 @@ public abstract partial class StrongInt64<TStrong>
 
         if (other is StrongInt64<TStrong> otherStrong)
         {
-            return strong.Value < otherStrong.Value;
+            return strong.Value > otherStrong.Value;
         }
 
         if (other is uint uintValue)
@@ -194,7 +194,7 @@ public abstract partial class StrongInt64<TStrong>
 
         if (other is StrongInt64<TStrong> otherStrong)
         {
-            return strong.Value <= otherStrong.Value;
+            return strong.Value >= otherStrong.Value;
         }
 
         if (other is uint uintValue)

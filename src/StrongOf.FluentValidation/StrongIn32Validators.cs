@@ -16,6 +16,10 @@ public static class StrongIn32Validators
     /// <summary>
     /// Checks if the StrongInt32 has a value.
     /// </summary>
+    /// <typeparam name="T">The type of the object being validated.</typeparam>
+    /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
+    /// <param name="rule">The rule builder.</param>
+    /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
         where TStrong : StrongInt32<TStrong>
         => rule.Must(strong => strong is not null);
@@ -23,6 +27,11 @@ public static class StrongIn32Validators
     /// <summary>
     /// Checks if the StrongInt32 has a minimum value.
     /// </summary>
+    /// <typeparam name="T">The type of the object being validated.</typeparam>
+    /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
+    /// <param name="rule">The rule builder.</param>
+    /// <param name="min">The minimum value.</param>
+    /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int min)
         where TStrong : StrongInt32<TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min);
@@ -30,6 +39,11 @@ public static class StrongIn32Validators
     /// <summary>
     /// Checks if the StrongInt32 has a maximum value.
     /// </summary>
+    /// <typeparam name="T">The type of the object being validated.</typeparam>
+    /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
+    /// <param name="rule">The rule builder.</param>
+    /// <param name="max">The maximum value.</param>
+    /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int max)
         where TStrong : StrongInt32<TStrong>
         => rule.Must(strong => strong is not null && strong.Value <= max);
@@ -37,6 +51,12 @@ public static class StrongIn32Validators
     /// <summary>
     /// Checks if the StrongInt32 is within a specified range.
     /// </summary>
+    /// <typeparam name="T">The type of the object being validated.</typeparam>
+    /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
+    /// <param name="rule">The rule builder.</param>
+    /// <param name="min">The minimum value of the range.</param>
+    /// <param name="max">The maximum value of the range.</param>
+    /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int min, int max)
         where TStrong : StrongInt32<TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);

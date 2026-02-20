@@ -1,7 +1,7 @@
 <Project>
   <PropertyGroup Label="Project">
     <Product>BenjaminAbt.StrongOf</Product>
-    <Authors>BenjaminAbt, SchwabenCode</Authors>
+    <Authors>BenjaminAbt</Authors>
     <Company>Benjamin Abt</Company>
     <Copyright>Benjamin Abt</Copyright>
   </PropertyGroup>
@@ -18,7 +18,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly">
-    <TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+    <TargetFrameworks>net8.0;net9.0;net10.0;net11.0</TargetFrameworks>
     <RootNamespace>$(MSBuildProjectName)</RootNamespace>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
   </PropertyGroup>
@@ -43,6 +43,13 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  
+  <PropertyGroup Label="Performance">
+    <!-- Enable Dynamic Profile-Guided Optimization for runtime performance -->
+    <TieredPGO>true</TieredPGO>
+    <DynamicPGO>true</DynamicPGO>
   </PropertyGroup>
 
   <PropertyGroup Label="Package">
@@ -76,6 +83,21 @@
     <NuGetAuditLevel>low</NuGetAuditLevel>
   </PropertyGroup>
 
+  <!-- Global coverage settings applied to all test projects -->
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'" Label="Coverage">
+    <CollectCoverage>true</CollectCoverage>
+    <CoverletOutputFormat>lcov,opencover,cobertura</CoverletOutputFormat>
+    <CoverletOutput>$(MSBuildThisFileDirectory)TestResults/coverage/$(MSBuildProjectName).</CoverletOutput>
+    <ExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
+    <ExcludeByFile>**/*Program.cs;**/*Startup.cs;**/*GlobalUsings.cs</ExcludeByFile>
+    <UseSourceLink>true</UseSourceLink>
+    <!-- Enforce high line coverage; branch coverage is informative only -->
+    <!-- Note: Set to 96 to account for performance-optimized helper methods and framework-specific code paths -->
+    <Threshold>96</Threshold>
+    <ThresholdType>line</ThresholdType>
+    <ThresholdStat>total</ThresholdStat>
+  </PropertyGroup>
+
   <ItemGroup Label="Default Test Dependencies" Condition="'$(IsTestProject)' == 'true'">
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="Microsoft.Extensions.Diagnostics.Testing" />
@@ -92,6 +114,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="xunit.runner.visualstudio">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="coverlet.collector">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

@@ -1,15 +1,29 @@
 ﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
+using System.Runtime.CompilerServices;
+
 namespace StrongOf;
 
 public abstract partial class StrongDecimal<TStrong>
 {
     /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are equal.
+    /// Determines whether two specified instances of <see cref="StrongDecimal{TStrong}"/> are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same decimal; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> and <paramref name="other"/> represent the same value;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// var price1 = new Price(99.99m);
+    /// var price2 = new Price(99.99m);
+    /// bool areEqual = price1 == price2; // true
+    /// bool sameAsRaw = price1 == 99.99m; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator ==(StrongDecimal<TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -31,11 +45,15 @@ public abstract partial class StrongDecimal<TStrong>
     }
 
     /// <summary>
-    /// Determines whether two specified instances of StrongDecimal are not equal.
+    /// Determines whether two specified instances of <see cref="StrongDecimal{TStrong}"/> are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same decimal; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> and <paramref name="other"/> do not represent the same value;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator !=(StrongDecimal<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
@@ -47,14 +65,21 @@ public abstract partial class StrongDecimal<TStrong>
     /// <param name="strong">The <see cref="StrongDecimal{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is less than the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is less than the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
+    /// <example>
+    /// <code>
+    /// var price = new Price(50.00m);
+    /// bool isLess = price &lt; 100.00m; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator <(StrongDecimal<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is decimal decimalValue)
@@ -91,14 +116,21 @@ public abstract partial class StrongDecimal<TStrong>
     /// <param name="strong">The <see cref="StrongDecimal{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is greater than the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is greater than the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
+    /// <example>
+    /// <code>
+    /// var price = new Price(150.00m);
+    /// bool isGreater = price &gt; 100.00m; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator >(StrongDecimal<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is decimal decimalValue)
@@ -135,9 +167,16 @@ public abstract partial class StrongDecimal<TStrong>
     /// <param name="strong">The <see cref="StrongDecimal{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is less than or equal to the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is less than or equal to the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
+    /// <example>
+    /// <code>
+    /// var price = new Price(100.00m);
+    /// bool isLessOrEqual = price &lt;= 100.00m; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator <=(StrongDecimal<TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -179,9 +218,16 @@ public abstract partial class StrongDecimal<TStrong>
     /// <param name="strong">The <see cref="StrongDecimal{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is greater than or equal to the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is greater than or equal to the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
+    /// <example>
+    /// <code>
+    /// var price = new Price(100.00m);
+    /// bool isGreaterOrEqual = price &gt;= 100.00m; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator >=(StrongDecimal<TStrong>? strong, object? other)
     {
         if (strong is null)

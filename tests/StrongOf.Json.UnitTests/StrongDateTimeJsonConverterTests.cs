@@ -11,8 +11,8 @@ public class StrongDateTimeJsonConverterTests
 {
     private sealed class TestDateTimeOffsetOf(DateTime value) : StrongDateTime<TestDateTimeOffsetOf>(value) { }
 
-    private readonly StrongDateTimeJsonConverter<TestDateTimeOffsetOf> _converter = new ();
-    private readonly JsonSerializerOptions _options = new ();
+    private readonly StrongDateTimeJsonConverter<TestDateTimeOffsetOf> _converter = new();
+    private readonly JsonSerializerOptions _options = new();
 
     [Fact]
     public void Read_ValidJson_ReturnsStrongDateTime()

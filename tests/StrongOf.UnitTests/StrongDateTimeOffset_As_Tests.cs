@@ -45,6 +45,6 @@ public class StrongDateTimeOffset_As_Tests
         TestDateTimeOffsetOf strong = new(DateTimeOffset.UtcNow);
 
         // Assert
-        Assert.Equal(TimeOnly.FromDateTime(strong.Value.Date), strong.AsTime());
+        Assert.Equal(TimeOnly.FromDateTime(strong.Value.DateTime), strong.AsTime());
     }
 }

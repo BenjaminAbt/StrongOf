@@ -51,7 +51,7 @@ public class StrongDecimal_Operators_Tests
     }
 
     [Fact]
-    public void LessThanOperator_WithBothNull_ReturnsTrue()
+    public void LessThanOperator_WithBothNull_ReturnsFalse()
     {
         // Arrange
         TestDecimalOf? strong = null;
@@ -61,7 +61,7 @@ public class StrongDecimal_Operators_Tests
         bool result = strong < other;
 
         // Assert
-        Assert.True(result);
+        Assert.False(result);
     }
 
     [Fact]
@@ -107,7 +107,7 @@ public class StrongDecimal_Operators_Tests
     }
 
     [Fact]
-    public void GreaterThanOperator_WithBothNull_ReturnsTrue()
+    public void GreaterThanOperator_WithBothNull_ReturnsFalse()
     {
         // Arrange
         TestDecimalOf? strong = null;
@@ -117,7 +117,7 @@ public class StrongDecimal_Operators_Tests
         bool result = strong > other;
 
         // Assert
-        Assert.True(result);
+        Assert.False(result);
     }
 
     [Fact]

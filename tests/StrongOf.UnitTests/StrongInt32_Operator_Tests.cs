@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright ï¿½ Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Xunit;
 
@@ -81,5 +81,67 @@ public class StrongInt32_Operator_Tests
 
         // Assert
         Assert.Equal((strong.Value >= other), (strong >= other));
+    }
+
+    // --- StrongType-vs-StrongType comparisons (regression tests for copy-paste bugs) ---
+
+    [Theory]
+    [InlineData(10, 5, true)]
+    [InlineData(5, 10, false)]
+    [InlineData(5, 5, false)]
+    public void OperatorGreaterThan_WithStrongType_ReturnsCorrectResult(int left, int right, bool expected)
+    {
+        TestInt32Of strongLeft = new(left);
+        TestInt32Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft > (object)strongRight);
+    }
+
+    [Theory]
+    [InlineData(5, 10, true)]
+    [InlineData(10, 5, false)]
+    [InlineData(5, 5, false)]
+    public void OperatorLessThan_WithStrongType_ReturnsCorrectResult(int left, int right, bool expected)
+    {
+        TestInt32Of strongLeft = new(left);
+        TestInt32Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft < (object)strongRight);
+    }
+
+    [Theory]
+    [InlineData(10, 5, true)]
+    [InlineData(5, 10, false)]
+    [InlineData(5, 5, true)]
+    public void OperatorGreaterThanOrEqual_WithStrongType_ReturnsCorrectResult(int left, int right, bool expected)
+    {
+        TestInt32Of strongLeft = new(left);
+        TestInt32Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft >= (object)strongRight);
+    }
+
+    [Theory]
+    [InlineData(5, 10, true)]
+    [InlineData(10, 5, false)]
+    [InlineData(5, 5, true)]
+    public void OperatorLessThanOrEqual_WithStrongType_ReturnsCorrectResult(int left, int right, bool expected)
+    {
+        TestInt32Of strongLeft = new(left);
+        TestInt32Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft <= (object)strongRight);
+    }
+
+    [Fact]
+    public void OperatorEquals_WithUInt_ReturnsTrue()
+    {
+        TestInt32Of strong = new(42);
+        uint uintValue = 42u;
+        Assert.True(strong == (object)uintValue);
+    }
+
+    [Fact]
+    public void OperatorEquals_WithUInt_ReturnsFalse()
+    {
+        TestInt32Of strong = new(42);
+        uint uintValue = 99u;
+        Assert.False(strong == (object)uintValue);
     }
 }

@@ -1,15 +1,28 @@
 ﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
+using System.Runtime.CompilerServices;
+
 namespace StrongOf;
 
 public abstract partial class StrongDateTimeOffset<TStrong>
 {
     /// <summary>
-    /// Determines whether two specified instances of StrongDateTimeOffset are equal.
+    /// Determines whether two specified instances of <see cref="StrongDateTimeOffset{TStrong}"/> are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same DateTimeOffset; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> and <paramref name="other"/> represent the same value;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// var createdAt1 = new CreatedAt(DateTimeOffset.UtcNow);
+    /// var createdAt2 = new CreatedAt(DateTimeOffset.UtcNow);
+    /// bool areEqual = createdAt1 == createdAt2;
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator ==(StrongDateTimeOffset<TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -31,22 +44,36 @@ public abstract partial class StrongDateTimeOffset<TStrong>
     }
 
     /// <summary>
-    /// Determines whether two specified instances of StrongDateTimeOffset are not equal.
+    /// Determines whether two specified instances of <see cref="StrongDateTimeOffset{TStrong}"/> are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same DateTimeOffset; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> and <paramref name="other"/> do not represent the same value;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator !=(StrongDateTimeOffset<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
     }
 
     /// <summary>
-    /// Determines whether the value of the current StrongDateTimeOffset object is less than the value of a specified object.
+    /// Determines whether a <see cref="StrongDateTimeOffset{TStrong}"/> is less than another object.
     /// </summary>
-    /// <param name="strong">The current instance.</param>
+    /// <param name="strong">The strong type instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if the value of the current StrongDateTimeOffset object is less than the value of other; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> is less than <paramref name="other"/>;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// var createdAt = new CreatedAt(DateTimeOffset.UtcNow.AddDays(-1));
+    /// bool isEarlier = createdAt &lt; DateTimeOffset.UtcNow; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator <(StrongDateTimeOffset<TStrong> strong, object other)
     {
         if (other is DateTimeOffset dtoValue)
@@ -68,11 +95,15 @@ public abstract partial class StrongDateTimeOffset<TStrong>
     }
 
     /// <summary>
-    /// Determines whether the value of the current StrongDateTimeOffset object is greater than the value of a specified object.
+    /// Determines whether a <see cref="StrongDateTimeOffset{TStrong}"/> is greater than another object.
     /// </summary>
-    /// <param name="strong">The current instance.</param>
+    /// <param name="strong">The strong type instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if the value of the current StrongDateTimeOffset object is greater than the value of other; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> is greater than <paramref name="other"/>;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator >(StrongDateTimeOffset<TStrong> strong, object other)
     {
         if (other is DateTimeOffset dtoValue)
@@ -94,11 +125,15 @@ public abstract partial class StrongDateTimeOffset<TStrong>
     }
 
     /// <summary>
-    /// Determines whether the value of the current StrongDateTimeOffset object is less than or equal to the value of a specified object.
+    /// Determines whether a <see cref="StrongDateTimeOffset{TStrong}"/> is less than or equal to another object.
     /// </summary>
-    /// <param name="strong">The current instance.</param>
+    /// <param name="strong">The strong type instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if the value of the current StrongDateTimeOffset object is less than or equal to the value of other; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> is less than or equal to <paramref name="other"/>;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator <=(StrongDateTimeOffset<TStrong> strong, object other)
     {
         if (other is DateTimeOffset dtoValue)
@@ -120,11 +155,15 @@ public abstract partial class StrongDateTimeOffset<TStrong>
     }
 
     /// <summary>
-    /// Determines whether the value of the current StrongDateTimeOffset object is greater than or equal to the value of a specified object.
+    /// Determines whether a <see cref="StrongDateTimeOffset{TStrong}"/> is greater than or equal to another object.
     /// </summary>
-    /// <param name="strong">The current instance.</param>
+    /// <param name="strong">The strong type instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if the value of the current StrongDateTimeOffset object is greater than or equal to the value of other; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> is greater than or equal to <paramref name="other"/>;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator >=(StrongDateTimeOffset<TStrong> strong, object other)
     {
         if (other is DateTimeOffset dtoValue)

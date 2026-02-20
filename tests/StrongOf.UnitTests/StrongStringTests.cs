@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright ï¿½ Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Xunit;
 
@@ -88,5 +88,43 @@ public class StrongStringTests
     {
         TestStringOf strongString = new("test");
         Assert.True(strongString != "other");
+    }
+
+    [Fact]
+    public void TryParse_WithNonNullValue_ReturnsTrueAndValue()
+    {
+        bool result = TestStringOf.TryParse("hello", out TestStringOf? strong);
+        Assert.True(result);
+        Assert.NotNull(strong);
+        Assert.Equal("hello", strong.Value);
+    }
+
+    [Fact]
+    public void TryParse_WithNull_ReturnsFalseAndNull()
+    {
+        bool result = TestStringOf.TryParse(null, out TestStringOf? strong);
+        Assert.False(result);
+        Assert.Null(strong);
+    }
+
+    [Fact]
+    public void CompareTo_WithNull_Returns1()
+    {
+        TestStringOf strongString = new("test");
+        Assert.Equal(1, strongString.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_Object_WithDifferentType_ThrowsArgumentException()
+    {
+        TestStringOf strongString = new("test");
+        Assert.Throws<ArgumentException>(() => strongString.CompareTo(new object()));
+    }
+
+    [Fact]
+    public void FromTrimmed_WithAllWhitespace_ReturnsEmpty()
+    {
+        TestStringOf result = TestStringOf.FromTrimmed("   ");
+        Assert.True(result.IsEmpty());
     }
 }

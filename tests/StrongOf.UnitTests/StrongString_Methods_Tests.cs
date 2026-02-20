@@ -126,14 +126,118 @@ public class StrongString_Methods_Tests
         }
     }
 
-    public static IEnumerable<object[]> ContainsInvalidBytesTestsData()
+    public static TheoryData<bool, string, string> ContainsInvalidBytesTestsData =>
+        new()
+        {
+            { false, "", "Hello World" },
+            { false, "", "test123" },
+            { false, "", "" },
+            { true, "🎉", "Hello🎉World" },
+            { true, "☀", "Sun☀shine" },
+        };
+
+    [Fact]
+    public void IsNullOrWhiteSpace_WithWhitespace_ReturnsTrue()
     {
-        yield return new object[] { true, "𝐻𝑒𝓁𝑜𝒯𝓈𝓉", "𝐻𝑒𝓁𝓁𝑜 𝒯𝑒𝓈𝓉" };
-        yield return new object[] { false, "", "Object list Filter elements" };
-        yield return new object[] { false, "", "4th annual C# advent" };
-        yield return new object[] { false, "", "Why is Serialport.ReadExisting with binary data so slow with C#?" };
-        yield return new object[] { false, "", "[solved] How can I display a print dialog for an RDLC report from the code?" };
-        yield return new object[] { false, "", "Regex: Find everything between an @ and a whitespace/end of string" };
-        yield return new object[] { false, "", "dll created with .NET Core and Roslyn throws \"The type 'Object' is defined...\" Error in another dll" };
+        TestStringOf strongString = new("   ");
+        Assert.True(strongString.IsNullOrWhiteSpace());
+    }
+
+    [Fact]
+    public void IsNullOrWhiteSpace_WithEmpty_ReturnsTrue()
+    {
+        TestStringOf strongString = new("");
+        Assert.True(strongString.IsNullOrWhiteSpace());
+    }
+
+    [Fact]
+    public void IsNullOrWhiteSpace_WithValue_ReturnsFalse()
+    {
+        TestStringOf strongString = new("Test");
+        Assert.False(strongString.IsNullOrWhiteSpace());
+    }
+
+    [Fact]
+    public void Contains_Char_ReturnsTrue()
+    {
+        TestStringOf strongString = new("Test");
+        Assert.True(strongString.Contains('T'));
+    }
+
+    [Fact]
+    public void Contains_Char_ReturnsFalse()
+    {
+        TestStringOf strongString = new("Test");
+        Assert.False(strongString.Contains('X'));
+    }
+
+    [Fact]
+    public void Contains_String_ReturnsTrue()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.True(strongString.Contains("World", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void Contains_String_WithComparison_ReturnsTrueCaseInsensitive()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.True(strongString.Contains("world", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void StartsWith_Char_ReturnsTrue()
+    {
+        TestStringOf strongString = new("Test");
+        Assert.True(strongString.StartsWith('T'));
+    }
+
+    [Fact]
+    public void StartsWith_String_ReturnsTrue()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.True(strongString.StartsWith("Hello", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void StartsWith_String_ReturnsFalse()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.False(strongString.StartsWith("World", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void StartsWith_String_WithComparison_ReturnsTrueCaseInsensitive()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.True(strongString.StartsWith("hello", StringComparison.OrdinalIgnoreCase));
+    }
+
+    [Fact]
+    public void EndsWith_Char_ReturnsTrue()
+    {
+        TestStringOf strongString = new("Test");
+        Assert.True(strongString.EndsWith('t'));
+    }
+
+    [Fact]
+    public void EndsWith_String_ReturnsTrue()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.True(strongString.EndsWith("World", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void EndsWith_String_ReturnsFalse()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.False(strongString.EndsWith("Hello", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void EndsWith_String_WithComparison_ReturnsTrueCaseInsensitive()
+    {
+        TestStringOf strongString = new("Hello World");
+        Assert.True(strongString.EndsWith("world", StringComparison.OrdinalIgnoreCase));
     }
 }

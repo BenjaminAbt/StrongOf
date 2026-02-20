@@ -42,11 +42,11 @@ public static class StrongDateTimeOffsetValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="min">The maximum value.</param>
+    /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset min)
+    public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset max)
         where TStrong : StrongDateTimeOffset<TStrong>
-        => rule.Must(strong => strong is not null && strong.Value <= min);
+        => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
     /// Checks if the StrongDateTimeOffset is within a specified range.
@@ -59,7 +59,7 @@ public static class StrongDateTimeOffsetValidators
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset min, DateTimeOffset max)
         where TStrong : StrongDateTimeOffset<TStrong>
-        => rule.Must(strong => strong is not null && strong.Value <= min && strong.Value >= max);
+        => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);
 
     /// <summary>
     /// Validates that the StrongDateTimeOffset is equal to another StrongDateTimeOffset.
@@ -87,7 +87,7 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="expression">The expression that specifies the other StrongDateTimeOffset.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongDateTime<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>
     {
         MemberInfo member = expression.GetMember();
         Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);

@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright ï¿½ Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Xunit;
 
@@ -79,5 +79,26 @@ public class StrongInt32Tests
         TestInt32Of strongInt1 = new(123);
         TestInt32Of strongInt2 = new(123);
         Assert.Equal(strongInt1.GetHashCode(), strongInt2.GetHashCode());
+    }
+
+    [Fact]
+    public void CompareTo_WithNull_Returns1()
+    {
+        TestInt32Of strong = new(5);
+        Assert.Equal(1, strong.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_WithDifferentType_ThrowsArgumentException()
+    {
+        TestInt32Of strong = new(5);
+        Assert.Throws<ArgumentException>(() => strong.CompareTo(new object()));
+    }
+
+    [Fact]
+    public void ToString_ReturnsStringRepresentation()
+    {
+        TestInt32Of strong = new(42);
+        Assert.Equal("42", strong.ToString());
     }
 }

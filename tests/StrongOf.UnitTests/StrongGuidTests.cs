@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright ï¿½ Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Xunit;
 
@@ -152,5 +152,48 @@ public class StrongGuidTests
         TestGuidOf strongGuid = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
         Assert.NotNull(strongGuid);
         Assert.NotNull(strongGuid);
+    }
+
+    [Fact]
+    public void From_WithArray_ReturnsConvertedList()
+    {
+        Guid[] guids = [Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid()];
+        List<TestGuidOf>? result = TestGuidOf.From((IEnumerable<Guid>)guids);
+        Assert.NotNull(result);
+        Assert.Equal(3, result.Count);
+        Assert.Equal(guids[0], result[0].Value);
+        Assert.Equal(guids[1], result[1].Value);
+        Assert.Equal(guids[2], result[2].Value);
+    }
+
+    [Fact]
+    public void From_WithList_ReturnsConvertedList()
+    {
+        List<Guid> guids = [Guid.NewGuid(), Guid.NewGuid()];
+        List<TestGuidOf>? result = TestGuidOf.From((IEnumerable<Guid>)guids);
+        Assert.NotNull(result);
+        Assert.Equal(2, result.Count);
+        Assert.Equal(guids[0], result[0].Value);
+    }
+
+    [Fact]
+    public void From_WithNull_ReturnsNull()
+    {
+        List<TestGuidOf>? result = TestGuidOf.From((IEnumerable<Guid>?)null);
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public void CompareTo_WithNull_Returns1()
+    {
+        TestGuidOf strong = new(Guid.NewGuid());
+        Assert.Equal(1, strong.CompareTo(null));
+    }
+
+    [Fact]
+    public void CompareTo_WithDifferentType_ThrowsArgumentException()
+    {
+        TestGuidOf strong = new(Guid.NewGuid());
+        Assert.Throws<ArgumentException>(() => strong.CompareTo(new object()));
     }
 }

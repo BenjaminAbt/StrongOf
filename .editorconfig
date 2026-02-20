@@ -440,9 +440,23 @@ dotnet_diagnostic.MA0048.severity = silent
 #         Set as suggestion to encourage smaller, more focused methods while allowing flexibility for complex logic.
 dotnet_diagnostic.MA0051.severity = suggestion
 
+# MA0095: A class that implements IEquatable<T> should override Equals(object)
+#         Suppressed for test files only - the abstract Strong types correctly override Equals(object),
+#         but sealed test classes inherit this override and the analyzer incorrectly flags them.
+#         See: https://github.com/meziantou/Meziantou.Analyzer/blob/main/docs/Rules/MA0095.md
+
 # MA0154: Use langword in XML comment
 #         Disabled to allow flexibility in documentation style and format.
 dotnet_diagnostic.MA0154.severity = none
+
+# ------------------------------------------------------
+# Tests and Benchmarks
+# ------------------------------------------------------
+
+# Suppress MA0095 for test and benchmark projects where sealed test classes
+# inherit from abstract Strong types that properly override Equals(object)
+[{tests,perf}/**/**.cs]
+dotnet_diagnostic.MA0095.severity = none
 
 # ------------------------------------------------------
 # Xunit

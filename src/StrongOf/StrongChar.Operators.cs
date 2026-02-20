@@ -1,15 +1,29 @@
 ﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
+using System.Runtime.CompilerServices;
+
 namespace StrongOf;
 
 public abstract partial class StrongChar<TStrong>
 {
     /// <summary>
-    /// Determines whether two specified instances of StrongChar are equal.
+    /// Determines whether two specified instances of <see cref="StrongChar{TStrong}"/> are equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and value represent the same char; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> and <paramref name="other"/> represent the same value;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    /// <example>
+    /// <code>
+    /// var grade1 = new GradeLevel('A');
+    /// var grade2 = new GradeLevel('A');
+    /// bool areEqual = grade1 == grade2; // true
+    /// bool sameAsRaw = grade1 == 'A'; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator ==(StrongChar<TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -31,11 +45,15 @@ public abstract partial class StrongChar<TStrong>
     }
 
     /// <summary>
-    /// Determines whether two specified instances of StrongChar are not equal.
+    /// Determines whether two specified instances of <see cref="StrongChar{TStrong}"/> are not equal.
     /// </summary>
     /// <param name="strong">The first instance to compare.</param>
     /// <param name="other">The object to compare.</param>
-    /// <returns>True if strong and other do not represent the same char; otherwise, false.</returns>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> and <paramref name="other"/> do not represent the same value;
+    /// otherwise, <c>false</c>.
+    /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator !=(StrongChar<TStrong>? strong, object? other)
     {
         return (strong == other) is false;
@@ -47,19 +65,21 @@ public abstract partial class StrongChar<TStrong>
     /// <param name="strong">The <see cref="StrongChar{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is less than the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is less than the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// If <paramref name="strong"/> is <see langword="null"/>, the method returns <see langword="true"/> if <paramref name="other"/> is also <see langword="null"/>, otherwise <see langword="false"/>.
-    /// If <paramref name="other"/> is a char, the method compares the value of <paramref name="strong"/> with the char value.
-    /// If <paramref name="other"/> is a <see cref="StrongChar{TStrong}"/> object, the method compares the value of <paramref name="strong"/> with the value of the other <see cref="StrongChar{TStrong}"/> object.
-    /// </remarks>
+    /// <example>
+    /// <code>
+    /// var grade = new GradeLevel('A');
+    /// bool isLess = grade &lt; 'B'; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator <(StrongChar<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is char charValue)
@@ -81,19 +101,21 @@ public abstract partial class StrongChar<TStrong>
     /// <param name="strong">The <see cref="StrongChar{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is greater than the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is greater than the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// If <paramref name="strong"/> is <see langword="null"/>, the method returns <see langword="true"/> if <paramref name="other"/> is also <see langword="null"/>, otherwise <see langword="false"/>.
-    /// If <paramref name="other"/> is a char, the method compares the value of <paramref name="strong"/> with the char value.
-    /// If <paramref name="other"/> is a <see cref="StrongChar{TStrong}"/> object, the method compares the value of <paramref name="strong"/> with the value of the other <see cref="StrongChar{TStrong}"/> object.
-    /// </remarks>
+    /// <example>
+    /// <code>
+    /// var grade = new GradeLevel('B');
+    /// bool isGreater = grade &gt; 'A'; // true
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator >(StrongChar<TStrong>? strong, object? other)
     {
         if (strong is null)
         {
-            return other is null;
+            return false;
         }
 
         if (other is char charValue)
@@ -115,14 +137,10 @@ public abstract partial class StrongChar<TStrong>
     /// <param name="strong">The <see cref="StrongChar{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is less than or equal to the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is less than or equal to the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// If <paramref name="strong"/> is <see langword="null"/>, the method returns <see langword="true"/> if <paramref name="other"/> is also <see langword="null"/>, otherwise <see langword="false"/>.
-    /// If <paramref name="other"/> is a char, the method compares the value of <paramref name="strong"/> with the char value.
-    /// If <paramref name="other"/> is a <see cref="StrongChar{TStrong}"/> object, the method compares the value of <paramref name="strong"/> with the value of the other <see cref="StrongChar{TStrong}"/> object.
-    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator <=(StrongChar<TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -149,14 +167,10 @@ public abstract partial class StrongChar<TStrong>
     /// <param name="strong">The <see cref="StrongChar{TStrong}"/> object to compare.</param>
     /// <param name="other">The object to compare with the <paramref name="strong"/> object.</param>
     /// <returns>
-    /// <see langword="true"/> if the <paramref name="strong"/> object is greater than or equal to the <paramref name="other"/> object;
-    /// otherwise, <see langword="false"/>.
+    /// <c>true</c> if the <paramref name="strong"/> object is greater than or equal to the <paramref name="other"/> object;
+    /// otherwise, <c>false</c>.
     /// </returns>
-    /// <remarks>
-    /// If <paramref name="strong"/> is <see langword="null"/>, the method returns <see langword="true"/> if <paramref name="other"/> is also <see langword="null"/>, otherwise <see langword="false"/>.
-    /// If <paramref name="other"/> is a char, the method compares the value of <paramref name="strong"/> with the char value.
-    /// If <paramref name="other"/> is a <see cref="StrongChar{TStrong}"/> object, the method compares the value of <paramref name="strong"/> with the value of the other <see cref="StrongChar{TStrong}"/> object.
-    /// </remarks>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool operator >=(StrongChar<TStrong>? strong, object? other)
     {
         if (strong is null)

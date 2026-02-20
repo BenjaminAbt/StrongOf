@@ -71,4 +71,40 @@ public class StrongDateTimeOffsetValidatorsTests
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Strong);
     }
+
+    [Fact]
+    public void HasRange_ShouldNotFail_WhenStrongDateTimeOffsetIsWithinRange()
+    {
+        _validator.RuleFor(x => x.Strong).HasRange(
+            new(2021, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        TestModel model = new() { Strong = new(new DateTimeOffset(2022, 6, 15, 12, 0, 0, TimeSpan.Zero)) };
+        TestValidationResult<TestModel> result = _validator.TestValidate(model);
+        result.ShouldNotHaveValidationErrorFor(x => x.Strong);
+    }
+
+    [Fact]
+    public void HasRange_ShouldFail_WhenStrongDateTimeOffsetIsBeforeMin()
+    {
+        _validator.RuleFor(x => x.Strong).HasRange(
+            new(2021, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        TestModel model = new() { Strong = new(new DateTimeOffset(2020, 1, 1, 0, 0, 0, TimeSpan.Zero)) };
+        TestValidationResult<TestModel> result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Strong);
+    }
+
+    [Fact]
+    public void HasRange_ShouldFail_WhenStrongDateTimeOffsetIsAfterMax()
+    {
+        _validator.RuleFor(x => x.Strong).HasRange(
+            new(2021, 1, 1, 0, 0, 0, TimeSpan.Zero),
+            new(2023, 1, 1, 0, 0, 0, TimeSpan.Zero));
+
+        TestModel model = new() { Strong = new(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)) };
+        TestValidationResult<TestModel> result = _validator.TestValidate(model);
+        result.ShouldHaveValidationErrorFor(x => x.Strong);
+    }
 }

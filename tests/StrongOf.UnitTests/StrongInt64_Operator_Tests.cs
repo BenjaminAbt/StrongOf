@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright ï¿½ Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Xunit;
 
@@ -81,5 +81,51 @@ public class StrongInt64_Operator_Tests
 
         // Assert
         Assert.Equal((strong.Value >= other), (strong >= other));
+    }
+
+    // --- StrongType-vs-StrongType comparisons (regression tests for copy-paste bugs) ---
+
+    [Theory]
+    [InlineData(10, 5, true)]
+    [InlineData(5, 10, false)]
+    [InlineData(5, 5, false)]
+    public void OperatorGreaterThan_WithStrongType_ReturnsCorrectResult(long left, long right, bool expected)
+    {
+        TestInt64Of strongLeft = new(left);
+        TestInt64Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft > (object)strongRight);
+    }
+
+    [Theory]
+    [InlineData(5, 10, true)]
+    [InlineData(10, 5, false)]
+    [InlineData(5, 5, false)]
+    public void OperatorLessThan_WithStrongType_ReturnsCorrectResult(long left, long right, bool expected)
+    {
+        TestInt64Of strongLeft = new(left);
+        TestInt64Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft < (object)strongRight);
+    }
+
+    [Theory]
+    [InlineData(10, 5, true)]
+    [InlineData(5, 10, false)]
+    [InlineData(5, 5, true)]
+    public void OperatorGreaterThanOrEqual_WithStrongType_ReturnsCorrectResult(long left, long right, bool expected)
+    {
+        TestInt64Of strongLeft = new(left);
+        TestInt64Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft >= (object)strongRight);
+    }
+
+    [Theory]
+    [InlineData(5, 10, true)]
+    [InlineData(10, 5, false)]
+    [InlineData(5, 5, true)]
+    public void OperatorLessThanOrEqual_WithStrongType_ReturnsCorrectResult(long left, long right, bool expected)
+    {
+        TestInt64Of strongLeft = new(left);
+        TestInt64Of strongRight = new(right);
+        Assert.Equal(expected, strongLeft <= (object)strongRight);
     }
 }
