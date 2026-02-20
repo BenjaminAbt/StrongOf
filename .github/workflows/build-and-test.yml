@@ -85,7 +85,7 @@ jobs:
         if: always() && inputs.upload-test-results
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ inputs.dotnet-version }}
+          name: test-results-${{ steps.nbgv.outputs.SemVer2 }}-${{ inputs.configuration }}
           path: '**/TestResults/**/*.trx'
 
       - name: Pack NuGet packages
