@@ -153,7 +153,7 @@ public abstract partial class StrongChar<TStrong>(char Value)
             return false;
         }
 
-        return Value.Equals(other.Value);
+        return Value == other.Value;
     }
 
     /// <summary>

@@ -79,7 +79,7 @@ public sealed partial class HostName(string value) : StrongString<HostName>(valu
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string GetTopLevelDomain()
     {
-        int lastDot = Value.LastIndexOf('.');
+        int lastDot = Value.LastIndexOf(".", StringComparison.Ordinal);
         return lastDot >= 0 ? Value[(lastDot + 1)..] : string.Empty;
     }
 

@@ -68,7 +68,7 @@ public sealed class FullName(string value) : StrongString<FullName>(value), IVal
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string GetLastPart()
     {
-        int spaceIndex = Value.LastIndexOf(' ');
+        int spaceIndex = Value.LastIndexOf(" ", StringComparison.Ordinal);
         return spaceIndex >= 0 ? Value[(spaceIndex + 1)..] : Value;
     }
 
