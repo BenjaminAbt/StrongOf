@@ -3,16 +3,6 @@ name: Build and Test (Reusable)
 on:
   workflow_call:
     inputs:
-      dotnet-version:
-        description: '.NET version to use (can be multi-line for multiple versions, leave empty to skip)'
-        required: false
-        type: string
-        default: ''
-      dotnet-preview-version:
-        description: '.NET preview version to install with dotnet-quality: preview (leave empty to skip)'
-        required: false
-        type: string
-        default: ''
       configuration:
         description: 'Build configuration'
         required: false
@@ -41,35 +31,24 @@ jobs:
       version: ${{ steps.nbgv.outputs.SemVer2 }}
 
     steps:
-      - name: Validate inputs
-        run: |
-          if [ -n "${{ inputs.dotnet-version }}" ] && [ -n "${{ inputs.dotnet-preview-version }}" ]; then
-            echo "Error: 'dotnet-version' and 'dotnet-preview-version' are mutually exclusive. Set only one."
-            exit 1
-          fi
-          if [ -z "${{ inputs.dotnet-version }}" ] && [ -z "${{ inputs.dotnet-preview-version }}" ]; then
-            echo "Error: One of 'dotnet-version' or 'dotnet-preview-version' must be set."
-            exit 1
-          fi
-
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0 # Required for GitVersion
+          fetch-depth: 0
 
-      - name: Setup .NET
-        if: inputs.dotnet-version != ''
+      - name: Setup .NET (stable)
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ inputs.dotnet-version }}
-          global-json-file: ./global.json
+          dotnet-version: |
+            8.0.x
+            9.0.x
+            10.0.x
 
-      - name: Setup .NET Preview
-        if: inputs.dotnet-preview-version != ''
+      - name: Setup .NET (preview)
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ inputs.dotnet-preview-version }}
-          dotnet-quality: 'preview'
+          dotnet-version: 11.0.x
+          dotnet-quality: preview
 
       - name: Calculate Version with NBGV
         uses: dotnet/nbgv@master
@@ -81,31 +60,14 @@ jobs:
         run: |
           echo "Calculated version: ${{ steps.nbgv.outputs.SemVer2 }}"
 
-      - name: Restore dependencies
-        run: dotnet restore
-
-      - name: Build
-        run: dotnet build --configuration ${{ inputs.configuration }} --no-restore /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
-
-      - name: Test
-        run: dotnet test --configuration ${{ inputs.configuration }} --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
-
-      - name: Compute artifact name
-        id: artifact
-        if: inputs.upload-test-results
-        run: |
-          if [ -n "${{ inputs.dotnet-preview-version }}" ]; then
-            LABEL="${{ inputs.dotnet-preview-version }}"
-          else
-            LABEL=$(echo "${{ inputs.dotnet-version }}" | xargs | tr ' ' '_')
-          fi
-          echo "name=test-results-${LABEL}" >> $GITHUB_OUTPUT
+      - name: Build and Test
+        run: dotnet test --configuration ${{ inputs.configuration }} --verbosity normal --logger "trx;LogFileName=test-results.trx" /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
 
       - name: Upload test results
         if: always() && inputs.upload-test-results
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.artifact.outputs.name }}
+          name: test-results
           path: '**/TestResults/**/*.trx'
 
       - name: Pack NuGet packages
