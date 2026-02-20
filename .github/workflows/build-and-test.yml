@@ -4,13 +4,10 @@ on:
   workflow_call:
     inputs:
       dotnet-version:
-        description: '.NET version to use (can be multi-line for multiple versions)'
+        description: '.NET version to use (can be multi-line for multiple versions, leave empty to skip)'
         required: false
         type: string
-        default: |
-          8.0.x
-          9.0.x
-          10.0.x
+        default: ''
       dotnet-preview-version:
         description: '.NET preview version to install with dotnet-quality: preview (leave empty to skip)'
         required: false
