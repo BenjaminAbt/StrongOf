@@ -44,12 +44,24 @@ jobs:
       version: ${{ steps.nbgv.outputs.SemVer2 }}
 
     steps:
+      - name: Validate inputs
+        run: |
+          if [ -n "${{ inputs.dotnet-version }}" ] && [ -n "${{ inputs.dotnet-preview-version }}" ]; then
+            echo "Error: 'dotnet-version' and 'dotnet-preview-version' are mutually exclusive. Set only one."
+            exit 1
+          fi
+          if [ -z "${{ inputs.dotnet-version }}" ] && [ -z "${{ inputs.dotnet-preview-version }}" ]; then
+            echo "Error: One of 'dotnet-version' or 'dotnet-preview-version' must be set."
+            exit 1
+          fi
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required for GitVersion
 
       - name: Setup .NET
+        if: inputs.dotnet-version != ''
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
@@ -81,11 +93,22 @@ jobs:
       - name: Test
         run: dotnet test --configuration ${{ inputs.configuration }} --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
 
+      - name: Compute artifact name
+        id: artifact
+        if: inputs.upload-test-results
+        run: |
+          if [ -n "${{ inputs.dotnet-preview-version }}" ]; then
+            LABEL="${{ inputs.dotnet-preview-version }}"
+          else
+            LABEL=$(echo "${{ inputs.dotnet-version }}" | xargs | tr ' ' '_')
+          fi
+          echo "name=test-results-${LABEL}" >> $GITHUB_OUTPUT
+
       - name: Upload test results
         if: always() && inputs.upload-test-results
         uses: actions/upload-artifact@v4
         with:
-          name: test-results-${{ steps.nbgv.outputs.SemVer2 }}-${{ inputs.configuration }}
+          name: ${{ steps.artifact.outputs.name }}
           path: '**/TestResults/**/*.trx'
 
       - name: Pack NuGet packages
