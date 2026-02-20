@@ -7,38 +7,40 @@ namespace StrongOf.Domains.Media.UnitTests;
 /// </summary>
 public class FilePathTests
 {
+    private static readonly string _testPath = Path.Combine("temp", "file.txt");
+
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var path = new FilePath("C:\\temp\\file.txt");
-        Assert.Equal("C:\\temp\\file.txt", path.Value);
+        FilePath path = new(_testPath);
+        Assert.Equal(_testPath, path.Value);
     }
 
     [Fact]
     public void IsValidPath_WithValidPath_ReturnsTrue()
     {
-        var path = new FilePath("C:\\temp\\file.txt");
+        FilePath path = new(_testPath);
         Assert.True(path.IsValidPath());
     }
 
     [Fact]
     public void IsValidPath_WithEmpty_ReturnsFalse()
     {
-        var path = new FilePath(" ");
+        FilePath path = new(" ");
         Assert.False(path.IsValidPath());
     }
 
     [Fact]
     public void GetExtension_ReturnsExpected()
     {
-        var path = new FilePath("C:\\temp\\file.txt");
+        FilePath path = new(_testPath);
         Assert.Equal(".txt", path.GetExtension());
     }
 
     [Fact]
     public void GetFileName_ReturnsExpected()
     {
-        var path = new FilePath("C:\\temp\\file.txt");
+        FilePath path = new(_testPath);
         Assert.Equal("file.txt", path.GetFileName());
     }
 
@@ -46,10 +48,10 @@ public class FilePathTests
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
         var converter = new StrongStringTypeConverter<FilePath>();
-        var result = converter.ConvertFrom("C:\\temp\\file.txt") as FilePath;
+        var result = converter.ConvertFrom(_testPath) as FilePath;
 
         Assert.NotNull(result);
-        Assert.Equal("C:\\temp\\file.txt", result.Value);
+        Assert.Equal(_testPath, result.Value);
     }
 
     [Fact]
