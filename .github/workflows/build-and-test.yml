@@ -11,7 +11,11 @@ on:
           8.0.x
           9.0.x
           10.0.x
-          11.0.x
+      dotnet-preview-version:
+        description: '.NET preview version to install with dotnet-quality: preview (leave empty to skip)'
+        required: false
+        type: string
+        default: ''
       configuration:
         description: 'Build configuration'
         required: false
@@ -50,6 +54,13 @@ jobs:
         with:
           dotnet-version: ${{ inputs.dotnet-version }}
           global-json-file: ./global.json
+
+      - name: Setup .NET Preview
+        if: inputs.dotnet-preview-version != ''
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ inputs.dotnet-preview-version }}
+          dotnet-quality: 'preview'
 
       - name: Calculate Version with NBGV
         uses: dotnet/nbgv@master
