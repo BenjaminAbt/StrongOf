@@ -11,7 +11,7 @@ namespace StrongOf.FluentValidation;
 /// <summary>
 /// Provides validation rules for StrongInt64.
 /// </summary>
-public static class StrongIn64Validators
+public static class StrongInt64Validators
 {
     /// <summary>
     /// Checks if the StrongInt64 has a value.

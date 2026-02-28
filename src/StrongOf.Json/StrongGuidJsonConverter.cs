@@ -22,7 +22,7 @@ public class StrongGuidJsonConverter<TStrong> : JsonConverter<TStrong>
     public override TStrong? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
-        if (string.IsNullOrEmpty(value) is false && StrongGuid<TStrong>.TryParse(value, out TStrong? strong))
+        if (string.IsNullOrEmpty(value) is false && StrongGuid<TStrong>.TryParse(value, null, out TStrong? strong))
         {
             return strong;
         }

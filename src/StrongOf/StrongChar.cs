@@ -40,7 +40,8 @@ namespace StrongOf;
 /// </example>
 /// <param name="Value">The underlying <see cref="char"/> value.</param>
 public abstract partial class StrongChar<TStrong>(char Value)
-        : StrongOf<char, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongChar
+        : StrongOf<char, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongChar,
+          IParsable<TStrong>, ISpanParsable<TStrong>
     where TStrong : StrongChar<TStrong>
 {
     /// <summary>
@@ -202,6 +203,85 @@ public abstract partial class StrongChar<TStrong>(char Value)
         }
 
         strong = null;
+        return false;
+    }
+
+    // IParsable<TStrong>
+
+    /// <summary>
+    /// Parses a string to create a new instance of the strong type.
+    /// The string must contain exactly one character.
+    /// </summary>
+    /// <param name="s">A string containing exactly one character.</param>
+    /// <param name="provider">An optional format provider (unused for <see cref="char"/> parsing).</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <c>null</c>.</exception>
+    /// <exception cref="FormatException"><paramref name="s"/> does not contain exactly one character.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(string s, IFormatProvider? provider)
+    {
+        ArgumentNullException.ThrowIfNull(s);
+        return From(char.Parse(s));
+    }
+
+    /// <summary>
+    /// Tries to parse a string to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">A string containing exactly one character.</param>
+    /// <param name="provider">An optional format provider (unused for <see cref="char"/> parsing).</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (s is not null && char.TryParse(s, out char value))
+        {
+            result = From(value);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
+    // ISpanParsable<TStrong>
+
+    /// <summary>
+    /// Parses a character span to create a new instance of the strong type.
+    /// The span must contain exactly one character.
+    /// </summary>
+    /// <param name="s">A character span containing exactly one character.</param>
+    /// <param name="provider">An optional format provider (unused for <see cref="char"/> parsing).</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    /// <exception cref="FormatException">The span does not contain exactly one character.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+    {
+        if (s.Length != 1)
+        {
+            throw new FormatException($"The input span must contain exactly one character. Length was {s.Length}.");
+        }
+
+        return From(s[0]);
+    }
+
+    /// <summary>
+    /// Tries to parse a character span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">A character span containing exactly one character.</param>
+    /// <param name="provider">An optional format provider (unused for <see cref="char"/> parsing).</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if the span contains exactly one character; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (s.Length == 1)
+        {
+            result = From(s[0]);
+            return true;
+        }
+
+        result = default;
         return false;
     }
 }

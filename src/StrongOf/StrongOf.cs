@@ -38,7 +38,7 @@ namespace StrongOf;
 /// </example>
 /// <param name="value">The underlying value to wrap.</param>
 public abstract class StrongOf<TTarget, TStrong>(TTarget value)
-        : IStrongOf, IEquatable<StrongOf<TTarget, TStrong>>, IEquatable<TTarget>
+        : IStrongOf<TTarget, TStrong>, IEquatable<StrongOf<TTarget, TStrong>>, IEquatable<TTarget>
     where TStrong : StrongOf<TTarget, TStrong>
 {
     private static readonly Func<TTarget, TStrong> s_factoryWithParameter;
@@ -95,6 +95,19 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong From(TTarget value)
+    {
+        return s_factoryWithParameter(value);
+    }
+
+    /// <summary>
+    /// Creates a new instance of the strong type from the specified value.
+    /// This is the <see cref="IStrongOf{TTarget, TSelf}"/> interface implementation
+    /// that enables compile-time safe factory usage in generic code.
+    /// </summary>
+    /// <param name="value">The underlying value to wrap.</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    static TStrong IStrongOf<TTarget, TStrong>.Create(TTarget value)
     {
         return s_factoryWithParameter(value);
     }

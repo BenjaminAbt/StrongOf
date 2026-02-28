@@ -1,6 +1,7 @@
 ﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace StrongOf;
@@ -33,7 +34,8 @@ namespace StrongOf;
 /// </example>
 /// <param name="Value">The underlying <see cref="long"/> value.</param>
 public abstract partial class StrongInt64<TStrong>(long Value)
-        : StrongOf<long, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt64
+        : StrongOf<long, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt64,
+          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
     where TStrong : StrongInt64<TStrong>
 {
     /// <summary>
@@ -197,6 +199,88 @@ public abstract partial class StrongInt64<TStrong>(long Value)
         }
 
         strong = null;
+        return false;
+    }
+
+    // IFormattable
+
+    /// <summary>
+    /// Formats the value using the specified format and culture-specific format information.
+    /// </summary>
+    /// <param name="format">A standard or custom numeric format string.</param>
+    /// <param name="formatProvider">An object that provides culture-specific formatting information.</param>
+    /// <returns>The formatted string representation of the value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public string ToString(string? format, IFormatProvider? formatProvider)
+        => Value.ToString(format, formatProvider);
+
+    // IParsable<TStrong>
+
+    /// <summary>
+    /// Parses a string to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The string representation of a <see cref="long"/>.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <c>null</c>.</exception>
+    /// <exception cref="FormatException"><paramref name="s"/> is not a valid long integer.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(string s, IFormatProvider? provider)
+    {
+        ArgumentNullException.ThrowIfNull(s);
+        return From(long.Parse(s, provider));
+    }
+
+    /// <summary>
+    /// Tries to parse a string to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The string representation of a <see cref="long"/>.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (s is not null && long.TryParse(s, provider, out long value))
+        {
+            result = From(value);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
+    // ISpanParsable<TStrong>
+
+    /// <summary>
+    /// Parses a character span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The character span containing the number to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    /// <exception cref="FormatException">The span is not a valid long integer.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+        => From(long.Parse(s, provider));
+
+    /// <summary>
+    /// Tries to parse a character span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The character span containing the number to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (long.TryParse(s, provider, out long value))
+        {
+            result = From(value);
+            return true;
+        }
+
+        result = default;
         return false;
     }
 }

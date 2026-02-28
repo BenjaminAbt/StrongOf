@@ -43,7 +43,8 @@ namespace StrongOf;
 /// </example>
 /// <param name="Value">The underlying <see cref="string"/> value.</param>
 public abstract partial class StrongString<TStrong>(string Value)
-        : StrongOf<string, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongString
+        : StrongOf<string, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongString,
+          IParsable<TStrong>, ISpanParsable<TStrong>
     where TStrong : StrongString<TStrong>
 {
     /// <summary>
@@ -282,4 +283,83 @@ public abstract partial class StrongString<TStrong>(string Value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsEmpty()
         => Value.Length == 0;
+
+    // IParsable<TStrong>
+
+    /// <summary>
+    /// Parses a string to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An optional format provider (unused for string types).</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <c>null</c>.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(string s, IFormatProvider? provider)
+    {
+        ArgumentNullException.ThrowIfNull(s);
+        return From(s);
+    }
+
+    /// <summary>
+    /// Tries to parse a string to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The string to parse.</param>
+    /// <param name="provider">An optional format provider (unused for string types).</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if <paramref name="s"/> is not <c>null</c>; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (s is not null)
+        {
+            result = From(s);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
+    // ISpanParsable<TStrong>
+
+    /// <summary>
+    /// Parses a character span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The character span to parse.</param>
+    /// <param name="provider">An optional format provider (unused for string types).</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+        => From(s.ToString());
+
+    /// <summary>
+    /// Tries to parse a character span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The character span to parse.</param>
+    /// <param name="provider">An optional format provider (unused for string types).</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns>Always <c>true</c> for string types, since any character span is a valid string.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        result = From(s.ToString());
+        return true;
+    }
+
+    // Span access
+
+    /// <summary>
+    /// Returns the underlying string value as a <see cref="ReadOnlySpan{T}"/> of <see cref="char"/> for zero-copy access.
+    /// </summary>
+    /// <returns>A read-only span over the underlying string characters.</returns>
+    /// <example>
+    /// <code>
+    /// var email = new Email("user@example.com");
+    /// ReadOnlySpan&lt;char&gt; span = email.AsSpan();
+    /// int atIndex = span.IndexOf('@');
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public ReadOnlySpan<char> AsSpan()
+        => Value.AsSpan();
 }

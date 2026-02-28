@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup Label="Project">
+        <TargetFrameworks>net9.0;net10.0;net11.0</TargetFrameworks>
+    </PropertyGroup>
+
+    <PropertyGroup Label="Package">
+        <PackageId>StrongOf.OpenApi</PackageId>
+        <IsPackable>true</IsPackable>
+        <PackageReadmeFile>readme.md</PackageReadmeFile>
+        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <None Include="readme.md" Pack="true" PackagePath=""/>
+        <None Include="LICENSE.txt" Pack="true" PackagePath=""/>
+    </ItemGroup>
+
+    <!-- Dependencies -->
+    <ItemGroup>
+        <FrameworkReference Include="Microsoft.AspNetCore.App" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
+    </ItemGroup>
+</Project>

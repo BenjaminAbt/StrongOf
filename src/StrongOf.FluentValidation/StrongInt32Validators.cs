@@ -11,7 +11,7 @@ namespace StrongOf.FluentValidation;
 /// <summary>
 /// Provides validation rules for StrongInt32.
 /// </summary>
-public static class StrongIn32Validators
+public static class StrongInt32Validators
 {
     /// <summary>
     /// Checks if the StrongInt32 has a value.
