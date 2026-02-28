@@ -2,7 +2,7 @@
 
 using Microsoft.AspNetCore.Http;
 
-namespace StrongOf.MinimalApis;
+namespace StrongOf.AspNetCore.MinimalApis;
 
 /// <summary>
 /// An endpoint filter that validates <see cref="IValidatable"/> strong type parameters

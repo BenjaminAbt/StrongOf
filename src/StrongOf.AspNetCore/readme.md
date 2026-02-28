@@ -68,6 +68,52 @@ public sealed class MyUserIdBinder : StrongOfBinder
 dotnet add package StrongOf.AspNetCore
 ```
 
+## Minimal APIs (`StrongOf.AspNetCore.MinimalApis`)
+
+All strong types implement `IParsable<TSelf>` and work as route/query parameters in Minimal APIs out of the box.
+
+Use the validation filter to automatically validate `IValidatable` parameters:
+
+```csharp
+using StrongOf.AspNetCore.MinimalApis;
+
+// Strong types work as route parameters out of the box
+app.MapGet("/users/{id}", (UserId id) => Results.Ok(id));
+
+// Register the endpoint filter for automatic validation of IValidatable types
+app.MapPost("/users", (EmailAddress email) => Results.Ok(email))
+   .WithStrongOfValidation();
+```
+
+## OpenAPI Schema Transformer (`StrongOf.AspNetCore.OpenApi`)
+
+> Requires .NET 9.0 or later
+
+Maps strong types to their underlying primitive types in OpenAPI documentation,
+so API schemas show `string (uuid)` instead of a complex object for `UserId`.
+
+```csharp
+using StrongOf.AspNetCore.OpenApi;
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddSchemaTransformer<StrongOfSchemaTransformer>();
+});
+```
+
+### Type Mappings
+
+| Strong Type | OpenAPI Type | OpenAPI Format |
+|-------------|-------------|----------------|
+| `StrongGuid<T>` | `string` | `uuid` |
+| `StrongString<T>` | `string` | - |
+| `StrongInt32<T>` | `integer` | `int32` |
+| `StrongInt64<T>` | `integer` | `int64` |
+| `StrongDecimal<T>` | `number` | `double` |
+| `StrongChar<T>` | `string` | - |
+| `StrongDateTime<T>` | `string` | `date-time` |
+| `StrongDateTimeOffset<T>` | `string` | `date-time` |
+
 ## GitHub
 
 See https://github.com/BenjaminAbt/StrongOf
