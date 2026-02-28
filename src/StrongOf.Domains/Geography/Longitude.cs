@@ -24,7 +24,7 @@ namespace StrongOf.Domains.Geography;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongDecimalTypeConverter<Longitude>))]
-public sealed class Longitude(decimal value) : StrongDecimal<Longitude>(value)
+public sealed class Longitude(decimal value) : StrongDecimal<Longitude>(value), IValidatable
 {
     /// <summary>
     /// Minimum valid longitude.
@@ -37,9 +37,14 @@ public sealed class Longitude(decimal value) : StrongDecimal<Longitude>(value)
     public const decimal MaxValue = 180m;
 
     /// <summary>
-    /// Determines whether the longitude is within the valid range [<see cref="MinValue"/>, <see cref="MaxValue"/>].
+    /// Validates whether the longitude is within the valid range [−180, +180].
     /// </summary>
     /// <returns><see langword="true"/> if the value is between −180 and +180 inclusive; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool IsValidFormat()
+        => IsValidRange();
+
+    /// <inheritdoc cref="IsValidFormat"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidRange()
         => Value >= MinValue && Value <= MaxValue;

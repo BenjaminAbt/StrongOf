@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright ï¿½ Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Xunit;
 
@@ -48,14 +48,14 @@ public class StrongCharTests
     [Fact]
     public void TryParse_ShouldReturnTrueForValidChar()
     {
-        Assert.True(TestCharOf.TryParse("a", out TestCharOf? strong));
+        Assert.True(TestCharOf.TryParse("a", null, out TestCharOf? strong));
         Assert.Equal('a', strong.Value);
     }
 
     [Fact]
     public void TryParse_ShouldReturnFalseForInvalidChar()
     {
-        Assert.False(TestCharOf.TryParse("invalid", out TestCharOf? strong));
+        Assert.False(TestCharOf.TryParse("invalid", null, out TestCharOf? strong));
         Assert.Null(strong);
     }
 

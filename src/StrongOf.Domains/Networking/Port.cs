@@ -22,7 +22,7 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongInt32TypeConverter<Port>))]
-public sealed class Port(int value) : StrongInt32<Port>(value)
+public sealed class Port(int value) : StrongInt32<Port>(value), IValidatable
 {
     /// <summary>
     /// The minimum valid port number.
@@ -68,6 +68,11 @@ public sealed class Port(int value) : StrongInt32<Port>(value)
     /// Validates whether the port number is within the valid range (0-65535).
     /// </summary>
     /// <returns><c>true</c> if the port is within valid range; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool IsValidFormat()
+        => IsValidRange();
+
+    /// <inheritdoc cref="IsValidFormat"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidRange()
         => Value >= MinValue && Value <= MaxValue;

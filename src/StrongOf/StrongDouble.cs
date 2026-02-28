@@ -1,4 +1,4 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -7,14 +7,14 @@ using System.Runtime.CompilerServices;
 namespace StrongOf;
 
 /// <summary>
-/// Represents a strongly-typed wrapper around a <see cref="long"/> (Int64) value, providing compile-time type safety
-/// and preventing parameter order mistakes when working with multiple long integer values.
+/// Represents a strongly-typed wrapper around a <see cref="double"/> value, providing compile-time type safety
+/// and preventing parameter order mistakes when working with multiple double values.
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong type that derives from this class (CRTP pattern).</typeparam>
 /// <remarks>
 /// <para>
-/// Use this class to create domain-specific long integer types like <c>FileSize</c>, <c>Timestamp</c>, etc.
-/// The compiler will prevent accidental mixing of different long types.
+/// Use this class to create domain-specific double types like <c>Distance</c>, <c>Speed</c>, <c>Angle</c>, etc.
+/// The compiler will prevent accidental mixing of different double types.
 /// </para>
 /// <para>
 /// <b>Performance Note:</b> Prefer <c>new()</c> over <see cref="StrongOf{TTarget,TStrong}.From(TTarget)"/>
@@ -23,53 +23,53 @@ namespace StrongOf;
 /// </remarks>
 /// <example>
 /// <code>
-/// // Define strongly-typed long types
-/// public sealed class FileSize(long value) : StrongInt64&lt;FileSize&gt;(value) { }
-/// public sealed class Timestamp(long value) : StrongInt64&lt;Timestamp&gt;(value) { }
+/// // Define strongly-typed double types
+/// public sealed class Distance(double value) : StrongDouble&lt;Distance&gt;(value) { }
+/// public sealed class Speed(double value) : StrongDouble&lt;Speed&gt;(value) { }
 ///
-/// // Usage
-/// var fileSize = new FileSize(1024 * 1024); // 1 MB
-/// var timestamp = Timestamp.From(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+/// // Usage - compiler prevents mixing up parameters
+/// public double CalculateTime(Distance distance, Speed speed)
+/// {
+///     // Cannot accidentally swap distance and speed!
+///     return distance.Value / speed.Value;
+/// }
+///
+/// // Create instances
+/// var distance = new Distance(100.5);         // Fastest
+/// var distance = Distance.From(100.5);        // For generic scenarios
 /// </code>
 /// </example>
-/// <param name="Value">The underlying <see cref="long"/> value.</param>
-public abstract partial class StrongInt64<TStrong>(long Value)
-        : StrongOf<long, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt64,
+/// <param name="Value">The underlying <see cref="double"/> value.</param>
+public abstract partial class StrongDouble<TStrong>(double Value)
+        : StrongOf<double, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDouble,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
-    where TStrong : StrongInt64<TStrong>
+    where TStrong : StrongDouble<TStrong>
 {
     /// <summary>
-    /// Gets the underlying <see cref="long"/> value.
+    /// Gets the underlying <see cref="double"/> value.
     /// </summary>
-    /// <returns>The underlying <see cref="long"/> value.</returns>
+    /// <returns>The underlying <see cref="double"/> value.</returns>
+    /// <example>
+    /// <code>
+    /// var distance = new Distance(100.5);
+    /// double rawValue = distance.AsDouble(); // 100.5
+    /// </code>
+    /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public long AsInt64() => Value;
+    public double AsDouble() => Value;
 
     /// <summary>
-    /// Gets the underlying <see cref="long"/> value.
+    /// Creates a strong type instance from a nullable <see cref="double"/> value.
     /// </summary>
-    /// <returns>The underlying <see cref="long"/> value.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public long AsLong() => Value;
-
-    /// <summary>
-    /// Creates a strong type instance from a nullable <see cref="long"/> value.
-    /// </summary>
-    /// <param name="value">The nullable <see cref="long"/> value to convert.</param>
+    /// <param name="value">The nullable <see cref="double"/> value to convert.</param>
     /// <returns>
     /// A new instance of <typeparamref name="TStrong"/> if <paramref name="value"/> has a value;
     /// otherwise, <c>null</c>.
     /// </returns>
-    /// <example>
-    /// <code>
-    /// long? nullableSize = GetOptionalFileSize();
-    /// FileSize? size = FileSize.FromNullable(nullableSize);
-    /// </code>
-    /// </example>
     [return: NotNullIfNotNull(nameof(value))]
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TStrong? FromNullable(long? value)
+    public static TStrong? FromNullable(double? value)
     {
         if (value.HasValue)
         {
@@ -135,13 +135,6 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <returns>
     /// <c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.
     /// </returns>
-    /// <example>
-    /// <code>
-    /// var size1 = new FileSize(1024);
-    /// var size2 = new FileSize(1024);
-    /// bool areEqual = size1.Equals(size2); // true
-    /// </code>
-    /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool Equals(TStrong? other)
     {
@@ -173,7 +166,7 @@ public abstract partial class StrongInt64<TStrong>(long Value)
         => Value.GetHashCode();
 
     /// <summary>
-    /// Tries to parse a <see cref="long"/> from a character span and creates a strong type instance.
+    /// Tries to parse a <see cref="double"/> from a character span and creates a strong type instance.
     /// </summary>
     /// <param name="content">The character span containing the number to parse.</param>
     /// <param name="strong">
@@ -182,18 +175,10 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// </param>
     /// <param name="formatProvider">An optional format provider for culture-specific parsing.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
-    /// <example>
-    /// <code>
-    /// if (FileSize.TryParse("1048576", out FileSize? size))
-    /// {
-    ///     Console.WriteLine($"File size: {size} bytes");
-    /// }
-    /// </code>
-    /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
-        if (long.TryParse(content, formatProvider, out long value))
+        if (double.TryParse(content, formatProvider, out double value))
         {
             strong = From(value);
             return true;
@@ -220,29 +205,29 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <summary>
     /// Parses a string to create a new instance of the strong type.
     /// </summary>
-    /// <param name="s">The string representation of a <see cref="long"/>.</param>
+    /// <param name="s">The string representation of a <see cref="double"/>.</param>
     /// <param name="provider">An optional format provider for culture-specific parsing.</param>
     /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="s"/> is <c>null</c>.</exception>
-    /// <exception cref="FormatException"><paramref name="s"/> is not a valid long integer.</exception>
+    /// <exception cref="FormatException"><paramref name="s"/> is not a valid double.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong Parse(string s, IFormatProvider? provider)
     {
         ArgumentNullException.ThrowIfNull(s);
-        return From(long.Parse(s, provider));
+        return From(double.Parse(s, provider));
     }
 
     /// <summary>
     /// Tries to parse a string to create a new instance of the strong type.
     /// </summary>
-    /// <param name="s">The string representation of a <see cref="long"/>.</param>
+    /// <param name="s">The string representation of a <see cref="double"/>.</param>
     /// <param name="provider">An optional format provider for culture-specific parsing.</param>
     /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
     {
-        if (s is not null && long.TryParse(s, provider, out long value))
+        if (s is not null && double.TryParse(s, provider, out double value))
         {
             result = From(value);
             return true;
@@ -260,10 +245,10 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <param name="s">The character span containing the number to parse.</param>
     /// <param name="provider">An optional format provider for culture-specific parsing.</param>
     /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
-    /// <exception cref="FormatException">The span is not a valid long integer.</exception>
+    /// <exception cref="FormatException">The span is not a valid double.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
-        => From(long.Parse(s, provider));
+        => From(double.Parse(s, provider));
 
     /// <summary>
     /// Tries to parse a character span to create a new instance of the strong type.
@@ -275,7 +260,7 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
     {
-        if (long.TryParse(s, provider, out long value))
+        if (double.TryParse(s, provider, out double value))
         {
             result = From(value);
             return true;
@@ -309,7 +294,7 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider)
-        => From(long.Parse(utf8Text, provider));
+        => From(double.Parse(utf8Text, provider));
 
     /// <summary>
     /// Tries to parse a UTF-8 byte span to create a new instance of the strong type.
@@ -321,7 +306,7 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
     {
-        if (long.TryParse(utf8Text, provider, out long value))
+        if (double.TryParse(utf8Text, provider, out double value))
         {
             result = From(value);
             return true;

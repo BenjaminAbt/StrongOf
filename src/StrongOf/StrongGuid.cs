@@ -42,7 +42,8 @@ namespace StrongOf;
 /// <param name="Value">The underlying <see cref="Guid"/> value.</param>
 public abstract partial class StrongGuid<TStrong>(Guid Value)
         : StrongOf<Guid, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongGuid,
-          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
+          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
+          IUtf8SpanFormattable
     where TStrong : StrongGuid<TStrong>
 {
     /// <summary>
@@ -443,4 +444,18 @@ public abstract partial class StrongGuid<TStrong>(Guid Value)
         result = default;
         return false;
     }
+
+    // IUtf8SpanFormattable
+
+    /// <summary>
+    /// Tries to format the value into the provided UTF-8 byte span.
+    /// </summary>
+    /// <param name="utf8Destination">The destination span of UTF-8 bytes.</param>
+    /// <param name="bytesWritten">The number of bytes written to the destination.</param>
+    /// <param name="format">A standard or custom format string.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information.</param>
+    /// <returns><c>true</c> if the formatting was successful; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+        => ((IUtf8SpanFormattable)Value).TryFormat(utf8Destination, out bytesWritten, format, provider);
 }

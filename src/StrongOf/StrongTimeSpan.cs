@@ -1,4 +1,4 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -7,14 +7,14 @@ using System.Runtime.CompilerServices;
 namespace StrongOf;
 
 /// <summary>
-/// Represents a strongly-typed wrapper around a <see cref="long"/> (Int64) value, providing compile-time type safety
-/// and preventing parameter order mistakes when working with multiple long integer values.
+/// Represents a strongly-typed wrapper around a <see cref="TimeSpan"/> value, providing compile-time type safety
+/// and preventing parameter order mistakes when working with multiple duration values.
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong type that derives from this class (CRTP pattern).</typeparam>
 /// <remarks>
 /// <para>
-/// Use this class to create domain-specific long integer types like <c>FileSize</c>, <c>Timestamp</c>, etc.
-/// The compiler will prevent accidental mixing of different long types.
+/// Use this class to create domain-specific duration types like <c>Duration</c>, <c>Timeout</c>, <c>RetryDelay</c>, etc.
+/// The compiler will prevent accidental mixing of different duration types.
 /// </para>
 /// <para>
 /// <b>Performance Note:</b> Prefer <c>new()</c> over <see cref="StrongOf{TTarget,TStrong}.From(TTarget)"/>
@@ -23,53 +23,75 @@ namespace StrongOf;
 /// </remarks>
 /// <example>
 /// <code>
-/// // Define strongly-typed long types
-/// public sealed class FileSize(long value) : StrongInt64&lt;FileSize&gt;(value) { }
-/// public sealed class Timestamp(long value) : StrongInt64&lt;Timestamp&gt;(value) { }
+/// // Define strongly-typed TimeSpan types
+/// public sealed class Duration(TimeSpan value) : StrongTimeSpan&lt;Duration&gt;(value) { }
+/// public sealed class Timeout(TimeSpan value) : StrongTimeSpan&lt;Timeout&gt;(value) { }
 ///
-/// // Usage
-/// var fileSize = new FileSize(1024 * 1024); // 1 MB
-/// var timestamp = Timestamp.From(DateTimeOffset.UtcNow.ToUnixTimeMilliseconds());
+/// // Usage - compiler prevents mixing up parameters
+/// public void Configure(Duration maxDuration, Timeout requestTimeout)
+/// {
+///     // Cannot accidentally swap maxDuration and requestTimeout!
+/// }
+///
+/// // Create instances
+/// var duration = new Duration(TimeSpan.FromMinutes(30));         // Fastest
+/// var duration = Duration.From(TimeSpan.FromMinutes(30));        // For generic scenarios
 /// </code>
 /// </example>
-/// <param name="Value">The underlying <see cref="long"/> value.</param>
-public abstract partial class StrongInt64<TStrong>(long Value)
-        : StrongOf<long, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt64,
-          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
-          IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
-    where TStrong : StrongInt64<TStrong>
+/// <param name="Value">The underlying <see cref="TimeSpan"/> value.</param>
+public abstract partial class StrongTimeSpan<TStrong>(TimeSpan Value)
+        : StrongOf<TimeSpan, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongTimeSpan,
+          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
+    where TStrong : StrongTimeSpan<TStrong>
 {
     /// <summary>
-    /// Gets the underlying <see cref="long"/> value.
+    /// Gets the underlying <see cref="TimeSpan"/> value.
     /// </summary>
-    /// <returns>The underlying <see cref="long"/> value.</returns>
+    /// <returns>The underlying <see cref="TimeSpan"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public long AsInt64() => Value;
+    public TimeSpan AsTimeSpan() => Value;
 
     /// <summary>
-    /// Gets the underlying <see cref="long"/> value.
+    /// Gets the total number of days represented by this instance.
     /// </summary>
-    /// <returns>The underlying <see cref="long"/> value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public long AsLong() => Value;
+    public double TotalDays() => Value.TotalDays;
 
     /// <summary>
-    /// Creates a strong type instance from a nullable <see cref="long"/> value.
+    /// Gets the total number of hours represented by this instance.
     /// </summary>
-    /// <param name="value">The nullable <see cref="long"/> value to convert.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public double TotalHours() => Value.TotalHours;
+
+    /// <summary>
+    /// Gets the total number of minutes represented by this instance.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public double TotalMinutes() => Value.TotalMinutes;
+
+    /// <summary>
+    /// Gets the total number of seconds represented by this instance.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public double TotalSeconds() => Value.TotalSeconds;
+
+    /// <summary>
+    /// Gets the total number of milliseconds represented by this instance.
+    /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public double TotalMilliseconds() => Value.TotalMilliseconds;
+
+    /// <summary>
+    /// Creates a strong type instance from a nullable <see cref="TimeSpan"/> value.
+    /// </summary>
+    /// <param name="value">The nullable <see cref="TimeSpan"/> value to convert.</param>
     /// <returns>
     /// A new instance of <typeparamref name="TStrong"/> if <paramref name="value"/> has a value;
     /// otherwise, <c>null</c>.
     /// </returns>
-    /// <example>
-    /// <code>
-    /// long? nullableSize = GetOptionalFileSize();
-    /// FileSize? size = FileSize.FromNullable(nullableSize);
-    /// </code>
-    /// </example>
     [return: NotNullIfNotNull(nameof(value))]
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TStrong? FromNullable(long? value)
+    public static TStrong? FromNullable(TimeSpan? value)
     {
         if (value.HasValue)
         {
@@ -135,13 +157,6 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <returns>
     /// <c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.
     /// </returns>
-    /// <example>
-    /// <code>
-    /// var size1 = new FileSize(1024);
-    /// var size2 = new FileSize(1024);
-    /// bool areEqual = size1.Equals(size2); // true
-    /// </code>
-    /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool Equals(TStrong? other)
     {
@@ -173,27 +188,19 @@ public abstract partial class StrongInt64<TStrong>(long Value)
         => Value.GetHashCode();
 
     /// <summary>
-    /// Tries to parse a <see cref="long"/> from a character span and creates a strong type instance.
+    /// Tries to parse a <see cref="TimeSpan"/> from a character span.
     /// </summary>
-    /// <param name="content">The character span containing the number to parse.</param>
+    /// <param name="content">The character span containing the TimeSpan to parse.</param>
     /// <param name="strong">
     /// When this method returns, contains the parsed strong type if successful;
     /// otherwise, <c>null</c>.
     /// </param>
     /// <param name="formatProvider">An optional format provider for culture-specific parsing.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
-    /// <example>
-    /// <code>
-    /// if (FileSize.TryParse("1048576", out FileSize? size))
-    /// {
-    ///     Console.WriteLine($"File size: {size} bytes");
-    /// }
-    /// </code>
-    /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong, IFormatProvider? formatProvider = null)
     {
-        if (long.TryParse(content, formatProvider, out long value))
+        if (TimeSpan.TryParse(content, formatProvider, out TimeSpan value))
         {
             strong = From(value);
             return true;
@@ -208,7 +215,7 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <summary>
     /// Formats the value using the specified format and culture-specific format information.
     /// </summary>
-    /// <param name="format">A standard or custom numeric format string.</param>
+    /// <param name="format">A standard or custom TimeSpan format string.</param>
     /// <param name="formatProvider">An object that provides culture-specific formatting information.</param>
     /// <returns>The formatted string representation of the value.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
@@ -220,29 +227,29 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <summary>
     /// Parses a string to create a new instance of the strong type.
     /// </summary>
-    /// <param name="s">The string representation of a <see cref="long"/>.</param>
+    /// <param name="s">The string representation of a <see cref="TimeSpan"/>.</param>
     /// <param name="provider">An optional format provider for culture-specific parsing.</param>
     /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
     /// <exception cref="ArgumentNullException"><paramref name="s"/> is <c>null</c>.</exception>
-    /// <exception cref="FormatException"><paramref name="s"/> is not a valid long integer.</exception>
+    /// <exception cref="FormatException"><paramref name="s"/> is not a valid TimeSpan.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong Parse(string s, IFormatProvider? provider)
     {
         ArgumentNullException.ThrowIfNull(s);
-        return From(long.Parse(s, provider));
+        return From(TimeSpan.Parse(s, provider));
     }
 
     /// <summary>
     /// Tries to parse a string to create a new instance of the strong type.
     /// </summary>
-    /// <param name="s">The string representation of a <see cref="long"/>.</param>
+    /// <param name="s">The string representation of a <see cref="TimeSpan"/>.</param>
     /// <param name="provider">An optional format provider for culture-specific parsing.</param>
     /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
     {
-        if (s is not null && long.TryParse(s, provider, out long value))
+        if (s is not null && TimeSpan.TryParse(s, provider, out TimeSpan value))
         {
             result = From(value);
             return true;
@@ -257,71 +264,25 @@ public abstract partial class StrongInt64<TStrong>(long Value)
     /// <summary>
     /// Parses a character span to create a new instance of the strong type.
     /// </summary>
-    /// <param name="s">The character span containing the number to parse.</param>
+    /// <param name="s">The character span containing the TimeSpan to parse.</param>
     /// <param name="provider">An optional format provider for culture-specific parsing.</param>
     /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
-    /// <exception cref="FormatException">The span is not a valid long integer.</exception>
+    /// <exception cref="FormatException">The span is not a valid TimeSpan.</exception>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
-        => From(long.Parse(s, provider));
+        => From(TimeSpan.Parse(s, provider));
 
     /// <summary>
     /// Tries to parse a character span to create a new instance of the strong type.
     /// </summary>
-    /// <param name="s">The character span containing the number to parse.</param>
+    /// <param name="s">The character span containing the TimeSpan to parse.</param>
     /// <param name="provider">An optional format provider for culture-specific parsing.</param>
     /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
     /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
     {
-        if (long.TryParse(s, provider, out long value))
-        {
-            result = From(value);
-            return true;
-        }
-
-        result = default;
-        return false;
-    }
-
-    // IUtf8SpanFormattable
-
-    /// <summary>
-    /// Tries to format the value into the provided UTF-8 byte span.
-    /// </summary>
-    /// <param name="utf8Destination">The destination span of UTF-8 bytes.</param>
-    /// <param name="bytesWritten">The number of bytes written to the destination.</param>
-    /// <param name="format">A standard or custom numeric format string.</param>
-    /// <param name="provider">An object that provides culture-specific formatting information.</param>
-    /// <returns><c>true</c> if the formatting was successful; otherwise, <c>false</c>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-        => ((IUtf8SpanFormattable)Value).TryFormat(utf8Destination, out bytesWritten, format, provider);
-
-    // IUtf8SpanParsable<TStrong>
-
-    /// <summary>
-    /// Parses a UTF-8 byte span to create a new instance of the strong type.
-    /// </summary>
-    /// <param name="utf8Text">The UTF-8 encoded text to parse.</param>
-    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
-    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static TStrong Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider)
-        => From(long.Parse(utf8Text, provider));
-
-    /// <summary>
-    /// Tries to parse a UTF-8 byte span to create a new instance of the strong type.
-    /// </summary>
-    /// <param name="utf8Text">The UTF-8 encoded text to parse.</param>
-    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
-    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
-    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
-    public static bool TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
-    {
-        if (long.TryParse(utf8Text, provider, out long value))
+        if (TimeSpan.TryParse(s, provider, out TimeSpan value))
         {
             result = From(value);
             return true;

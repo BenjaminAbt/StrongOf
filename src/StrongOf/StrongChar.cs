@@ -41,7 +41,7 @@ namespace StrongOf;
 /// <param name="Value">The underlying <see cref="char"/> value.</param>
 public abstract partial class StrongChar<TStrong>(char Value)
         : StrongOf<char, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongChar,
-          IParsable<TStrong>, ISpanParsable<TStrong>
+          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
     where TStrong : StrongChar<TStrong>
 {
     /// <summary>
@@ -284,4 +284,16 @@ public abstract partial class StrongChar<TStrong>(char Value)
         result = default;
         return false;
     }
+
+    // IFormattable
+
+    /// <summary>
+    /// Formats the value using the specified format and culture-specific format information.
+    /// </summary>
+    /// <param name="format">A standard or custom format string (ignored for <see cref="char"/>).</param>
+    /// <param name="formatProvider">An object that provides culture-specific formatting information.</param>
+    /// <returns>The string representation of the underlying <see cref="char"/> value.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public string ToString(string? format, IFormatProvider? formatProvider)
+        => Value.ToString(formatProvider);
 }

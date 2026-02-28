@@ -23,7 +23,7 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<MiddleName>))]
-public sealed class MiddleName(string value) : StrongString<MiddleName>(value)
+public sealed class MiddleName(string value) : StrongString<MiddleName>(value), IValidatable
 {
     /// <summary>
     /// Minimum length for a valid middle name.
@@ -36,13 +36,18 @@ public sealed class MiddleName(string value) : StrongString<MiddleName>(value)
     public const int MaxLength = 50;
 
     /// <summary>
-    /// Determines whether the middle name length is valid.
+    /// Validates whether the middle name has a valid length.
     /// </summary>
     /// <returns>
     /// <see langword="true"/> if the value is non-empty and between
     /// <see cref="MinLength"/> and <see cref="MaxLength"/> characters inclusive;
     /// otherwise, <see langword="false"/>.
     /// </returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool IsValidFormat()
+        => IsValidLength();
+
+    /// <inheritdoc cref="IsValidFormat"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidLength()
         => !string.IsNullOrWhiteSpace(Value) && Value.Length >= MinLength && Value.Length <= MaxLength;

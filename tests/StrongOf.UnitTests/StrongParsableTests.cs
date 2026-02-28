@@ -158,7 +158,7 @@ public class StrongParsableTests
     [Fact]
     public void StrongInt32_Parse_WithNull_ThrowsArgumentNullException()
     {
-        Assert.Throws<ArgumentNullException>(() => TestInt32Of.Parse(null!, null));
+        Assert.Throws<ArgumentNullException>(() => TestInt32Of.Parse((string)null!, null));
     }
 
     [Fact]

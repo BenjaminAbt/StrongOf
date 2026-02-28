@@ -26,16 +26,19 @@ namespace StrongOf.OpenApi;
 /// </remarks>
 public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
 {
-    private static readonly Dictionary<Type, (string Type, string? Format)> s_typeMap = new()
+    private static readonly Dictionary<Type, (string Type, string? Format, string Description)> s_typeMap = new()
     {
-        [typeof(IStrongGuid)] = ("string", "uuid"),
-        [typeof(IStrongString)] = ("string", null),
-        [typeof(IStrongInt32)] = ("integer", "int32"),
-        [typeof(IStrongInt64)] = ("integer", "int64"),
-        [typeof(IStrongDecimal)] = ("number", "double"),
-        [typeof(IStrongChar)] = ("string", null),
-        [typeof(IStrongDateTime)] = ("string", "date-time"),
-        [typeof(IStrongDateTimeOffset)] = ("string", "date-time"),
+        [typeof(IStrongGuid)] = ("string", "uuid", "A strongly-typed GUID value."),
+        [typeof(IStrongString)] = ("string", null, "A strongly-typed string value."),
+        [typeof(IStrongInt32)] = ("integer", "int32", "A strongly-typed 32-bit integer value."),
+        [typeof(IStrongInt64)] = ("integer", "int64", "A strongly-typed 64-bit integer value."),
+        [typeof(IStrongDecimal)] = ("number", "double", "A strongly-typed decimal value."),
+        [typeof(IStrongDouble)] = ("number", "double", "A strongly-typed double-precision floating-point value."),
+        [typeof(IStrongBoolean)] = ("boolean", null, "A strongly-typed boolean value."),
+        [typeof(IStrongChar)] = ("string", null, "A strongly-typed single character."),
+        [typeof(IStrongDateTime)] = ("string", "date-time", "A strongly-typed date and time value."),
+        [typeof(IStrongDateTimeOffset)] = ("string", "date-time", "A strongly-typed date and time value with UTC offset."),
+        [typeof(IStrongTimeSpan)] = ("string", "duration", "A strongly-typed time interval."),
     };
 
     /// <inheritdoc />
@@ -43,12 +46,13 @@ public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
     {
         Type type = context.JsonTypeInfo.Type;
 
-        foreach (KeyValuePair<Type, (string Type, string? Format)> entry in s_typeMap)
+        foreach (KeyValuePair<Type, (string Type, string? Format, string Description)> entry in s_typeMap)
         {
             if (entry.Key.IsAssignableFrom(type))
             {
                 schema.Type = entry.Value.Type;
                 schema.Format = entry.Value.Format;
+                schema.Description ??= entry.Value.Description;
                 schema.Properties.Clear();
                 break;
             }

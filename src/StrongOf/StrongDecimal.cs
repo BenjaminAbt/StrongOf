@@ -42,7 +42,8 @@ namespace StrongOf;
 /// <param name="Value">The underlying <see cref="decimal"/> value.</param>
 public abstract partial class StrongDecimal<TStrong>(decimal Value)
         : StrongOf<decimal, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDecimal,
-          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
+          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
+          IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
     where TStrong : StrongDecimal<TStrong>
 {
     /// <summary>
@@ -336,4 +337,50 @@ public abstract partial class StrongDecimal<TStrong>(decimal Value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
         => From(decimal.Parse(s, provider));
+
+    // IUtf8SpanFormattable
+
+    /// <summary>
+    /// Tries to format the value into the provided UTF-8 byte span.
+    /// </summary>
+    /// <param name="utf8Destination">The destination span of UTF-8 bytes.</param>
+    /// <param name="bytesWritten">The number of bytes written to the destination.</param>
+    /// <param name="format">A standard or custom numeric format string.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information.</param>
+    /// <returns><c>true</c> if the formatting was successful; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+        => ((IUtf8SpanFormattable)Value).TryFormat(utf8Destination, out bytesWritten, format, provider);
+
+    // IUtf8SpanParsable<TStrong>
+
+    /// <summary>
+    /// Parses a UTF-8 byte span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="utf8Text">The UTF-8 encoded text to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider)
+        => From(decimal.Parse(utf8Text, provider));
+
+    /// <summary>
+    /// Tries to parse a UTF-8 byte span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="utf8Text">The UTF-8 encoded text to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (decimal.TryParse(utf8Text, provider, out decimal value))
+        {
+            result = From(value);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
 }

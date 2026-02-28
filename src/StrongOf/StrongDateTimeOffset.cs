@@ -47,7 +47,8 @@ namespace StrongOf;
 /// <param name="Value">The underlying <see cref="DateTimeOffset"/> value.</param>
 public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value)
         : StrongOf<DateTimeOffset, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDateTimeOffset,
-          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
+          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
+          IUtf8SpanFormattable
     where TStrong : StrongDateTimeOffset<TStrong>
 {
     /// <summary>
@@ -466,4 +467,18 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
     /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToStringIso8601() => Value.ToString("o", CultureInfo.InvariantCulture);
+
+    // IUtf8SpanFormattable
+
+    /// <summary>
+    /// Tries to format the value into the provided UTF-8 byte span.
+    /// </summary>
+    /// <param name="utf8Destination">The destination span of UTF-8 bytes.</param>
+    /// <param name="bytesWritten">The number of bytes written to the destination.</param>
+    /// <param name="format">A standard or custom date/time format string.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information.</param>
+    /// <returns><c>true</c> if the formatting was successful; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+        => ((IUtf8SpanFormattable)Value).TryFormat(utf8Destination, out bytesWritten, format, provider);
 }
