@@ -42,7 +42,7 @@ global using StrongOf.Domains.Software;
 ## Key Features
 
 - **Format validation** via `IsValidFormat()` for types with format constraints (e.g. `EmailAddress`, `CountryCode`, `Iban`)
-- **Safe factory** via `TryCreate(string?, out T?)` — returns `false` instead of creating an invalid instance
+- **Safe factory** via `TryCreate(string?, out T?)` - returns `false` instead of creating an invalid instance
 - **Range validation** via `IsValidRange()` for numeric and geographic types
 - **Conversion helpers** e.g. `ToMeters()`, `ToFahrenheit()`, `ToKelvin()`, `ToCultureInfo()`, `TryGetTimeZone()`
 - **Case-insensitive equality** for `CountryCode`, `CurrencyCode`, `LanguageCode`, `Locale`, `FileExtension`, `MimeType`, `HostName`, `MacAddress`
@@ -54,7 +54,7 @@ global using StrongOf.Domains.Software;
 EmailAddress email = new("user@example.com");
 bool isValidEmail = email.IsValidFormat();
 
-// Safe factory — does not create an invalid instance
+// Safe factory - does not create an invalid instance
 bool created = EmailAddress.TryCreate("bad-input", out EmailAddress? result); // false
 
 CountryCode country = new("US");

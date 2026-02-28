@@ -31,10 +31,10 @@ builder.Services.AddOpenApi(options =>
 | Strong Type | OpenAPI Type | OpenAPI Format |
 |-------------|-------------|----------------|
 | `StrongGuid<T>` | `string` | `uuid` |
-| `StrongString<T>` | `string` | — |
+| `StrongString<T>` | `string` | - |
 | `StrongInt32<T>` | `integer` | `int32` |
 | `StrongInt64<T>` | `integer` | `int64` |
 | `StrongDecimal<T>` | `number` | `double` |
-| `StrongChar<T>` | `string` | — |
+| `StrongChar<T>` | `string` | - |
 | `StrongDateTime<T>` | `string` | `date-time` |
 | `StrongDateTimeOffset<T>` | `string` | `date-time` |

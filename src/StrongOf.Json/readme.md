@@ -15,7 +15,7 @@ System.Text.Json converters for [StrongOf](https://www.nuget.org/packages/Strong
 | `StrongDateTimeJsonConverter<T>` | `StrongDateTime<T>` types |
 | `StrongDateTimeOffsetJsonConverter<T>` | `StrongDateTimeOffset<T>` types |
 
-## Usage — Attribute
+## Usage - Attribute
 
 Decorate properties directly:
 
@@ -30,7 +30,7 @@ public sealed class UserDto
 }
 ```
 
-## Usage — JsonSerializerOptions
+## Usage - JsonSerializerOptions
 
 Or register converters globally:
 
