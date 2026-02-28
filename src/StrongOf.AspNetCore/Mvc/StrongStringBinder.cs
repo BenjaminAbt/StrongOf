@@ -1,15 +1,15 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongInt32 type.
+/// Represents a binder for StrongString type.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongInt32.</typeparam>
-public class StrongInt32Binder<TStrong> : StrongOfBinder
-    where TStrong : StrongInt32<TStrong>
+/// <typeparam name="TStrong">The type of the StrongString.</typeparam>
+public class StrongStringBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongString<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -19,9 +19,9 @@ public class StrongInt32Binder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongInt32<TStrong>.TryParse(value, out TStrong? strong))
+        if (value is not null)
         {
-            result = ModelBindingResult.Success(strong);
+            result = ModelBindingResult.Success(StrongString<TStrong>.FromTrimmed(value));
             return true;
         }
 

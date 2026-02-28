@@ -1,8 +1,8 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
 /// Abstract class for StrongOfBinder which implements IModelBinder interface.

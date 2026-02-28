@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 
-namespace StrongOf.MinimalApis;
+namespace StrongOf.AspNetCore.MinimalApis;
 
 /// <summary>
 /// Provides extension methods for configuring StrongOf validation on Minimal API endpoints.

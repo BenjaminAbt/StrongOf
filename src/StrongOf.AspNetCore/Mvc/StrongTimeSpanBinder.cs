@@ -1,15 +1,15 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongDateTimeOffset type.
+/// Represents a binder for <see cref="StrongTimeSpan{TStrong}"/> types.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
-public class StrongDateTimeOffsetBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongDateTimeOffset<TStrong>
+/// <typeparam name="TStrong">The type of the StrongTimeSpan.</typeparam>
+public class StrongTimeSpanBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongTimeSpan<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -19,7 +19,7 @@ public class StrongDateTimeOffsetBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongDateTimeOffset<TStrong>.TryParseIso8601(value, out TStrong? strong))
+        if (StrongTimeSpan<TStrong>.TryParse(value, null, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

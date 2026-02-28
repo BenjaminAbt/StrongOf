@@ -21,4 +21,13 @@
         <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
     </ItemGroup>
 
+    <!-- OpenApi: available on net9.0+ only -->
+    <ItemGroup Condition="'$(TargetFramework)' != 'net8.0'">
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+        <Compile Remove="OpenApi\**" />
+    </ItemGroup>
+
 </Project>

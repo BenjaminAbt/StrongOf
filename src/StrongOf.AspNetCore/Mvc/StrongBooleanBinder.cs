@@ -1,15 +1,15 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongChar type.
+/// Represents a binder for StrongBoolean type.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongChar.</typeparam>
-public class StrongCharBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongChar<TStrong>
+/// <typeparam name="TStrong">The type of the StrongBoolean.</typeparam>
+public class StrongBooleanBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongBoolean<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -19,7 +19,7 @@ public class StrongCharBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongChar<TStrong>.TryParse(value, null, out TStrong? strong))
+        if (StrongBoolean<TStrong>.TryParse(value, null, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

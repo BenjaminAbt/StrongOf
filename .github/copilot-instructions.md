@@ -235,9 +235,11 @@ Available converters:
 
 ## ASP.NET Core Integration
 
-Implement a custom `IModelBinderProvider`:
+Implement a custom `IModelBinderProvider` using the `StrongOf.AspNetCore.Mvc` namespace:
 
 ```csharp
+using StrongOf.AspNetCore.Mvc;
+
 public class StrongOfBinderProvider : IModelBinderProvider
 {
     private static readonly Dictionary<Type, Type> s_binders = new()
@@ -361,7 +363,10 @@ src/
 │   ├── Each concrete type is a single .cs file
 │   └── Each file includes the type + its TypeConverter
 ├── StrongOf.Json/               # JSON converters
-├── StrongOf.AspNetCore/         # ASP.NET Core binders
+├── StrongOf.AspNetCore/         # ASP.NET Core integration
+│   ├── Mvc/                     # MVC model binders
+│   ├── MinimalApis/             # Minimal API extensions
+│   └── OpenApi/                 # OpenAPI schema transformer
 └── StrongOf.FluentValidation/   # Validation extensions
 
 tests/

@@ -2,9 +2,9 @@
 
 [![Build](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml/badge.svg)](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml)
 
-||StrongOf|StrongOf.AspNetCore|StrongOf.Json|StrongOf.FluentValidation|StrongOf.EntityFrameworkCore|StrongOf.OpenApi|
-|-|-|-|-|-|-|-|
-|*NuGet*|[![NuGet](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf/)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.EntityFrameworkCore.svg?logo=nuget&label=StrongOf.EntityFrameworkCore)](https://www.nuget.org/packages/StrongOf.EntityFrameworkCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.OpenApi.svg?logo=nuget&label=StrongOf.OpenApi)](https://www.nuget.org/packages/StrongOf.OpenApi)|
+||StrongOf|StrongOf.AspNetCore|StrongOf.Json|StrongOf.FluentValidation|StrongOf.EntityFrameworkCore|
+|-|-|-|-|-|-|
+|*NuGet*|[![NuGet](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf/)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.EntityFrameworkCore.svg?logo=nuget&label=StrongOf.EntityFrameworkCore)](https://www.nuget.org/packages/StrongOf.EntityFrameworkCore)|
 
 All [StrongOf Packages](https://www.nuget.org/packages/StrongOf)  are available for .NET 8, .NET 9, .NET 10, and .NET 11.
 
@@ -163,9 +163,11 @@ string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
 
 ## Usage with ASP.NET Core
 
-You can just use [StrongOf.AspNetCore](https://www.nuget.org/packages/StrongOf.AspNetCore) and use one of the pre-defined binders
+You can just use [StrongOf.AspNetCore](https://www.nuget.org/packages/StrongOf.AspNetCore) and use one of the pre-defined binders from the `StrongOf.AspNetCore.Mvc` namespace:
 
 ```csharp
+using StrongOf.AspNetCore.Mvc;
+
 public class MyBinderProvider : IModelBinderProvider
 {
     private static readonly IReadOnlyDictionary<Type, Type> s_binders = new Dictionary<Type, Type>
@@ -189,6 +191,8 @@ public class MyBinderProvider : IModelBinderProvider
 You can also create a customized binder
 
 ```csharp
+using StrongOf.AspNetCore.Mvc;
+
 public class MyCustomStrongGuidBinder<TStrong> : StrongOfBinder
     where TStrong : StrongGuid<TStrong>
 {
@@ -207,6 +211,37 @@ public class MyCustomStrongGuidBinder<TStrong> : StrongOfBinder
     }
 }
 ```
+
+### Usage with Minimal APIs
+
+All strong types implement `IParsable<TSelf>` and work as route/query parameters in Minimal APIs out of the box.
+Use the validation filter from `StrongOf.AspNetCore.MinimalApis` to automatically validate `IValidatable` parameters:
+
+```csharp
+using StrongOf.AspNetCore.MinimalApis;
+
+// Strong types work as route parameters out of the box
+app.MapGet("/users/{id}", (UserId id) => Results.Ok(id));
+
+// Register the endpoint filter for automatic validation of IValidatable types
+app.MapPost("/users", (EmailAddress email) => Results.Ok(email))
+   .WithStrongOfValidation();
+```
+
+### Usage with OpenApi (.NET 9+)
+
+Use the schema transformer from `StrongOf.AspNetCore.OpenApi` to correctly map strong types in OpenAPI specs:
+
+```csharp
+using StrongOf.AspNetCore.OpenApi;
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddSchemaTransformer<StrongOfSchemaTransformer>();
+});
+```
+
+This maps strong types to their underlying primitives (e.g. `UserId` becomes `string (uuid)` instead of a complex object).
 
 ## Usage with Entity Framework Core
 

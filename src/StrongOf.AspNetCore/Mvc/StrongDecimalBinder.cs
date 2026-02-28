@@ -1,15 +1,16 @@
 // Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
+using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for <see cref="StrongTimeSpan{TStrong}"/> types.
+/// Represents a binder for StrongDecimal type.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongTimeSpan.</typeparam>
-public class StrongTimeSpanBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongTimeSpan<TStrong>
+/// <typeparam name="TStrong">The type of the StrongDecimal.</typeparam>
+public class StrongDecimalBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongDecimal<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -19,7 +20,8 @@ public class StrongTimeSpanBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongTimeSpan<TStrong>.TryParse(value, null, out TStrong? strong))
+        if (StrongDecimal<TStrong>.TryParse(value,
+            CultureInfo.InvariantCulture.NumberFormat, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

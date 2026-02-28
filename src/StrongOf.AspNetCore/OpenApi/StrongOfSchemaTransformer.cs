@@ -3,7 +3,7 @@
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
 
-namespace StrongOf.OpenApi;
+namespace StrongOf.AspNetCore.OpenApi;
 
 /// <summary>
 /// An OpenAPI schema transformer that maps <see cref="StrongOf{TTarget,TStrong}"/> types

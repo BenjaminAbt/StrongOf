@@ -52,18 +52,22 @@ template: |
 
   - `StrongOf`
   - `StrongOf.AspNetCore`
+  - `StrongOf.Json`
   - `StrongOf.MemoryCache`
   - `StrongOf.Domains`
   - `StrongOf.FluentValidation`
+  - `StrongOf.EntityFrameworkCore`
 
   ### Installation
 
   ```bash
   dotnet add package StrongOf
   dotnet add package StrongOf.AspNetCore
+  dotnet add package StrongOf.Json
   dotnet add package StrongOf.MemoryCache
   dotnet add package StrongOf.Domains
   dotnet add package StrongOf.FluentValidation
+  dotnet add package StrongOf.EntityFrameworkCore
   ```
 
   ## Contributors
