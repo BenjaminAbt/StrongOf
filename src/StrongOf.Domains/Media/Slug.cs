@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 namespace StrongOf.Domains.Media;
 
 /// <summary>
-/// Represents a strongly-typed URL slug — a URL-friendly string identifier.
+/// Represents a strongly-typed URL slug - a URL-friendly string identifier.
 /// </summary>
 /// <remarks>
 /// <para>

@@ -2,9 +2,9 @@
 
 [![Build](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml/badge.svg)](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml)
 
-||StrongOf|StrongOf.AspNetCore|StrongOf.Json|StrongOf.FluentValidation|
-|-|-|-|-|-|
-|*NuGet*|[![NuGet](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf/)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)|
+||StrongOf|StrongOf.AspNetCore|StrongOf.Json|StrongOf.FluentValidation|StrongOf.EntityFrameworkCore|StrongOf.OpenApi|
+|-|-|-|-|-|-|-|
+|*NuGet*|[![NuGet](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf/)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.EntityFrameworkCore.svg?logo=nuget&label=StrongOf.EntityFrameworkCore)](https://www.nuget.org/packages/StrongOf.EntityFrameworkCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.OpenApi.svg?logo=nuget&label=StrongOf.OpenApi)](https://www.nuget.org/packages/StrongOf.OpenApi)|
 
 All [StrongOf Packages](https://www.nuget.org/packages/StrongOf)  are available for .NET 8, .NET 9, .NET 10, and .NET 11.
 
@@ -92,7 +92,7 @@ private sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
 | `StrongOf.Domains.Media` | `ColorHex`, `FileExtension`, `FilePath`, `Isbn`, `MimeType`, `Slug` |
 | `StrongOf.Domains.Software` | `SemVer` |
 
-### Global Usings — avoid repetitive `using` directives
+### Global Usings - avoid repetitive `using` directives
 
 Because domain types are spread across multiple namespaces, we strongly recommend adding a single `GlobalUsings.cs` file at the root of your project. This is a standard C# feature that applies `using` directives project-wide, so you never have to repeat them in individual files.
 
@@ -116,7 +116,7 @@ global using StrongOf.Domains.Software;
 After this one-time setup, all domain types are available everywhere in your project without any further imports:
 
 ```csharp
-// No using directives needed — GlobalUsings.cs already covers them
+// No using directives needed - GlobalUsings.cs already covers them
 public class User
 {
     public TenantId   TenantId   { get; set; }
@@ -128,7 +128,7 @@ public class User
 }
 ```
 
-> **Tip:** Global usings are evaluated at compile-time and have zero runtime overhead. They were introduced in C# 10 / .NET 6 and are a first-class language feature — not a workaround.
+> **Tip:** Global usings are evaluated at compile-time and have zero runtime overhead. They were introduced in C# 10 / .NET 6 and are a first-class language feature - not a workaround.
 
 ### Namespace naming rationale
 
@@ -208,19 +208,72 @@ public class MyCustomStrongGuidBinder<TStrong> : StrongOfBinder
 }
 ```
 
-## Usage with Entity Framework
+## Usage with Entity Framework Core
 
-Unfortunately, Entity Framework does not love generic [Value Converters](https://learn.microsoft.com/en-us/ef/core/modeling/value-conversions?WT.mc_id=DT-MVP-5001507), which is why you have to write it yourself.
+Install [StrongOf.EntityFrameworkCore](https://www.nuget.org/packages/StrongOf.EntityFrameworkCore) for first-class EF Core integration with a generic value converter that works for all strong types - no per-type converter classes needed.
+
+```bash
+dotnet add package StrongOf.EntityFrameworkCore
+```
+
+### Register Converters Once with `ConfigureConventions` (Recommended)
+
+Register each strong type once in `ConfigureConventions` and EF Core applies the converter globally across all entities and `DbSet`s - no per-property configuration required:
 
 ```csharp
-public class UserIdValueConverter : ValueConverter<UserId, Guid>
+public class AppDbContext : DbContext
 {
-    public UserIdValueConverter(ConverterMappingHints? mappingHints = null)
-        : base(id => id.Value, value => new(value), mappingHints) { }
+    public DbSet<User> Users => Set<User>();
+    public DbSet<Order> Orders => Set<Order>();
+
+    protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+    {
+        // Register once - applies everywhere these types appear
+        configurationBuilder.Properties<UserId>()
+            .HaveConversion<StrongOfValueConverter<UserId, Guid>>();
+
+        configurationBuilder.Properties<Email>()
+            .HaveConversion<StrongOfValueConverter<Email, string>>();
+
+        configurationBuilder.Properties<Amount>()
+            .HaveConversion<StrongOfValueConverter<Amount, decimal>>();
+    }
 }
 ```
 
-There is no benefit in providing you a base class with an additional package and dependency.
+### Per-Property Configuration
+
+For explicit control over individual properties (e.g. column constraints):
+
+```csharp
+protected override void OnModelCreating(ModelBuilder modelBuilder)
+{
+    modelBuilder.Entity<User>(entity =>
+    {
+        entity.Property(e => e.Id)
+              .HasStrongOfConversion<UserId, Guid>();
+
+        entity.Property(e => e.Email)
+              .HasStrongOfConversion<Email, string>()
+              .HasMaxLength(256);
+    });
+}
+```
+
+### LINQ Limitations
+
+EF Core value converters work transparently for CRUD, equality comparisons (`==`, `!=`), and ordering. However, be aware of these limitations:
+
+- **`.Value` in LINQ** - not translatable to SQL. Compare strong types against strong types instead.
+- **`Contains` with mixed types** - the list must be the strong type (`UserId`), not the primitive (`Guid`). Use `UserId.From(guids)` to convert.
+- **`ToString()` in LINQ** - not translatable. Format client-side after materializing.
+- **Aggregations** - may require casting to the nullable primitive type (e.g. `(decimal?)order.Total`).
+
+See the [StrongOf.EntityFrameworkCore readme](src/StrongOf.EntityFrameworkCore/readme.md) for detailed examples and a full compatibility table.
+
+### Why No Source Generator for EF Core?
+
+The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type. A source generator would add Roslyn coupling complexity and contradicts the project's design philosophy (see FAQ below) - for zero practical benefit.
 
 ## Usage with FluentValidation
 

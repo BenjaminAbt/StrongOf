@@ -1,6 +1,7 @@
 ﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Runtime.CompilerServices;
 
 namespace StrongOf;
@@ -39,7 +40,9 @@ namespace StrongOf;
 /// </example>
 /// <param name="Value">The underlying <see cref="int"/> value.</param>
 public abstract partial class StrongInt32<TStrong>(int Value)
-        : StrongOf<int, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt32
+        : StrongOf<int, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt32,
+          IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
+          IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
     where TStrong : StrongInt32<TStrong>
 {
     /// <summary>
@@ -209,6 +212,140 @@ public abstract partial class StrongInt32<TStrong>(int Value)
         }
 
         strong = null;
+        return false;
+    }
+
+    // IFormattable
+
+    /// <summary>
+    /// Formats the value using the specified format and culture-specific format information.
+    /// </summary>
+    /// <param name="format">A standard or custom numeric format string.</param>
+    /// <param name="formatProvider">An object that provides culture-specific formatting information.</param>
+    /// <returns>The formatted string representation of the value.</returns>
+    /// <example>
+    /// <code>
+    /// var quantity = new Quantity(1234);
+    /// string formatted = quantity.ToString("N0", CultureInfo.InvariantCulture); // "1,234"
+    /// </code>
+    /// </example>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public string ToString(string? format, IFormatProvider? formatProvider)
+        => Value.ToString(format, formatProvider);
+
+    // IParsable<TStrong>
+
+    /// <summary>
+    /// Parses a string to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The string representation of an <see cref="int"/>.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    /// <exception cref="ArgumentNullException"><paramref name="s"/> is <c>null</c>.</exception>
+    /// <exception cref="FormatException"><paramref name="s"/> is not a valid integer.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(string s, IFormatProvider? provider)
+    {
+        ArgumentNullException.ThrowIfNull(s);
+        return From(int.Parse(s, provider));
+    }
+
+    /// <summary>
+    /// Tries to parse a string to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The string representation of an <see cref="int"/>.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse([NotNullWhen(true)] string? s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (s is not null && int.TryParse(s, provider, out int value))
+        {
+            result = From(value);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
+    // ISpanParsable<TStrong>
+
+    /// <summary>
+    /// Parses a character span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The character span containing the number to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    /// <exception cref="FormatException">The span is not a valid integer.</exception>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
+        => From(int.Parse(s, provider));
+
+    /// <summary>
+    /// Tries to parse a character span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="s">The character span containing the number to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (int.TryParse(s, provider, out int value))
+        {
+            result = From(value);
+            return true;
+        }
+
+        result = default;
+        return false;
+    }
+
+    // IUtf8SpanFormattable
+
+    /// <summary>
+    /// Tries to format the value into the provided UTF-8 byte span.
+    /// </summary>
+    /// <param name="utf8Destination">The destination span of UTF-8 bytes.</param>
+    /// <param name="bytesWritten">The number of bytes written to the destination.</param>
+    /// <param name="format">A standard or custom numeric format string.</param>
+    /// <param name="provider">An object that provides culture-specific formatting information.</param>
+    /// <returns><c>true</c> if the formatting was successful; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool TryFormat(Span<byte> utf8Destination, out int bytesWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
+        => ((IUtf8SpanFormattable)Value).TryFormat(utf8Destination, out bytesWritten, format, provider);
+
+    // IUtf8SpanParsable<TStrong>
+
+    /// <summary>
+    /// Parses a UTF-8 byte span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="utf8Text">The UTF-8 encoded text to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static TStrong Parse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider)
+        => From(int.Parse(utf8Text, provider));
+
+    /// <summary>
+    /// Tries to parse a UTF-8 byte span to create a new instance of the strong type.
+    /// </summary>
+    /// <param name="utf8Text">The UTF-8 encoded text to parse.</param>
+    /// <param name="provider">An optional format provider for culture-specific parsing.</param>
+    /// <param name="result">When this method returns, contains the parsed strong type if successful; otherwise, <c>null</c>.</param>
+    /// <returns><c>true</c> if parsing succeeded; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public static bool TryParse(ReadOnlySpan<byte> utf8Text, IFormatProvider? provider, [MaybeNullWhen(false)] out TStrong result)
+    {
+        if (int.TryParse(utf8Text, provider, out int value))
+        {
+            result = From(value);
+            return true;
+        }
+
+        result = default;
         return false;
     }
 }

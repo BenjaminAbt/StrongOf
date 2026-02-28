@@ -182,7 +182,7 @@ When creating concrete domain types in `StrongOf.Domains`, follow this pattern:
 [TypeConverter(typeof(UserIdTypeConverter))]
 public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
 {
-    // Domain-specific methods only — no redundant overrides
+    // Domain-specific methods only - no redundant overrides
     public bool HasValue() => Value != Guid.Empty;
 }
 

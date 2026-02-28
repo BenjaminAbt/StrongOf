@@ -24,7 +24,7 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<HttpMethod>))]
-public sealed class HttpMethod(string value) : StrongString<HttpMethod>(value)
+public sealed class HttpMethod(string value) : StrongString<HttpMethod>(value), IValidatable
 {
     private static readonly HashSet<string> s_standardMethods = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -42,6 +42,14 @@ public sealed class HttpMethod(string value) : StrongString<HttpMethod>(value)
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsStandard()
         => !string.IsNullOrWhiteSpace(Value) && s_standardMethods.Contains(Value);
+
+    /// <summary>
+    /// Validates whether the HTTP method is a recognized standard method.
+    /// </summary>
+    /// <returns><see langword="true"/> if the method is a standard HTTP method; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool IsValidFormat()
+        => IsStandard();
 
     /// <summary>
     /// Returns the method in uppercase.

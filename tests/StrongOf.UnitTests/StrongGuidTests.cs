@@ -111,7 +111,7 @@ public class StrongGuidTests
     [Fact]
     public void TryParse_ShouldReturnTrueForValidGuid()
     {
-        bool isValid = TestGuidOf.TryParse("00000000-0000-0000-0000-000000000001", out TestGuidOf? strongGuid);
+        bool isValid = TestGuidOf.TryParse("00000000-0000-0000-0000-000000000001", null, out TestGuidOf? strongGuid);
         Assert.True(isValid);
         Assert.NotNull(strongGuid);
         Assert.Equal(Guid.Parse("00000000-0000-0000-0000-000000000001"), strongGuid.Value);
@@ -120,7 +120,7 @@ public class StrongGuidTests
     [Fact]
     public void TryParse_ShouldReturnFalseForInvalidGuid()
     {
-        bool isValid = TestGuidOf.TryParse("00000000-0000-0000-0000-00000000000X", out TestGuidOf? strongGuid);
+        bool isValid = TestGuidOf.TryParse("00000000-0000-0000-0000-00000000000X", null, out TestGuidOf? strongGuid);
         Assert.False(isValid);
         Assert.Null(strongGuid);
     }
@@ -129,7 +129,7 @@ public class StrongGuidTests
     public void ToString_ShouldReturnCorrectFormat()
     {
         TestGuidOf strongGuid = new(Guid.Parse("00000000-0000-0000-0000-000000000001"));
-        Assert.Equal("00000000-0000-0000-0000-000000000001", strongGuid.ToString("D"));
+        Assert.Equal("00000000-0000-0000-0000-000000000001", strongGuid.ToString("D", null));
     }
 
     [Fact]

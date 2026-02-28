@@ -5,6 +5,7 @@
   <ItemGroup Label="Dependencies">
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
   </ItemGroup>
   <ItemGroup Label="DevOps">
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.6.133">

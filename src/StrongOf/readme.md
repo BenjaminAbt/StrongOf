@@ -23,7 +23,7 @@ public sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
 public sealed class Email(string value) : StrongString<Email>(value) { }
 
 // Instantiation
-UserId userId = new(Guid.NewGuid());  // preferred — fastest
+UserId userId = new(Guid.NewGuid());  // preferred - fastest
 UserId userId2 = UserId.From(Guid.NewGuid()); // via cached factory delegate
 
 // Accessing the value
@@ -53,9 +53,9 @@ Available converters: `StrongStringTypeConverter<T>`, `StrongGuidTypeConverter<T
 
 ## Interfaces
 
-- `IStrongOf` — base marker interface
-- `IStrongString`, `IStrongGuid`, `IStrongInt32`, etc. — for generic constraints
-- `IValidatable` — for types that validate their own format via `IsValidFormat()`
+- `IStrongOf` - base marker interface
+- `IStrongString`, `IStrongGuid`, `IStrongInt32`, etc. - for generic constraints
+- `IValidatable` - for types that validate their own format via `IsValidFormat()`
 
 ## GitHub
 

@@ -22,7 +22,7 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value} years")]
 [TypeConverter(typeof(StrongInt32TypeConverter<Age>))]
-public sealed class Age(int value) : StrongInt32<Age>(value)
+public sealed class Age(int value) : StrongInt32<Age>(value), IValidatable
 {
     /// <summary>
     /// The minimum valid age value.
@@ -63,9 +63,14 @@ public sealed class Age(int value) : StrongInt32<Age>(value)
     }
 
     /// <summary>
-    /// Validates whether the age is within the valid range.
+    /// Validates whether the age is within the valid range (0-150).
     /// </summary>
     /// <returns><c>true</c> if the age is within valid range; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool IsValidFormat()
+        => IsValidRange();
+
+    /// <inheritdoc cref="IsValidFormat"/>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidRange()
         => Value >= MinValue && Value <= MaxValue;

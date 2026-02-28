@@ -19,7 +19,7 @@ public class StrongCharBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongChar<TStrong>.TryParse(value, out TStrong? strong))
+        if (StrongChar<TStrong>.TryParse(value, null, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

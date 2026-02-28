@@ -28,8 +28,16 @@ namespace StrongOf.Domains.Localization;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<TimeZoneId>))]
-public sealed class TimeZoneId(string value) : StrongString<TimeZoneId>(value)
+public sealed class TimeZoneId(string value) : StrongString<TimeZoneId>(value), IValidatable
 {
+    /// <summary>
+    /// Validates whether the time zone identifier is recognized on the current system.
+    /// </summary>
+    /// <returns><see langword="true"/> if the identifier is valid; otherwise, <see langword="false"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    public bool IsValidFormat()
+        => IsValidId();
+
     /// <summary>
     /// Determines whether the time zone identifier is valid on the current system.
     /// </summary>
