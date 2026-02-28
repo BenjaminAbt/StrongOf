@@ -163,9 +163,11 @@ string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
 
 ## Usage with ASP.NET Core
 
-You can just use [StrongOf.AspNetCore](https://www.nuget.org/packages/StrongOf.AspNetCore) and use one of the pre-defined binders
+You can just use [StrongOf.AspNetCore](https://www.nuget.org/packages/StrongOf.AspNetCore) and use one of the pre-defined binders from the `StrongOf.AspNetCore.Mvc` namespace:
 
 ```csharp
+using StrongOf.AspNetCore.Mvc;
+
 public class MyBinderProvider : IModelBinderProvider
 {
     private static readonly IReadOnlyDictionary<Type, Type> s_binders = new Dictionary<Type, Type>
@@ -189,6 +191,8 @@ public class MyBinderProvider : IModelBinderProvider
 You can also create a customized binder
 
 ```csharp
+using StrongOf.AspNetCore.Mvc;
+
 public class MyCustomStrongGuidBinder<TStrong> : StrongOfBinder
     where TStrong : StrongGuid<TStrong>
 {

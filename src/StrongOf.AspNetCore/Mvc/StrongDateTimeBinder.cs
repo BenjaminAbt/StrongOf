@@ -2,14 +2,14 @@
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongBoolean type.
+/// Represents a binder for StrongDateTime type.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongBoolean.</typeparam>
-public class StrongBooleanBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongBoolean<TStrong>
+/// <typeparam name="TStrong">The type of the StrongDateTime.</typeparam>
+public class StrongDateTimeBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongDateTime<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -19,7 +19,7 @@ public class StrongBooleanBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongBoolean<TStrong>.TryParse(value, null, out TStrong? strong))
+        if (StrongDateTime<TStrong>.TryParseIso8601(value, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

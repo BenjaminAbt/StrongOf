@@ -1,8 +1,18 @@
 # StrongOf.AspNetCore
 
-ASP.NET Core model binders for [StrongOf](https://www.nuget.org/packages/StrongOf) types. Enables route values, query strings, and form fields to be automatically parsed into strong types.
+ASP.NET Core integration for [StrongOf](https://www.nuget.org/packages/StrongOf) types. Includes MVC model binders, Minimal API validation, and OpenAPI schema transformation.
 
-## Available Binders
+## Installation
+
+```bash
+dotnet add package StrongOf.AspNetCore
+```
+
+## MVC Model Binders (`StrongOf.AspNetCore.Mvc`)
+
+Enables route values, query strings, and form fields to be automatically parsed into strong types.
+
+### Available Binders
 
 | Binder | For |
 |--------|-----|
@@ -11,12 +21,20 @@ ASP.NET Core model binders for [StrongOf](https://www.nuget.org/packages/StrongO
 | `StrongInt32Binder<T>` | `StrongInt32<T>` types |
 | `StrongInt64Binder<T>` | `StrongInt64<T>` types |
 | `StrongDecimalBinder<T>` | `StrongDecimal<T>` types |
+| `StrongDoubleBinder<T>` | `StrongDouble<T>` types |
+| `StrongCharBinder<T>` | `StrongChar<T>` types |
+| `StrongBooleanBinder<T>` | `StrongBoolean<T>` types |
+| `StrongDateTimeBinder<T>` | `StrongDateTime<T>` types |
+| `StrongDateTimeOffsetBinder<T>` | `StrongDateTimeOffset<T>` types |
+| `StrongTimeSpanBinder<T>` | `StrongTimeSpan<T>` types |
 
-## Setup
+### Setup
 
 Register a custom `IModelBinderProvider` in your ASP.NET Core startup:
 
 ```csharp
+using StrongOf.AspNetCore.Mvc;
+
 // Program.cs
 builder.Services.AddControllers(options =>
     options.ModelBinderProviders.Insert(0, new MyBinderProvider()));
@@ -42,11 +60,13 @@ public sealed class MyBinderProvider : IModelBinderProvider
 }
 ```
 
-## Custom Binders
+### Custom Binders
 
 Extend `StrongOfBinder` to add custom parsing logic:
 
 ```csharp
+using StrongOf.AspNetCore.Mvc;
+
 public sealed class MyUserIdBinder : StrongOfBinder
 {
     public override bool TryHandle(string value, out ModelBindingResult result)
@@ -60,12 +80,6 @@ public sealed class MyUserIdBinder : StrongOfBinder
         return false;
     }
 }
-```
-
-## Installation
-
-```bash
-dotnet add package StrongOf.AspNetCore
 ```
 
 ## Minimal APIs (`StrongOf.AspNetCore.MinimalApis`)

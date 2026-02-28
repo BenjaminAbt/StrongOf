@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
 /// An <see cref="IModelBinderProvider"/> that automatically resolves the correct

@@ -2,14 +2,14 @@
 
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongDouble type.
+/// Represents a binder for StrongInt64 type.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongDouble.</typeparam>
-public class StrongDoubleBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongDouble<TStrong>
+/// <typeparam name="TStrong">The type of the StrongInt64.</typeparam>
+public class StrongInt64Binder<TStrong> : StrongOfBinder
+    where TStrong : StrongInt64<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -19,7 +19,7 @@ public class StrongDoubleBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongDouble<TStrong>.TryParse(value, null, out TStrong? strong))
+        if (StrongInt64<TStrong>.TryParse(value, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;

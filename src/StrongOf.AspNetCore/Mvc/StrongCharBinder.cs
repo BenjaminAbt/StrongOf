@@ -1,16 +1,15 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
 
-using System.Globalization;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
-namespace StrongOf.AspNetCore;
+namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongDecimal type.
+/// Represents a binder for StrongChar type.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongDecimal.</typeparam>
-public class StrongDecimalBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongDecimal<TStrong>
+/// <typeparam name="TStrong">The type of the StrongChar.</typeparam>
+public class StrongCharBinder<TStrong> : StrongOfBinder
+    where TStrong : StrongChar<TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.
@@ -20,8 +19,7 @@ public class StrongDecimalBinder<TStrong> : StrongOfBinder
     /// <returns>Returns a boolean indicating the success of the operation.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
-        if (StrongDecimal<TStrong>.TryParse(value,
-            CultureInfo.InvariantCulture.NumberFormat, out TStrong? strong))
+        if (StrongChar<TStrong>.TryParse(value, null, out TStrong? strong))
         {
             result = ModelBindingResult.Success(strong);
             return true;
