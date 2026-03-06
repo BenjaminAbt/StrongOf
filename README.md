@@ -16,9 +16,10 @@ In contrast to other approaches, __StrongOf__ is above all simple and performant
 
 ## Why? 
 
-This library was developed because C# did not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations) up to and including version 12. Originally announced for C#13, we should finally receive [Extension Types](https://devblogs.microsoft.com/dotnet/dotnet-build-2024-announcements) with C# 14.
+This library was created because C# still does not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations).
 
-See GitHub proposal: [Proposal: Type aliases / abbreviations / newtype](https://github.com/dotnet/csharplang/issues/410)
+It is currently unclear whether this feature will ever become part of the language:  
+[Proposal: Type aliases / abbreviations / newtype](https://github.com/dotnet/csharplang/issues/410)
 
 ## The idea
 
