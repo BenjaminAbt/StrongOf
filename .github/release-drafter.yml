@@ -54,11 +54,10 @@ template: |
   |---|---|---|
   | `StrongOf` | $RESOLVED_VERSION | A library for creating strongly-typed value objects in .NET. |
   | `StrongOf.AspNetCore` | $RESOLVED_VERSION | ASP.NET Core integration for StrongOf, including model binding and validation. |
-  | `StrongOf.Json` | $RESOLVED_VERSION | JSON serialization support for StrongOf value objects using System.Text.Json. |
-  | `StrongOf.MemoryCache` | $RESOLVED_VERSION | Memory caching extensions for StrongOf value objects. |
   | `StrongOf.Domains` | $RESOLVED_VERSION | Domain-driven design utilities |
-  | `StrongOf.FluentValidation` | $RESOLVED_VERSION | FluentValidation integration for StrongOf value objects. |
   | `StrongOf.EntityFrameworkCore` | $RESOLVED_VERSION | Entity Framework Core integration for StrongOf value objects. |
+  | `StrongOf.FluentValidation` | $RESOLVED_VERSION | FluentValidation integration for StrongOf value objects. |
+  | `StrongOf.Json` | $RESOLVED_VERSION | JSON serialization support for StrongOf value objects using System.Text.Json. |
 
   ## Contributors
 
