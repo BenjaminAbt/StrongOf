@@ -26,7 +26,6 @@
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)BenjaminAbt.StrongOf.snk</AssemblyOriginatorKeyFile>
-
     <PublicKey>
       0024000004800000940000000602000000240000525341310004000001000100a19f5c9b522bba
       2b14442a92edac88ebfad09ade036005cdbcfdb574e78f5b60612a92b18b73acb1a3ecc933fb2d
@@ -45,6 +44,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   
   <PropertyGroup Label="Performance">
     <!-- Enable Dynamic Profile-Guided Optimization for runtime performance -->
