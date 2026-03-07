@@ -1,4 +1,4 @@
-# Justfile .NET - Benjamin Abt 2025 - https://benjamin-abt.com
+# Justfile .NET - https://benjamin-abt.com
 # https://github.com/BenjaminAbt/templates/blob/main/justfile/dotnet
 
 set shell := ["pwsh", "-c"]

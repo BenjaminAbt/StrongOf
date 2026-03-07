@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 global using StrongOf;
 global using StrongOf.Domains.Commerce;

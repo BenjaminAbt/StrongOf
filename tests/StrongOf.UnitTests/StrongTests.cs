@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+// Copyright Â© BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using Xunit;
 

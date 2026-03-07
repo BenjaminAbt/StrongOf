@@ -1,4 +1,4 @@
-// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using DomainHttpMethod = StrongOf.Domains.Networking.HttpMethod;
 
