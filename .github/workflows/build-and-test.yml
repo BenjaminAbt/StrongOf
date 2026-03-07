@@ -10,9 +10,8 @@ on:
         default: 'Release'
       upload-test-results:
         description: 'Whether to upload test results as artifacts'
-        required: false
+        required: true
         type: boolean
-        default: false
       upload-packages:
         description: 'Whether to upload NuGet packages'
         required: true
@@ -73,7 +72,7 @@ jobs:
         run: dotnet pack --configuration ${{ inputs.configuration }} --no-build --include-symbols -p:SymbolPackageFormat=snupkg --output ./artifacts /p:PackageVersion=${{ steps.nbgv.outputs.SemVer2 }}
 
       - name: Upload NuGet packages
-        if: inputs.upload-pack
+        if: inputs.upload-packages
         uses: actions/upload-artifact@v4
         with:
           name: nuget-packages

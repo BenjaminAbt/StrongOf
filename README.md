@@ -1,14 +1,30 @@
 # StrongOf
 
 <p align="center">
-    <img src="res/benjamin-abt-strongof.png" alt="Unio" width="160" />
+    <img src="res/benjamin-abt-strongof.png" alt="StrongOf" width="160" />
 </p>
 
-||StrongOf|StrongOf.AspNetCore|StrongOf.Json|StrongOf.FluentValidation|StrongOf.EntityFrameworkCore|
-|-|-|-|-|-|-|
-|*NuGet*|[![NuGet](https://img.shields.io/nuget/v/StrongOf.svg?logo=nuget&label=StrongOf)](https://www.nuget.org/packages/StrongOf/)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.AspNetCore.svg?logo=nuget&label=StrongOf.AspNetCore)](https://www.nuget.org/packages/StrongOf.AspNetCore)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.Json.svg?logo=nuget&label=StrongOf.Json)](https://www.nuget.org/packages/StrongOf.Json)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.FluentValidation.svg?logo=nuget&label=StrongOf.FluentValidation)](https://www.nuget.org/packages/StrongOf.FluentValidation)|[![NuGet](https://img.shields.io/nuget/v/StrongOf.EntityFrameworkCore.svg?logo=nuget&label=StrongOf.EntityFrameworkCore)](https://www.nuget.org/packages/StrongOf.EntityFrameworkCore)|
+<p align="center">
+    <a href="https://www.nuget.org/packages/StrongOf"><img src="https://img.shields.io/nuget/v/StrongOf?label=StrongOf&logo=nuget&color=0f766e" alt="StrongOf" /></a>
+    <a href="https://www.nuget.org/packages/StrongOf.Domains"><img src="https://img.shields.io/nuget/v/StrongOf.Domains?label=StrongOf.Domains&logo=nuget&color=0f766e" alt="StrongOf.Domains" /></a>
+    <a href="https://www.nuget.org/packages/StrongOf.Json"><img src="https://img.shields.io/nuget/v/StrongOf.Json?label=StrongOf.Json&logo=nuget&color=0f766e" alt="StrongOf.Json" /></a>
+</p>
 
-All [StrongOf Packages](https://www.nuget.org/packages/StrongOf)  are available for .NET 8, .NET 9, .NET 10, and .NET 11.
+<p align="center">
+    <a href="https://www.nuget.org/packages/StrongOf.AspNetCore"><img src="https://img.shields.io/nuget/v/StrongOf.AspNetCore?label=StrongOf.AspNetCore&logo=nuget&color=0369a1" alt="StrongOf.AspNetCore" /></a>
+    <a href="https://www.nuget.org/packages/StrongOf.EntityFrameworkCore"><img src="https://img.shields.io/nuget/v/StrongOf.EntityFrameworkCore?label=StrongOf.EntityFrameworkCore&logo=nuget&color=0369a1" alt="StrongOf.EntityFrameworkCore" /></a>
+    <a href="https://www.nuget.org/packages/StrongOf.FluentValidation"><img src="https://img.shields.io/nuget/v/StrongOf.FluentValidation?label=StrongOf.FluentValidation&logo=nuget&color=0369a1" alt="StrongOf.FluentValidation" /></a>
+</p>
+
+<p align="center">
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-f4b400.svg" alt="License: MIT" /></a>
+</p>
+
+<p align="center">
+    <strong>Strongly typed primitives for .NET 8, .NET 9, .NET 10, and .NET 11.</strong>
+    <br />
+    Core library, domain types, JSON, ASP.NET Core, EF Core, and FluentValidation integrations.
+</p>
 
 ---
 
