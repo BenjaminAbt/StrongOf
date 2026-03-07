@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Measurement.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="HeightCm"/>.
@@ -10,7 +10,7 @@ public class HeightCmTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var height = new HeightCm(180m);
+        HeightCm height = new HeightCm(180m);
         Assert.Equal(180m, height.Value);
     }
 
@@ -22,30 +22,30 @@ public class HeightCmTests
     [InlineData(301, false)]
     public void IsValidRange_ReturnsExpected(decimal value, bool expected)
     {
-        var height = new HeightCm(value);
+        HeightCm height = new HeightCm(value);
         Assert.Equal(expected, height.IsValidRange());
     }
 
     [Fact]
     public void ToMeters_ReturnsExpected()
     {
-        var height = new HeightCm(180m);
+        HeightCm height = new HeightCm(180m);
         Assert.Equal(1.8m, height.ToMeters());
     }
 
     [Fact]
     public void Clamp_ReturnsClampedValue()
     {
-        var height = new HeightCm(400m);
-        var clamped = height.Clamp();
+        HeightCm height = new HeightCm(400m);
+        HeightCm clamped = height.Clamp();
         Assert.Equal(HeightCm.MaxValue, clamped.Value);
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<HeightCm>();
-        var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "180") as HeightCm;
+        StrongDecimalTypeConverter<HeightCm> converter = new StrongDecimalTypeConverter<HeightCm>();
+        HeightCm? result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "180") as HeightCm;
 
         Assert.NotNull(result);
         Assert.Equal(180m, result.Value);
@@ -54,8 +54,8 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_ConvertFromDecimal_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<HeightCm>();
-        var result = converter.ConvertFrom(180m) as HeightCm;
+        StrongDecimalTypeConverter<HeightCm> converter = new StrongDecimalTypeConverter<HeightCm>();
+        HeightCm? result = converter.ConvertFrom(180m) as HeightCm;
 
         Assert.NotNull(result);
         Assert.Equal(180m, result.Value);
@@ -64,8 +64,8 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_ConvertFromDouble_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<HeightCm>();
-        var result = converter.ConvertFrom(180.5) as HeightCm;
+        StrongDecimalTypeConverter<HeightCm> converter = new StrongDecimalTypeConverter<HeightCm>();
+        HeightCm? result = converter.ConvertFrom(180.5) as HeightCm;
 
         Assert.NotNull(result);
         Assert.Equal(180.5m, result.Value);
@@ -74,8 +74,8 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<HeightCm>();
-        var result = converter.ConvertFrom(180) as HeightCm;
+        StrongDecimalTypeConverter<HeightCm> converter = new StrongDecimalTypeConverter<HeightCm>();
+        HeightCm? result = converter.ConvertFrom(180) as HeightCm;
 
         Assert.NotNull(result);
         Assert.Equal(180m, result.Value);
@@ -84,7 +84,7 @@ public class HeightCmTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new StrongDecimalTypeConverter<HeightCm>();
+        StrongDecimalTypeConverter<HeightCm> converter = new StrongDecimalTypeConverter<HeightCm>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.People.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="PhoneNumber"/>.
@@ -14,7 +14,7 @@ public class PhoneNumberTests
         const string phone = "+1-555-123-4567";
 
         // Act
-        var phoneNumber = new PhoneNumber(phone);
+        PhoneNumber phoneNumber = new PhoneNumber(phone);
 
         // Assert
         Assert.Equal(phone, phoneNumber.Value);
@@ -33,7 +33,7 @@ public class PhoneNumberTests
     public void IsValidFormat_ReturnsExpectedResult(string phone, bool expected)
     {
         // Arrange
-        var phoneNumber = new PhoneNumber(phone);
+        PhoneNumber phoneNumber = new PhoneNumber(phone);
 
         // Act
         bool result = phoneNumber.IsValidFormat();
@@ -51,7 +51,7 @@ public class PhoneNumberTests
     public void GetNormalized_ReturnsExpectedResult(string phone, string expected)
     {
         // Arrange
-        var phoneNumber = new PhoneNumber(phone);
+        PhoneNumber phoneNumber = new PhoneNumber(phone);
 
         // Act
         string result = phoneNumber.GetNormalized();
@@ -64,8 +64,8 @@ public class PhoneNumberTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var phone1 = new PhoneNumber("+1-555-123-4567");
-        var phone2 = new PhoneNumber("+1-555-123-4567");
+        PhoneNumber phone1 = new PhoneNumber("+1-555-123-4567");
+        PhoneNumber phone2 = new PhoneNumber("+1-555-123-4567");
 
         // Act & Assert
         Assert.Equal(phone1, phone2);
@@ -76,8 +76,8 @@ public class PhoneNumberTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var phone1 = new PhoneNumber("+1-555-123-4567");
-        var phone2 = new PhoneNumber("+1-555-987-6543");
+        PhoneNumber phone1 = new PhoneNumber("+1-555-123-4567");
+        PhoneNumber phone2 = new PhoneNumber("+1-555-987-6543");
 
         // Act & Assert
         Assert.NotEqual(phone1, phone2);
@@ -89,7 +89,7 @@ public class PhoneNumberTests
     {
         // Arrange
         const string phone = "+1-555-123-4567";
-        var phoneNumber = new PhoneNumber(phone);
+        PhoneNumber phoneNumber = new PhoneNumber(phone);
 
         // Act
         string result = phoneNumber.ToString();
@@ -102,8 +102,8 @@ public class PhoneNumberTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var phone1 = new PhoneNumber("+1-555-123-4567");
-        var phone2 = new PhoneNumber("+1-555-123-4567");
+        PhoneNumber phone1 = new PhoneNumber("+1-555-123-4567");
+        PhoneNumber phone2 = new PhoneNumber("+1-555-123-4567");
 
         // Act & Assert
         Assert.Equal(phone1.GetHashCode(), phone2.GetHashCode());
@@ -116,7 +116,7 @@ public class PhoneNumberTests
         const string phone = "+1-555-123-4567";
 
         // Act
-        var phoneNumber = PhoneNumber.From(phone);
+        PhoneNumber phoneNumber = PhoneNumber.From(phone);
 
         // Assert
         Assert.Equal(phone, phoneNumber.Value);
@@ -126,7 +126,7 @@ public class PhoneNumberTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<PhoneNumber>();
+        StrongStringTypeConverter<PhoneNumber> converter = new StrongStringTypeConverter<PhoneNumber>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -139,11 +139,11 @@ public class PhoneNumberTests
     public void TypeConverter_ConvertFromString_ReturnsPhoneNumber()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<PhoneNumber>();
+        StrongStringTypeConverter<PhoneNumber> converter = new StrongStringTypeConverter<PhoneNumber>();
         const string phone = "+1-555-123-4567";
 
         // Act
-        var result = converter.ConvertFrom(phone) as PhoneNumber;
+        PhoneNumber? result = converter.ConvertFrom(phone) as PhoneNumber;
 
         // Assert
         Assert.NotNull(result);
@@ -154,7 +154,7 @@ public class PhoneNumberTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<PhoneNumber>();
+        StrongStringTypeConverter<PhoneNumber> converter = new StrongStringTypeConverter<PhoneNumber>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

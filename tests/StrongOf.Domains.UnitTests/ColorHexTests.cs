@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Media.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="ColorHex"/>.
@@ -10,7 +10,7 @@ public class ColorHexTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var color = new ColorHex("#ff00aa");
+        ColorHex color = new ColorHex("#ff00aa");
         Assert.Equal("#ff00aa", color.Value);
     }
 
@@ -22,22 +22,22 @@ public class ColorHexTests
     [InlineData("", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var color = new ColorHex(value);
+        ColorHex color = new ColorHex(value);
         Assert.Equal(expected, color.IsValidFormat());
     }
 
     [Fact]
     public void Normalize_ReturnsUppercaseWithHash()
     {
-        var color = new ColorHex("ff00aa");
+        ColorHex color = new ColorHex("ff00aa");
         Assert.Equal("#FF00AA", color.Normalize());
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<ColorHex>();
-        var result = converter.ConvertFrom("#FFFFFF") as ColorHex;
+        StrongStringTypeConverter<ColorHex> converter = new StrongStringTypeConverter<ColorHex>();
+        ColorHex? result = converter.ConvertFrom("#FFFFFF") as ColorHex;
 
         Assert.NotNull(result);
         Assert.Equal("#FFFFFF", result.Value);
@@ -46,7 +46,7 @@ public class ColorHexTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<ColorHex>();
+        StrongStringTypeConverter<ColorHex> converter = new StrongStringTypeConverter<ColorHex>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

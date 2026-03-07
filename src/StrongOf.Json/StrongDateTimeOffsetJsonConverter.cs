@@ -1,6 +1,5 @@
-﻿// Copyright © Benjamin Abt (https://benjamin-abt.com) - all rights reserved
+﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -38,5 +37,5 @@ public class StrongDateTimeOffsetJsonConverter<TStrong> : JsonConverter<TStrong>
     /// <param name="strong">The value to write.</param>
     /// <param name="options">Options to control the serializer behavior during writing.</param>
     public override void Write(Utf8JsonWriter writer, TStrong strong, JsonSerializerOptions options)
-        => writer.WriteStringValue(strong.Value.ToString(CultureInfo.InvariantCulture));
+        => writer.WriteStringValue(strong.ToStringIso8601());
 }

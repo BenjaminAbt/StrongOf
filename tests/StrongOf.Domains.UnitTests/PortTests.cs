@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Networking.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="Port"/>.
@@ -14,7 +14,7 @@ public class PortTests
         const int value = 443;
 
         // Act
-        var port = new Port(value);
+        Port port = new Port(value);
 
         // Assert
         Assert.Equal(value, port.Value);
@@ -30,7 +30,7 @@ public class PortTests
     public void IsValidRange_ReturnsExpectedResult(int value, bool expected)
     {
         // Arrange
-        var port = new Port(value);
+        Port port = new Port(value);
 
         // Act
         bool result = port.IsValidRange();
@@ -49,7 +49,7 @@ public class PortTests
     public void IsWellKnownPort_ReturnsExpectedResult(int value, bool expected)
     {
         // Arrange
-        var port = new Port(value);
+        Port port = new Port(value);
 
         // Act
         bool result = port.IsWellKnownPort();
@@ -67,7 +67,7 @@ public class PortTests
     public void IsRegisteredPort_ReturnsExpectedResult(int value, bool expected)
     {
         // Arrange
-        var port = new Port(value);
+        Port port = new Port(value);
 
         // Act
         bool result = port.IsRegisteredPort();
@@ -85,7 +85,7 @@ public class PortTests
     public void IsDynamicPort_ReturnsExpectedResult(int value, bool expected)
     {
         // Arrange
-        var port = new Port(value);
+        Port port = new Port(value);
 
         // Act
         bool result = port.IsDynamicPort();
@@ -98,7 +98,7 @@ public class PortTests
     public void Http_ReturnsPort80()
     {
         // Act
-        var port = Port.Http;
+        Port port = Port.Http;
 
         // Assert
         Assert.Equal(80, port.Value);
@@ -108,7 +108,7 @@ public class PortTests
     public void Https_ReturnsPort443()
     {
         // Act
-        var port = Port.Https;
+        Port port = Port.Https;
 
         // Assert
         Assert.Equal(443, port.Value);
@@ -118,7 +118,7 @@ public class PortTests
     public void Ssh_ReturnsPort22()
     {
         // Act
-        var port = Port.Ssh;
+        Port port = Port.Ssh;
 
         // Assert
         Assert.Equal(22, port.Value);
@@ -128,7 +128,7 @@ public class PortTests
     public void Ftp_ReturnsPort21()
     {
         // Act
-        var port = Port.Ftp;
+        Port port = Port.Ftp;
 
         // Assert
         Assert.Equal(21, port.Value);
@@ -138,8 +138,8 @@ public class PortTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var port1 = new Port(443);
-        var port2 = new Port(443);
+        Port port1 = new Port(443);
+        Port port2 = new Port(443);
 
         // Act & Assert
         Assert.Equal(port1, port2);
@@ -150,8 +150,8 @@ public class PortTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var port1 = new Port(80);
-        var port2 = new Port(443);
+        Port port1 = new Port(80);
+        Port port2 = new Port(443);
 
         // Act & Assert
         Assert.NotEqual(port1, port2);
@@ -162,8 +162,8 @@ public class PortTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var port1 = new Port(443);
-        var port2 = new Port(443);
+        Port port1 = new Port(443);
+        Port port2 = new Port(443);
 
         // Act & Assert
         Assert.Equal(port1.GetHashCode(), port2.GetHashCode());
@@ -176,7 +176,7 @@ public class PortTests
         const int value = 443;
 
         // Act
-        var port = Port.From(value);
+        Port port = Port.From(value);
 
         // Assert
         Assert.Equal(value, port.Value);
@@ -210,7 +210,7 @@ public class PortTests
     public void TypeConverter_CanConvertFromInt()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Port>();
+        StrongInt32TypeConverter<Port> converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));
@@ -223,7 +223,7 @@ public class PortTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Port>();
+        StrongInt32TypeConverter<Port> converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -236,10 +236,10 @@ public class PortTests
     public void TypeConverter_ConvertFromInt_ReturnsPort()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Port>();
+        StrongInt32TypeConverter<Port> converter = new StrongInt32TypeConverter<Port>();
 
         // Act
-        var result = converter.ConvertFrom(443) as Port;
+        Port? result = converter.ConvertFrom(443) as Port;
 
         // Assert
         Assert.NotNull(result);
@@ -250,10 +250,10 @@ public class PortTests
     public void TypeConverter_ConvertFromString_ReturnsPort()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Port>();
+        StrongInt32TypeConverter<Port> converter = new StrongInt32TypeConverter<Port>();
 
         // Act
-        var result = converter.ConvertFrom("443") as Port;
+        Port? result = converter.ConvertFrom("443") as Port;
 
         // Assert
         Assert.NotNull(result);
@@ -264,7 +264,7 @@ public class PortTests
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Port>();
+        StrongInt32TypeConverter<Port> converter = new StrongInt32TypeConverter<Port>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(Guid));

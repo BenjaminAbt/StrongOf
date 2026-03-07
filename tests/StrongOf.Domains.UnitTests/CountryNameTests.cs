@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Postal.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="CountryName"/>.
@@ -10,7 +10,7 @@ public class CountryNameTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var name = new CountryName("Germany");
+        CountryName name = new CountryName("Germany");
         Assert.Equal("Germany", name.Value);
     }
 
@@ -21,22 +21,22 @@ public class CountryNameTests
     [InlineData("", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var name = new CountryName(value);
+        CountryName name = new CountryName(value);
         Assert.Equal(expected, name.IsValidFormat());
     }
 
     [Fact]
     public void ToUpperCase_ReturnsExpected()
     {
-        var name = new CountryName("Germany");
+        CountryName name = new CountryName("Germany");
         Assert.Equal("GERMANY", name.ToUpperCase());
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<CountryName>();
-        var result = converter.ConvertFrom("Germany") as CountryName;
+        StrongStringTypeConverter<CountryName> converter = new StrongStringTypeConverter<CountryName>();
+        CountryName? result = converter.ConvertFrom("Germany") as CountryName;
 
         Assert.NotNull(result);
         Assert.Equal("Germany", result.Value);
@@ -45,7 +45,7 @@ public class CountryNameTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<CountryName>();
+        StrongStringTypeConverter<CountryName> converter = new StrongStringTypeConverter<CountryName>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

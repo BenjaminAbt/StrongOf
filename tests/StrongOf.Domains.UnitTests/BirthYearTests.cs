@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.People.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="BirthYear"/>.
@@ -10,7 +10,7 @@ public class BirthYearTests
     [Fact]
     public void Constructor_WithValidValue_SetsValue()
     {
-        var year = new BirthYear(1990);
+        BirthYear year = new BirthYear(1990);
         Assert.Equal(1990, year.Value);
     }
 
@@ -22,15 +22,15 @@ public class BirthYearTests
     [InlineData(2101, false)]
     public void IsValidRange_ReturnsExpected(int value, bool expected)
     {
-        var year = new BirthYear(value);
+        BirthYear year = new BirthYear(value);
         Assert.Equal(expected, year.IsValidRange());
     }
 
     [Fact]
     public void IsLeapYear_ReturnsExpected()
     {
-        var leap = new BirthYear(2000);
-        var nonLeap = new BirthYear(2001);
+        BirthYear leap = new BirthYear(2000);
+        BirthYear nonLeap = new BirthYear(2001);
 
         Assert.True(leap.IsLeapYear());
         Assert.False(nonLeap.IsLeapYear());
@@ -39,15 +39,15 @@ public class BirthYearTests
     [Fact]
     public void TypeConverter_CanConvertFromInt()
     {
-        var converter = new StrongInt32TypeConverter<BirthYear>();
+        StrongInt32TypeConverter<BirthYear> converter = new StrongInt32TypeConverter<BirthYear>();
         Assert.True(converter.CanConvertFrom(typeof(int)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongInt32TypeConverter<BirthYear>();
-        var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "1990") as BirthYear;
+        StrongInt32TypeConverter<BirthYear> converter = new StrongInt32TypeConverter<BirthYear>();
+        BirthYear? result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "1990") as BirthYear;
 
         Assert.NotNull(result);
         Assert.Equal(1990, result.Value);
@@ -56,8 +56,8 @@ public class BirthYearTests
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsInstance()
     {
-        var converter = new StrongInt32TypeConverter<BirthYear>();
-        var result = converter.ConvertFrom(1990) as BirthYear;
+        StrongInt32TypeConverter<BirthYear> converter = new StrongInt32TypeConverter<BirthYear>();
+        BirthYear? result = converter.ConvertFrom(1990) as BirthYear;
 
         Assert.NotNull(result);
         Assert.Equal(1990, result.Value);
@@ -66,7 +66,7 @@ public class BirthYearTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new StrongInt32TypeConverter<BirthYear>();
+        StrongInt32TypeConverter<BirthYear> converter = new StrongInt32TypeConverter<BirthYear>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

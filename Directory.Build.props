@@ -26,7 +26,6 @@
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)BenjaminAbt.StrongOf.snk</AssemblyOriginatorKeyFile>
-
     <PublicKey>
       0024000004800000940000000602000000240000525341310004000001000100a19f5c9b522bba
       2b14442a92edac88ebfad09ade036005cdbcfdb574e78f5b60612a92b18b73acb1a3ecc933fb2d
@@ -45,6 +44,10 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
+    <DebugType>portable</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
   
   <PropertyGroup Label="Performance">
     <!-- Enable Dynamic Profile-Guided Optimization for runtime performance -->
@@ -57,6 +60,8 @@
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <MinClientVersion>2.12</MinClientVersion>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols Condition="'$(IsPackable)' == 'true'">true</IncludeSymbols>
+    <SymbolPackageFormat Condition="'$(IsPackable)' == 'true'">snupkg</SymbolPackageFormat>
 
     <Title>StrongOf - Strong Type your stuff!</Title>
     <Description>
@@ -66,7 +71,14 @@
     <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
     <RepositoryUrl>https://github.com/BenjaminAbt/StrongOf</RepositoryUrl>
     <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
+    <!-- Central package icon for NuGet packages (file is included into the package via ItemGroup below) -->
+    <PackageIcon>benjamin-abt-strongof.png</PackageIcon>
   </PropertyGroup>
+
+  <!-- Ensure the repository root res/benjamin-abt-strongof.png is packed into NuGet packages -->
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)res\benjamin-abt-strongof.png" Pack="true" PackagePath="" />
+  </ItemGroup>
 
   <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
     <GenerateDocumentationFile>true</GenerateDocumentationFile>

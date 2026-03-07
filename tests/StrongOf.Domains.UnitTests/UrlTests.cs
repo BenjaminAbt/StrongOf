@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Networking.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="Url"/>.
@@ -14,7 +14,7 @@ public class UrlTests
         const string urlValue = "https://example.com";
 
         // Act
-        var url = new Url(urlValue);
+        Url url = new Url(urlValue);
 
         // Assert
         Assert.Equal(urlValue, url.Value);
@@ -31,7 +31,7 @@ public class UrlTests
     public void IsValidFormat_ReturnsExpectedResult(string urlValue, bool expected)
     {
         // Arrange
-        var url = new Url(urlValue);
+        Url url = new Url(urlValue);
 
         // Act
         bool result = url.IsValidFormat();
@@ -49,7 +49,7 @@ public class UrlTests
     public void IsAbsoluteUri_ReturnsExpectedResult(string urlValue, bool expected)
     {
         // Arrange
-        var url = new Url(urlValue);
+        Url url = new Url(urlValue);
 
         // Act
         bool result = url.IsAbsoluteUri();
@@ -65,7 +65,7 @@ public class UrlTests
     public void GetHost_ReturnsExpectedResult(string urlValue, string expectedHost)
     {
         // Arrange
-        var url = new Url(urlValue);
+        Url url = new Url(urlValue);
 
         // Act
         string host = url.GetHost();
@@ -82,7 +82,7 @@ public class UrlTests
     public void GetScheme_ReturnsExpectedResult(string urlValue, string expectedScheme)
     {
         // Arrange
-        var url = new Url(urlValue);
+        Url url = new Url(urlValue);
 
         // Act
         string scheme = url.GetScheme();
@@ -98,7 +98,7 @@ public class UrlTests
     public void GetPath_ReturnsExpectedResult(string urlValue, string expectedPath)
     {
         // Arrange
-        var url = new Url(urlValue);
+        Url url = new Url(urlValue);
 
         // Act
         string path = url.GetPath();
@@ -111,7 +111,7 @@ public class UrlTests
     public void ToUri_ValidUrl_ReturnsUri()
     {
         // Arrange
-        var url = new Url("https://example.com");
+        Url url = new Url("https://example.com");
 
         // Act
         Uri? uri = url.ToUri();
@@ -125,7 +125,7 @@ public class UrlTests
     public void ToUri_InvalidUrl_ReturnsNull()
     {
         // Arrange
-        var url = new Url("not-a-url");
+        Url url = new Url("not-a-url");
 
         // Act
         Uri? uri = url.ToUri();
@@ -138,8 +138,8 @@ public class UrlTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var url1 = new Url("https://example.com");
-        var url2 = new Url("https://example.com");
+        Url url1 = new Url("https://example.com");
+        Url url2 = new Url("https://example.com");
 
         // Act & Assert
         Assert.Equal(url1, url2);
@@ -151,7 +151,7 @@ public class UrlTests
     {
         // Arrange
         const string urlValue = "https://example.com";
-        var url = new Url(urlValue);
+        Url url = new Url(urlValue);
 
         // Act
         string result = url.ToString();
@@ -164,8 +164,8 @@ public class UrlTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var url1 = new Url("https://example.com");
-        var url2 = new Url("https://example.com");
+        Url url1 = new Url("https://example.com");
+        Url url2 = new Url("https://example.com");
 
         // Act & Assert
         Assert.Equal(url1.GetHashCode(), url2.GetHashCode());
@@ -178,7 +178,7 @@ public class UrlTests
         const string urlValue = "https://example.com";
 
         // Act
-        var url = Url.From(urlValue);
+        Url url = Url.From(urlValue);
 
         // Assert
         Assert.Equal(urlValue, url.Value);
@@ -188,7 +188,7 @@ public class UrlTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Url>();
+        StrongStringTypeConverter<Url> converter = new StrongStringTypeConverter<Url>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -201,11 +201,11 @@ public class UrlTests
     public void TypeConverter_ConvertFromString_ReturnsUrl()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Url>();
+        StrongStringTypeConverter<Url> converter = new StrongStringTypeConverter<Url>();
         const string urlValue = "https://example.com";
 
         // Act
-        var result = converter.ConvertFrom(urlValue) as Url;
+        Url? result = converter.ConvertFrom(urlValue) as Url;
 
         // Assert
         Assert.NotNull(result);
@@ -216,7 +216,7 @@ public class UrlTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Url>();
+        StrongStringTypeConverter<Url> converter = new StrongStringTypeConverter<Url>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

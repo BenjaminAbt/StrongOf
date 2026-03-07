@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Networking.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="MacAddress"/>.
@@ -14,7 +14,7 @@ public class MacAddressTests
         const string value = "00:11:22:33:44:55";
 
         // Act
-        var macAddress = new MacAddress(value);
+        MacAddress macAddress = new MacAddress(value);
 
         // Assert
         Assert.Equal(value, macAddress.Value);
@@ -34,7 +34,7 @@ public class MacAddressTests
     public void IsValidFormat_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var macAddress = new MacAddress(value);
+        MacAddress macAddress = new MacAddress(value);
 
         // Act
         bool result = macAddress.IsValidFormat();
@@ -53,7 +53,7 @@ public class MacAddressTests
     public void GetNormalized_ReturnsExpectedResult(string value, string expected)
     {
         // Arrange
-        var macAddress = new MacAddress(value);
+        MacAddress macAddress = new MacAddress(value);
 
         // Act
         string result = macAddress.GetNormalized();
@@ -70,7 +70,7 @@ public class MacAddressTests
     public void GetWithoutSeparators_ReturnsExpectedResult(string value, string expected)
     {
         // Arrange
-        var macAddress = new MacAddress(value);
+        MacAddress macAddress = new MacAddress(value);
 
         // Act
         string result = macAddress.GetWithoutSeparators();
@@ -83,8 +83,8 @@ public class MacAddressTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var mac1 = new MacAddress("00:11:22:33:44:55");
-        var mac2 = new MacAddress("00:11:22:33:44:55");
+        MacAddress mac1 = new MacAddress("00:11:22:33:44:55");
+        MacAddress mac2 = new MacAddress("00:11:22:33:44:55");
 
         // Act & Assert
         Assert.Equal(mac1, mac2);
@@ -95,8 +95,8 @@ public class MacAddressTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var mac1 = new MacAddress("00:11:22:33:44:55");
-        var mac2 = new MacAddress("AA:BB:CC:DD:EE:FF");
+        MacAddress mac1 = new MacAddress("00:11:22:33:44:55");
+        MacAddress mac2 = new MacAddress("AA:BB:CC:DD:EE:FF");
 
         // Act & Assert
         Assert.NotEqual(mac1, mac2);
@@ -108,7 +108,7 @@ public class MacAddressTests
     {
         // Arrange
         const string value = "00:11:22:33:44:55";
-        var macAddress = new MacAddress(value);
+        MacAddress macAddress = new MacAddress(value);
 
         // Act
         string result = macAddress.ToString();
@@ -121,8 +121,8 @@ public class MacAddressTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var mac1 = new MacAddress("00:11:22:33:44:55");
-        var mac2 = new MacAddress("00:11:22:33:44:55");
+        MacAddress mac1 = new MacAddress("00:11:22:33:44:55");
+        MacAddress mac2 = new MacAddress("00:11:22:33:44:55");
 
         // Act & Assert
         Assert.Equal(mac1.GetHashCode(), mac2.GetHashCode());
@@ -135,7 +135,7 @@ public class MacAddressTests
         const string value = "00:11:22:33:44:55";
 
         // Act
-        var macAddress = MacAddress.From(value);
+        MacAddress macAddress = MacAddress.From(value);
 
         // Assert
         Assert.Equal(value, macAddress.Value);
@@ -145,7 +145,7 @@ public class MacAddressTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<MacAddress>();
+        StrongStringTypeConverter<MacAddress> converter = new StrongStringTypeConverter<MacAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -158,11 +158,11 @@ public class MacAddressTests
     public void TypeConverter_ConvertFromString_ReturnsMacAddress()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<MacAddress>();
+        StrongStringTypeConverter<MacAddress> converter = new StrongStringTypeConverter<MacAddress>();
         const string value = "00:11:22:33:44:55";
 
         // Act
-        var result = converter.ConvertFrom(value) as MacAddress;
+        MacAddress? result = converter.ConvertFrom(value) as MacAddress;
 
         // Assert
         Assert.NotNull(result);
@@ -173,7 +173,7 @@ public class MacAddressTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<MacAddress>();
+        StrongStringTypeConverter<MacAddress> converter = new StrongStringTypeConverter<MacAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

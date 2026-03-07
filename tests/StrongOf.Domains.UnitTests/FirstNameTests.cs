@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.People.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="FirstName"/>.
@@ -14,7 +14,7 @@ public class FirstNameTests
         const string name = "John";
 
         // Act
-        var firstName = new FirstName(name);
+        FirstName firstName = new FirstName(name);
 
         // Assert
         Assert.Equal(name, firstName.Value);
@@ -32,7 +32,7 @@ public class FirstNameTests
     public void IsValidFormat_ReturnsExpectedResult(string name, bool expected)
     {
         // Arrange
-        var firstName = new FirstName(name);
+        FirstName firstName = new FirstName(name);
 
         // Act
         bool result = firstName.IsValidFormat();
@@ -50,7 +50,7 @@ public class FirstNameTests
     public void ToTitleCase_ReturnsExpectedResult(string name, string expected)
     {
         // Arrange
-        var firstName = new FirstName(name);
+        FirstName firstName = new FirstName(name);
 
         // Act
         string result = firstName.ToTitleCase();
@@ -63,8 +63,8 @@ public class FirstNameTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var name1 = new FirstName("John");
-        var name2 = new FirstName("John");
+        FirstName name1 = new FirstName("John");
+        FirstName name2 = new FirstName("John");
 
         // Act & Assert
         Assert.Equal(name1, name2);
@@ -75,8 +75,8 @@ public class FirstNameTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var name1 = new FirstName("John");
-        var name2 = new FirstName("Jane");
+        FirstName name1 = new FirstName("John");
+        FirstName name2 = new FirstName("Jane");
 
         // Act & Assert
         Assert.NotEqual(name1, name2);
@@ -88,7 +88,7 @@ public class FirstNameTests
     {
         // Arrange
         const string name = "John";
-        var firstName = new FirstName(name);
+        FirstName firstName = new FirstName(name);
 
         // Act
         string result = firstName.ToString();
@@ -101,8 +101,8 @@ public class FirstNameTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var name1 = new FirstName("John");
-        var name2 = new FirstName("John");
+        FirstName name1 = new FirstName("John");
+        FirstName name2 = new FirstName("John");
 
         // Act & Assert
         Assert.Equal(name1.GetHashCode(), name2.GetHashCode());
@@ -115,7 +115,7 @@ public class FirstNameTests
         const string name = "John";
 
         // Act
-        var firstName = FirstName.From(name);
+        FirstName firstName = FirstName.From(name);
 
         // Assert
         Assert.Equal(name, firstName.Value);
@@ -125,7 +125,7 @@ public class FirstNameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<FirstName>();
+        StrongStringTypeConverter<FirstName> converter = new StrongStringTypeConverter<FirstName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -138,11 +138,11 @@ public class FirstNameTests
     public void TypeConverter_ConvertFromString_ReturnsFirstName()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<FirstName>();
+        StrongStringTypeConverter<FirstName> converter = new StrongStringTypeConverter<FirstName>();
         const string name = "John";
 
         // Act
-        var result = converter.ConvertFrom(name) as FirstName;
+        FirstName? result = converter.ConvertFrom(name) as FirstName;
 
         // Assert
         Assert.NotNull(result);
@@ -153,7 +153,7 @@ public class FirstNameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<FirstName>();
+        StrongStringTypeConverter<FirstName> converter = new StrongStringTypeConverter<FirstName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

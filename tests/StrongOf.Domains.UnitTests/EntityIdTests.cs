@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Identity.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="EntityId"/>.
@@ -14,7 +14,7 @@ public class EntityIdTests
         Guid value = Guid.NewGuid();
 
         // Act
-        var entityId = new EntityId(value);
+        EntityId entityId = new EntityId(value);
 
         // Assert
         Assert.Equal(value, entityId.Value);
@@ -24,7 +24,7 @@ public class EntityIdTests
     public void New_CreatesNewGuid()
     {
         // Act
-        var entityId = EntityId.New();
+        EntityId entityId = EntityId.New();
 
         // Assert
         Assert.NotEqual(Guid.Empty, entityId.Value);
@@ -34,7 +34,7 @@ public class EntityIdTests
     public void Empty_ReturnsEmptyGuid()
     {
         // Act
-        var entityId = EntityId.Empty;
+        EntityId entityId = EntityId.Empty;
 
         // Assert
         Assert.Equal(Guid.Empty, entityId.Value);
@@ -44,7 +44,7 @@ public class EntityIdTests
     public void IsEmpty_WithEmptyGuid_ReturnsTrue()
     {
         // Arrange
-        var entityId = new EntityId(Guid.Empty);
+        EntityId entityId = new EntityId(Guid.Empty);
 
         // Act
         bool result = entityId.IsEmpty();
@@ -57,7 +57,7 @@ public class EntityIdTests
     public void IsEmpty_WithNonEmptyGuid_ReturnsFalse()
     {
         // Arrange
-        var entityId = new EntityId(Guid.NewGuid());
+        EntityId entityId = new EntityId(Guid.NewGuid());
 
         // Act
         bool result = entityId.IsEmpty();
@@ -70,7 +70,7 @@ public class EntityIdTests
     public void HasValue_WithNonEmptyGuid_ReturnsTrue()
     {
         // Arrange
-        var entityId = new EntityId(Guid.NewGuid());
+        EntityId entityId = new EntityId(Guid.NewGuid());
 
         // Act
         bool result = entityId.HasValue();
@@ -83,7 +83,7 @@ public class EntityIdTests
     public void HasValue_WithEmptyGuid_ReturnsFalse()
     {
         // Arrange
-        var entityId = new EntityId(Guid.Empty);
+        EntityId entityId = new EntityId(Guid.Empty);
 
         // Act
         bool result = entityId.HasValue();
@@ -97,7 +97,7 @@ public class EntityIdTests
     {
         // Arrange
         Guid guid = Guid.Parse("12345678-1234-1234-1234-123456789012");
-        var entityId = new EntityId(guid);
+        EntityId entityId = new EntityId(guid);
 
         // Act
         string result = entityId.ToShortString();
@@ -112,8 +112,8 @@ public class EntityIdTests
     {
         // Arrange
         Guid guid = Guid.NewGuid();
-        var id1 = new EntityId(guid);
-        var id2 = new EntityId(guid);
+        EntityId id1 = new EntityId(guid);
+        EntityId id2 = new EntityId(guid);
 
         // Act & Assert
         Assert.Equal(id1, id2);
@@ -124,8 +124,8 @@ public class EntityIdTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var id1 = new EntityId(Guid.NewGuid());
-        var id2 = new EntityId(Guid.NewGuid());
+        EntityId id1 = new EntityId(Guid.NewGuid());
+        EntityId id2 = new EntityId(Guid.NewGuid());
 
         // Act & Assert
         Assert.NotEqual(id1, id2);
@@ -137,8 +137,8 @@ public class EntityIdTests
     {
         // Arrange
         Guid guid = Guid.NewGuid();
-        var id1 = new EntityId(guid);
-        var id2 = new EntityId(guid);
+        EntityId id1 = new EntityId(guid);
+        EntityId id2 = new EntityId(guid);
 
         // Act & Assert
         Assert.Equal(id1.GetHashCode(), id2.GetHashCode());
@@ -151,7 +151,7 @@ public class EntityIdTests
         Guid guid = Guid.NewGuid();
 
         // Act
-        var entityId = EntityId.From(guid);
+        EntityId entityId = EntityId.From(guid);
 
         // Assert
         Assert.Equal(guid, entityId.Value);
@@ -161,7 +161,7 @@ public class EntityIdTests
     public void TypeConverter_CanConvertFromGuid()
     {
         // Arrange
-        var converter = new StrongGuidTypeConverter<EntityId>();
+        StrongGuidTypeConverter<EntityId> converter = new StrongGuidTypeConverter<EntityId>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(Guid));
@@ -174,7 +174,7 @@ public class EntityIdTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongGuidTypeConverter<EntityId>();
+        StrongGuidTypeConverter<EntityId> converter = new StrongGuidTypeConverter<EntityId>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -187,11 +187,11 @@ public class EntityIdTests
     public void TypeConverter_ConvertFromGuid_ReturnsEntityId()
     {
         // Arrange
-        var converter = new StrongGuidTypeConverter<EntityId>();
+        StrongGuidTypeConverter<EntityId> converter = new StrongGuidTypeConverter<EntityId>();
         Guid guid = Guid.NewGuid();
 
         // Act
-        var result = converter.ConvertFrom(guid) as EntityId;
+        EntityId? result = converter.ConvertFrom(guid) as EntityId;
 
         // Assert
         Assert.NotNull(result);
@@ -202,12 +202,12 @@ public class EntityIdTests
     public void TypeConverter_ConvertFromString_ReturnsEntityId()
     {
         // Arrange
-        var converter = new StrongGuidTypeConverter<EntityId>();
+        StrongGuidTypeConverter<EntityId> converter = new StrongGuidTypeConverter<EntityId>();
         Guid guid = Guid.NewGuid();
         string guidString = guid.ToString();
 
         // Act
-        var result = converter.ConvertFrom(guidString) as EntityId;
+        EntityId? result = converter.ConvertFrom(guidString) as EntityId;
 
         // Assert
         Assert.NotNull(result);
@@ -218,7 +218,7 @@ public class EntityIdTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongGuidTypeConverter<EntityId>();
+        StrongGuidTypeConverter<EntityId> converter = new StrongGuidTypeConverter<EntityId>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

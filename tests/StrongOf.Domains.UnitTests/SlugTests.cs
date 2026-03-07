@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Media.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 public class SlugTests
 {
@@ -18,22 +18,22 @@ public class SlugTests
     [InlineData("", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var slug = new Slug(value);
+        Slug slug = new Slug(value);
         Assert.Equal(expected, slug.IsValidFormat());
     }
 
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var slug = new Slug("my-page");
+        Slug slug = new Slug("my-page");
         Assert.Equal("my-page", slug.Value);
     }
 
     [Fact]
     public void Equality_SameValue_ReturnsTrue()
     {
-        var slug1 = new Slug("my-page");
-        var slug2 = new Slug("my-page");
+        Slug slug1 = new Slug("my-page");
+        Slug slug2 = new Slug("my-page");
         Assert.Equal(slug1, slug2);
         Assert.True(slug1 == slug2);
     }
@@ -41,23 +41,23 @@ public class SlugTests
     [Fact]
     public void Equality_DifferentValues_ReturnsFalse()
     {
-        var slug1 = new Slug("my-page");
-        var slug2 = new Slug("other-page");
+        Slug slug1 = new Slug("my-page");
+        Slug slug2 = new Slug("other-page");
         Assert.NotEqual(slug1, slug2);
     }
 
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new StrongStringTypeConverter<Slug>();
+        StrongStringTypeConverter<Slug> converter = new StrongStringTypeConverter<Slug>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsSlug()
     {
-        var converter = new StrongStringTypeConverter<Slug>();
-        var result = converter.ConvertFrom("my-page") as Slug;
+        StrongStringTypeConverter<Slug> converter = new StrongStringTypeConverter<Slug>();
+        Slug? result = converter.ConvertFrom("my-page") as Slug;
         Assert.NotNull(result);
         Assert.Equal("my-page", result.Value);
     }

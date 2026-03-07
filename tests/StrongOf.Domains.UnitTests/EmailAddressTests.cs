@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Networking.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="EmailAddress"/>.
@@ -14,7 +14,7 @@ public class EmailAddressTests
         const string email = "user@example.com";
 
         // Act
-        var emailAddress = new EmailAddress(email);
+        EmailAddress emailAddress = new EmailAddress(email);
 
         // Assert
         Assert.Equal(email, emailAddress.Value);
@@ -35,7 +35,7 @@ public class EmailAddressTests
     public void IsValidFormat_ReturnsExpectedResult(string email, bool expected)
     {
         // Arrange
-        var emailAddress = new EmailAddress(email);
+        EmailAddress emailAddress = new EmailAddress(email);
 
         // Act
         bool result = emailAddress.IsValidFormat();
@@ -51,7 +51,7 @@ public class EmailAddressTests
     public void GetDomain_ReturnsExpectedResult(string email, string expectedDomain)
     {
         // Arrange
-        var emailAddress = new EmailAddress(email);
+        EmailAddress emailAddress = new EmailAddress(email);
 
         // Act
         string domain = emailAddress.GetDomain();
@@ -67,7 +67,7 @@ public class EmailAddressTests
     public void GetLocalPart_ReturnsExpectedResult(string email, string expectedLocalPart)
     {
         // Arrange
-        var emailAddress = new EmailAddress(email);
+        EmailAddress emailAddress = new EmailAddress(email);
 
         // Act
         string localPart = emailAddress.GetLocalPart();
@@ -80,8 +80,8 @@ public class EmailAddressTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var email1 = new EmailAddress("user@example.com");
-        var email2 = new EmailAddress("user@example.com");
+        EmailAddress email1 = new EmailAddress("user@example.com");
+        EmailAddress email2 = new EmailAddress("user@example.com");
 
         // Act & Assert
         Assert.Equal(email1, email2);
@@ -93,8 +93,8 @@ public class EmailAddressTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var email1 = new EmailAddress("user1@example.com");
-        var email2 = new EmailAddress("user2@example.com");
+        EmailAddress email1 = new EmailAddress("user1@example.com");
+        EmailAddress email2 = new EmailAddress("user2@example.com");
 
         // Act & Assert
         Assert.NotEqual(email1, email2);
@@ -107,7 +107,7 @@ public class EmailAddressTests
     {
         // Arrange
         const string email = "user@example.com";
-        var emailAddress = new EmailAddress(email);
+        EmailAddress emailAddress = new EmailAddress(email);
 
         // Act
         string result = emailAddress.ToString();
@@ -120,8 +120,8 @@ public class EmailAddressTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var email1 = new EmailAddress("user@example.com");
-        var email2 = new EmailAddress("user@example.com");
+        EmailAddress email1 = new EmailAddress("user@example.com");
+        EmailAddress email2 = new EmailAddress("user@example.com");
 
         // Act & Assert
         Assert.Equal(email1.GetHashCode(), email2.GetHashCode());
@@ -134,7 +134,7 @@ public class EmailAddressTests
         const string email = "user@example.com";
 
         // Act
-        var emailAddress = EmailAddress.From(email);
+        EmailAddress emailAddress = EmailAddress.From(email);
 
         // Assert
         Assert.Equal(email, emailAddress.Value);
@@ -144,7 +144,7 @@ public class EmailAddressTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<EmailAddress>();
+        StrongStringTypeConverter<EmailAddress> converter = new StrongStringTypeConverter<EmailAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -157,11 +157,11 @@ public class EmailAddressTests
     public void TypeConverter_ConvertFromString_ReturnsEmailAddress()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<EmailAddress>();
+        StrongStringTypeConverter<EmailAddress> converter = new StrongStringTypeConverter<EmailAddress>();
         const string email = "user@example.com";
 
         // Act
-        var result = converter.ConvertFrom(email) as EmailAddress;
+        EmailAddress? result = converter.ConvertFrom(email) as EmailAddress;
 
         // Assert
         Assert.NotNull(result);
@@ -172,7 +172,7 @@ public class EmailAddressTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<EmailAddress>();
+        StrongStringTypeConverter<EmailAddress> converter = new StrongStringTypeConverter<EmailAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

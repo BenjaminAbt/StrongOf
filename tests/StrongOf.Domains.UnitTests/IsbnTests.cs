@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Media.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 public class IsbnTests
 {
@@ -15,7 +15,7 @@ public class IsbnTests
     [InlineData("12345", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var isbn = new Isbn(value);
+        Isbn isbn = new Isbn(value);
         Assert.Equal(expected, isbn.IsValidFormat());
     }
 
@@ -26,7 +26,7 @@ public class IsbnTests
     [InlineData("047096599X", false)]
     public void IsIsbn13_ReturnsExpected(string value, bool expected)
     {
-        var isbn = new Isbn(value);
+        Isbn isbn = new Isbn(value);
         Assert.Equal(expected, isbn.IsIsbn13());
     }
 
@@ -37,43 +37,43 @@ public class IsbnTests
     [InlineData("978-0-306-40615-7", false)]
     public void IsIsbn10_ReturnsExpected(string value, bool expected)
     {
-        var isbn = new Isbn(value);
+        Isbn isbn = new Isbn(value);
         Assert.Equal(expected, isbn.IsIsbn10());
     }
 
     [Fact]
     public void ToNormalizedString_WithDashes_RemovesDashes()
     {
-        var isbn = new Isbn("978-0-306-40615-7");
+        Isbn isbn = new Isbn("978-0-306-40615-7");
         Assert.Equal("9780306406157", isbn.ToNormalizedString());
     }
 
     [Fact]
     public void ToNormalizedString_WithSpaces_RemovesSpaces()
     {
-        var isbn = new Isbn("978 0 306 40615 7");
+        Isbn isbn = new Isbn("978 0 306 40615 7");
         Assert.Equal("9780306406157", isbn.ToNormalizedString());
     }
 
     [Fact]
     public void ToNormalizedString_WithoutSeparators_ReturnsSameValue()
     {
-        var isbn = new Isbn("9780306406157");
+        Isbn isbn = new Isbn("9780306406157");
         Assert.Equal("9780306406157", isbn.ToNormalizedString());
     }
 
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var isbn = new Isbn("9780306406157");
+        Isbn isbn = new Isbn("9780306406157");
         Assert.Equal("9780306406157", isbn.Value);
     }
 
     [Fact]
     public void Equality_SameValue_ReturnsTrue()
     {
-        var isbn1 = new Isbn("9780306406157");
-        var isbn2 = new Isbn("9780306406157");
+        Isbn isbn1 = new Isbn("9780306406157");
+        Isbn isbn2 = new Isbn("9780306406157");
         Assert.Equal(isbn1, isbn2);
         Assert.True(isbn1 == isbn2);
     }
@@ -81,15 +81,15 @@ public class IsbnTests
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new StrongStringTypeConverter<Isbn>();
+        StrongStringTypeConverter<Isbn> converter = new StrongStringTypeConverter<Isbn>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsIsbn()
     {
-        var converter = new StrongStringTypeConverter<Isbn>();
-        var result = converter.ConvertFrom("9780306406157") as Isbn;
+        StrongStringTypeConverter<Isbn> converter = new StrongStringTypeConverter<Isbn>();
+        Isbn? result = converter.ConvertFrom("9780306406157") as Isbn;
         Assert.NotNull(result);
         Assert.Equal("9780306406157", result.Value);
     }

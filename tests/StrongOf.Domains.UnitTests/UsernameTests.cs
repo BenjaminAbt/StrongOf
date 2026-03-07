@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Identity.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="Username"/>.
@@ -14,7 +14,7 @@ public class UsernameTests
         const string name = "john_doe123";
 
         // Act
-        var username = new Username(name);
+        Username username = new Username(name);
 
         // Assert
         Assert.Equal(name, username.Value);
@@ -34,7 +34,7 @@ public class UsernameTests
     public void IsValidFormat_ReturnsExpectedResult(string name, bool expected)
     {
         // Arrange
-        var username = new Username(name);
+        Username username = new Username(name);
 
         // Act
         bool result = username.IsValidFormat();
@@ -48,7 +48,7 @@ public class UsernameTests
     {
         // Arrange
         string name = new('a', 65); // 65 chars, max is 64
-        var username = new Username(name);
+        Username username = new Username(name);
 
         // Act
         bool result = username.IsValidFormat();
@@ -62,7 +62,7 @@ public class UsernameTests
     {
         // Arrange
         string name = new('a', 64); // Exactly 64 chars
-        var username = new Username(name);
+        Username username = new Username(name);
 
         // Act
         bool result = username.IsValidFormat();
@@ -78,7 +78,7 @@ public class UsernameTests
     public void ToLowerCase_ReturnsExpectedResult(string name, string expected)
     {
         // Arrange
-        var username = new Username(name);
+        Username username = new Username(name);
 
         // Act
         string result = username.ToLowerCase();
@@ -91,8 +91,8 @@ public class UsernameTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var name1 = new Username("john_doe");
-        var name2 = new Username("john_doe");
+        Username name1 = new Username("john_doe");
+        Username name2 = new Username("john_doe");
 
         // Act & Assert
         Assert.Equal(name1, name2);
@@ -103,8 +103,8 @@ public class UsernameTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var name1 = new Username("john_doe");
-        var name2 = new Username("jane_doe");
+        Username name1 = new Username("john_doe");
+        Username name2 = new Username("jane_doe");
 
         // Act & Assert
         Assert.NotEqual(name1, name2);
@@ -116,7 +116,7 @@ public class UsernameTests
     {
         // Arrange
         const string name = "john_doe";
-        var username = new Username(name);
+        Username username = new Username(name);
 
         // Act
         string result = username.ToString();
@@ -129,8 +129,8 @@ public class UsernameTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var name1 = new Username("john_doe");
-        var name2 = new Username("john_doe");
+        Username name1 = new Username("john_doe");
+        Username name2 = new Username("john_doe");
 
         // Act & Assert
         Assert.Equal(name1.GetHashCode(), name2.GetHashCode());
@@ -143,7 +143,7 @@ public class UsernameTests
         const string name = "john_doe";
 
         // Act
-        var username = Username.From(name);
+        Username username = Username.From(name);
 
         // Assert
         Assert.Equal(name, username.Value);
@@ -165,7 +165,7 @@ public class UsernameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Username>();
+        StrongStringTypeConverter<Username> converter = new StrongStringTypeConverter<Username>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -178,11 +178,11 @@ public class UsernameTests
     public void TypeConverter_ConvertFromString_ReturnsUsername()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Username>();
+        StrongStringTypeConverter<Username> converter = new StrongStringTypeConverter<Username>();
         const string name = "john_doe";
 
         // Act
-        var result = converter.ConvertFrom(name) as Username;
+        Username? result = converter.ConvertFrom(name) as Username;
 
         // Assert
         Assert.NotNull(result);
@@ -193,7 +193,7 @@ public class UsernameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Username>();
+        StrongStringTypeConverter<Username> converter = new StrongStringTypeConverter<Username>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

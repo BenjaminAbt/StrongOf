@@ -11,9 +11,12 @@ StrongOf helps to implement primitives as a strong type that represents a domain
 | `StrongInt32<T>` | `int` |
 | `StrongInt64<T>` | `long` |
 | `StrongDecimal<T>` | `decimal` |
+| `StrongDouble<T>` | `double` |
 | `StrongChar<T>` | `char` |
+| `StrongBoolean<T>` | `bool` |
 | `StrongDateTime<T>` | `DateTime` |
 | `StrongDateTimeOffset<T>` | `DateTimeOffset` |
+| `StrongTimeSpan<T>` | `TimeSpan` |
 
 ## Quick Start
 
@@ -49,7 +52,7 @@ The `StrongOf` package ships generic `TypeConverter` implementations for each ba
 public sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
 ```
 
-Available converters: `StrongStringTypeConverter<T>`, `StrongGuidTypeConverter<T>`, `StrongInt32TypeConverter<T>`, `StrongInt64TypeConverter<T>`, `StrongDecimalTypeConverter<T>`, `StrongDateTimeTypeConverter<T>`.
+Available converters: `StrongStringTypeConverter<T>`, `StrongGuidTypeConverter<T>`, `StrongInt32TypeConverter<T>`, `StrongInt64TypeConverter<T>`, `StrongDecimalTypeConverter<T>`, `StrongDoubleTypeConverter<T>`, `StrongCharTypeConverter<T>`, `StrongBooleanTypeConverter<T>`, `StrongDateTimeTypeConverter<T>`, `StrongDateTimeOffsetTypeConverter<T>`, `StrongTimeSpanTypeConverter<T>`.
 
 ## Interfaces
 

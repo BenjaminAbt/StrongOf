@@ -1,9 +1,9 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Diagnostics.CodeAnalysis;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 
 namespace StrongOf.Domains.Identity;

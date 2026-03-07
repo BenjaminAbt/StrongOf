@@ -1,6 +1,8 @@
-# StrongOf <a href="https://www.buymeacoffee.com/benjaminabt" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" height="30" ></a>
+# StrongOf
 
-[![Build](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml/badge.svg)](https://github.com/benjaminabt/StrongOf/actions/workflows/ci.yml)
+<p align="center">
+    <img src="res/benjamin-abt-strongof.png" alt="Unio" width="160" />
+</p>
 
 ||StrongOf|StrongOf.AspNetCore|StrongOf.Json|StrongOf.FluentValidation|StrongOf.EntityFrameworkCore|
 |-|-|-|-|-|-|
@@ -147,7 +149,18 @@ public class MyClass
 }
 ```
 
-or use the `JsonSerializerOptions` 
+For most applications, register all StrongOf converters once:
+
+```csharp
+using StrongOf.Json;
+
+JsonSerializerOptions serializeOptions = new JsonSerializerOptions()
+    .AddStrongOfConverters();
+
+string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
+```
+
+If you want explicit control, you can still register individual converters in `JsonSerializerOptions`:
 
 ```csharp
 JsonSerializerOptions serializeOptions = new JsonSerializerOptions
@@ -169,24 +182,19 @@ You can just use [StrongOf.AspNetCore](https://www.nuget.org/packages/StrongOf.A
 ```csharp
 using StrongOf.AspNetCore.Mvc;
 
-public class MyBinderProvider : IModelBinderProvider
-{
-    private static readonly IReadOnlyDictionary<Type, Type> s_binders = new Dictionary<Type, Type>
-    {
-        {typeof(UserId), typeof(StrongGuidBinder<UserId>)}
-        // ... more here ...
-    };
+builder.Services.AddControllers(options =>
+    options.AddStrongOfModelBinderProvider(
+        typeof(UserId),
+        typeof(EmailAddress)));
+```
 
-    public IModelBinder? GetBinder(ModelBinderProviderContext context)
-    {
-        if (s_binders.TryGetValue(context.Metadata.ModelType, out Type? binderType))
-        {
-            return new BinderTypeModelBinder(binderType);
-        }
+If your strong types live in one or more assemblies, you can also register them by assembly scan:
 
-        return null;
-    }
-}
+```csharp
+using StrongOf.AspNetCore.Mvc;
+
+builder.Services.AddControllers(options =>
+    options.AddStrongOfModelBinderProviderFromAssemblies(typeof(UserId).Assembly));
 ```
 
 You can also create a customized binder

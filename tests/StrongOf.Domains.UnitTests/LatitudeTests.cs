@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.Geography.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="Latitude"/>.
@@ -10,7 +10,7 @@ public class LatitudeTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var lat = new Latitude(10.5m);
+        Latitude lat = new Latitude(10.5m);
         Assert.Equal(10.5m, lat.Value);
     }
 
@@ -22,23 +22,23 @@ public class LatitudeTests
     [InlineData(91, false)]
     public void IsValidRange_ReturnsExpected(decimal value, bool expected)
     {
-        var lat = new Latitude(value);
+        Latitude lat = new Latitude(value);
         Assert.Equal(expected, lat.IsValidRange());
     }
 
     [Fact]
     public void Clamp_ReturnsClampedValue()
     {
-        var lat = new Latitude(120m);
-        var clamped = lat.Clamp();
+        Latitude lat = new Latitude(120m);
+        Latitude clamped = lat.Clamp();
         Assert.Equal(Latitude.MaxValue, clamped.Value);
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<Latitude>();
-        var result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "10.5") as Latitude;
+        StrongDecimalTypeConverter<Latitude> converter = new StrongDecimalTypeConverter<Latitude>();
+        Latitude? result = converter.ConvertFrom(null, System.Globalization.CultureInfo.InvariantCulture, "10.5") as Latitude;
 
         Assert.NotNull(result);
         Assert.Equal(10.5m, result.Value);
@@ -47,8 +47,8 @@ public class LatitudeTests
     [Fact]
     public void TypeConverter_ConvertFromDecimal_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<Latitude>();
-        var result = converter.ConvertFrom(10.5m) as Latitude;
+        StrongDecimalTypeConverter<Latitude> converter = new StrongDecimalTypeConverter<Latitude>();
+        Latitude? result = converter.ConvertFrom(10.5m) as Latitude;
 
         Assert.NotNull(result);
         Assert.Equal(10.5m, result.Value);
@@ -57,8 +57,8 @@ public class LatitudeTests
     [Fact]
     public void TypeConverter_ConvertFromDouble_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<Latitude>();
-        var result = converter.ConvertFrom(10.25) as Latitude;
+        StrongDecimalTypeConverter<Latitude> converter = new StrongDecimalTypeConverter<Latitude>();
+        Latitude? result = converter.ConvertFrom(10.25) as Latitude;
 
         Assert.NotNull(result);
         Assert.Equal(10.25m, result.Value);
@@ -67,8 +67,8 @@ public class LatitudeTests
     [Fact]
     public void TypeConverter_ConvertFromInt_ReturnsInstance()
     {
-        var converter = new StrongDecimalTypeConverter<Latitude>();
-        var result = converter.ConvertFrom(10) as Latitude;
+        StrongDecimalTypeConverter<Latitude> converter = new StrongDecimalTypeConverter<Latitude>();
+        Latitude? result = converter.ConvertFrom(10) as Latitude;
 
         Assert.NotNull(result);
         Assert.Equal(10m, result.Value);
@@ -77,7 +77,7 @@ public class LatitudeTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new StrongDecimalTypeConverter<Latitude>();
+        StrongDecimalTypeConverter<Latitude> converter = new StrongDecimalTypeConverter<Latitude>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

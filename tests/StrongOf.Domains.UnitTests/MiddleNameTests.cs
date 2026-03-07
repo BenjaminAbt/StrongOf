@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-namespace StrongOf.Domains.People.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="MiddleName"/>.
@@ -10,7 +10,7 @@ public class MiddleNameTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var name = new MiddleName("Ann");
+        MiddleName name = new MiddleName("Ann");
         Assert.Equal("Ann", name.Value);
     }
 
@@ -21,22 +21,22 @@ public class MiddleNameTests
     [InlineData(" ", false)]
     public void IsValidLength_ReturnsExpected(string value, bool expected)
     {
-        var name = new MiddleName(value);
+        MiddleName name = new MiddleName(value);
         Assert.Equal(expected, name.IsValidLength());
     }
 
     [Fact]
     public void Trimmed_ReturnsTrimmedValue()
     {
-        var name = new MiddleName("  Ann  ");
+        MiddleName name = new MiddleName("  Ann  ");
         Assert.Equal("Ann", name.Trimmed());
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<MiddleName>();
-        var result = converter.ConvertFrom("Ann") as MiddleName;
+        StrongStringTypeConverter<MiddleName> converter = new StrongStringTypeConverter<MiddleName>();
+        MiddleName? result = converter.ConvertFrom("Ann") as MiddleName;
 
         Assert.NotNull(result);
         Assert.Equal("Ann", result.Value);
@@ -45,7 +45,7 @@ public class MiddleNameTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<MiddleName>();
+        StrongStringTypeConverter<MiddleName> converter = new StrongStringTypeConverter<MiddleName>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }
