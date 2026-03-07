@@ -48,17 +48,7 @@ template: |
 
   ## 📦 NuGet Packages
 
-  The following packages are included in this release:
-
-  - `StrongOf`
-  - `StrongOf.AspNetCore`
-  - `StrongOf.Json`
-  - `StrongOf.MemoryCache`
-  - `StrongOf.Domains`
-  - `StrongOf.FluentValidation`
-  - `StrongOf.EntityFrameworkCore`
-
-    The following packages are included in this release (each with matching `.snupkg` symbols):
+  The following packages are included in this release (each with matching `.snupkg` symbols):
 
   | Package | Version | Description |
   |---|---|---|
@@ -66,21 +56,9 @@ template: |
   | `StrongOf.AspNetCore` | $RESOLVED_VERSION | ASP.NET Core integration for StrongOf, including model binding and validation. |
   | `StrongOf.Json` | $RESOLVED_VERSION | JSON serialization support for StrongOf value objects using System.Text.Json. |
   | `StrongOf.MemoryCache` | $RESOLVED_VERSION | Memory caching extensions for StrongOf value objects. |
-  | `StrongOf.Domains` | $RESOLVED_VERSION | Domain-driven design utilities
+  | `StrongOf.Domains` | $RESOLVED_VERSION | Domain-driven design utilities |
   | `StrongOf.FluentValidation` | $RESOLVED_VERSION | FluentValidation integration for StrongOf value objects. |
   | `StrongOf.EntityFrameworkCore` | $RESOLVED_VERSION | Entity Framework Core integration for StrongOf value objects. |
-
-  ### Installation
-
-  ```bash
-  dotnet add package StrongOf
-  dotnet add package StrongOf.AspNetCore
-  dotnet add package StrongOf.Json
-  dotnet add package StrongOf.MemoryCache
-  dotnet add package StrongOf.Domains
-  dotnet add package StrongOf.FluentValidation
-  dotnet add package StrongOf.EntityFrameworkCore
-  ```
 
   ## Contributors
 
