@@ -47,8 +47,9 @@ public class StrongDateTimeOffsetJsonConverterTests
         _converter.Write(writer, strong, _options);
         writer.Flush();
         string json = Encoding.UTF8.GetString(stream.ToArray());
+        string? jsonValue = JsonSerializer.Deserialize<string>(json);
 
         // Assert
-        Assert.Equal("2023-12-17T14:24:22.6412808+00:00", strong.ToStringIso8601());
+        Assert.Equal("2023-12-17T14:24:22.6412808+00:00", jsonValue);
     }
 }

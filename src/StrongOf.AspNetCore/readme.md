@@ -30,34 +30,18 @@ Enables route values, query strings, and form fields to be automatically parsed 
 
 ### Setup
 
-Register a custom `IModelBinderProvider` in your ASP.NET Core startup:
+Register the built-in StrongOf model binder provider in your ASP.NET Core startup:
 
 ```csharp
 using StrongOf.AspNetCore.Mvc;
 
 // Program.cs
 builder.Services.AddControllers(options =>
-    options.ModelBinderProviders.Insert(0, new MyBinderProvider()));
-
-// MyBinderProvider.cs
-public sealed class MyBinderProvider : IModelBinderProvider
-{
-    private static readonly IReadOnlyDictionary<Type, Type> s_binders =
-        new Dictionary<Type, Type>
+    options.AddStrongOfModelBinderProvider(new Dictionary<Type, Type>
         {
             { typeof(UserId),       typeof(StrongGuidBinder<UserId>)   },
             { typeof(EmailAddress), typeof(StrongStringBinder<EmailAddress>) },
-        };
-
-    public IModelBinder? GetBinder(ModelBinderProviderContext context)
-    {
-        if (s_binders.TryGetValue(context.Metadata.ModelType, out Type? binderType))
-        {
-            return new BinderTypeModelBinder(binderType);
-        }
-        return null;
-    }
-}
+        }));
 ```
 
 ### Custom Binders
