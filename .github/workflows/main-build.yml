@@ -14,7 +14,7 @@ jobs:
     name: Build, Test and Pack
     uses: ./.github/workflows/build-and-test.yml
     with:
-      create-pack: true
+      upload-packages: true
 
   create-draft-release:
     name: Create Draft Release
