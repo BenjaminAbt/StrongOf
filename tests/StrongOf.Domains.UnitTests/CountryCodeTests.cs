@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Postal.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="CountryCode"/>.
@@ -14,7 +14,7 @@ public class CountryCodeTests
         const string code = "US";
 
         // Act
-        var countryCode = new CountryCode(code);
+        CountryCode countryCode = new CountryCode(code);
 
         // Assert
         Assert.Equal(code, countryCode.Value);
@@ -33,7 +33,7 @@ public class CountryCodeTests
     public void IsValidFormat_ReturnsExpectedResult(string code, bool expected)
     {
         // Arrange
-        var countryCode = new CountryCode(code);
+        CountryCode countryCode = new CountryCode(code);
 
         // Act
         bool result = countryCode.IsValidFormat();
@@ -49,7 +49,7 @@ public class CountryCodeTests
     public void ToUpperCase_ReturnsExpectedResult(string code, string expected)
     {
         // Arrange
-        var countryCode = new CountryCode(code);
+        CountryCode countryCode = new CountryCode(code);
 
         // Act
         string result = countryCode.ToUpperCase();
@@ -62,8 +62,8 @@ public class CountryCodeTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var code1 = new CountryCode("US");
-        var code2 = new CountryCode("US");
+        CountryCode code1 = new CountryCode("US");
+        CountryCode code2 = new CountryCode("US");
 
         // Act & Assert
         Assert.Equal(code1, code2);
@@ -74,8 +74,8 @@ public class CountryCodeTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var code1 = new CountryCode("US");
-        var code2 = new CountryCode("DE");
+        CountryCode code1 = new CountryCode("US");
+        CountryCode code2 = new CountryCode("DE");
 
         // Act & Assert
         Assert.NotEqual(code1, code2);
@@ -87,7 +87,7 @@ public class CountryCodeTests
     {
         // Arrange
         const string code = "US";
-        var countryCode = new CountryCode(code);
+        CountryCode countryCode = new CountryCode(code);
 
         // Act
         string result = countryCode.ToString();
@@ -100,8 +100,8 @@ public class CountryCodeTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var code1 = new CountryCode("US");
-        var code2 = new CountryCode("US");
+        CountryCode code1 = new CountryCode("US");
+        CountryCode code2 = new CountryCode("US");
 
         // Act & Assert
         Assert.Equal(code1.GetHashCode(), code2.GetHashCode());
@@ -114,7 +114,7 @@ public class CountryCodeTests
         const string code = "US";
 
         // Act
-        var countryCode = CountryCode.From(code);
+        CountryCode countryCode = CountryCode.From(code);
 
         // Assert
         Assert.Equal(code, countryCode.Value);
@@ -130,7 +130,7 @@ public class CountryCodeTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<CountryCode>();
+        StrongStringTypeConverter<CountryCode> converter = new StrongStringTypeConverter<CountryCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -143,11 +143,11 @@ public class CountryCodeTests
     public void TypeConverter_ConvertFromString_ReturnsCountryCode()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<CountryCode>();
+        StrongStringTypeConverter<CountryCode> converter = new StrongStringTypeConverter<CountryCode>();
         const string code = "US";
 
         // Act
-        var result = converter.ConvertFrom(code) as CountryCode;
+        CountryCode? result = converter.ConvertFrom(code) as CountryCode;
 
         // Assert
         Assert.NotNull(result);
@@ -158,7 +158,7 @@ public class CountryCodeTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<CountryCode>();
+        StrongStringTypeConverter<CountryCode> converter = new StrongStringTypeConverter<CountryCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

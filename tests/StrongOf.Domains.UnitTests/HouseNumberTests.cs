@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Postal.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="HouseNumber"/>.
@@ -10,7 +10,7 @@ public class HouseNumberTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var number = new HouseNumber("12A");
+        HouseNumber number = new HouseNumber("12A");
         Assert.Equal("12A", number.Value);
     }
 
@@ -23,22 +23,22 @@ public class HouseNumberTests
     [InlineData("", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var number = new HouseNumber(value);
+        HouseNumber number = new HouseNumber(value);
         Assert.Equal(expected, number.IsValidFormat());
     }
 
     [Fact]
     public void GetNumericPart_ReturnsExpected()
     {
-        var number = new HouseNumber("123B");
+        HouseNumber number = new HouseNumber("123B");
         Assert.Equal(123, number.GetNumericPart());
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<HouseNumber>();
-        var result = converter.ConvertFrom("12") as HouseNumber;
+        StrongStringTypeConverter<HouseNumber> converter = new StrongStringTypeConverter<HouseNumber>();
+        HouseNumber? result = converter.ConvertFrom("12") as HouseNumber;
 
         Assert.NotNull(result);
         Assert.Equal("12", result.Value);
@@ -47,7 +47,7 @@ public class HouseNumberTests
     [Fact]
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<HouseNumber>();
+        StrongStringTypeConverter<HouseNumber> converter = new StrongStringTypeConverter<HouseNumber>();
         Assert.False(converter.CanConvertFrom(typeof(Guid)));
     }
 }

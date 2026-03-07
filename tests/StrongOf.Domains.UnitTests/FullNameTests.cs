@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.People.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="FullName"/>.
@@ -14,7 +14,7 @@ public class FullNameTests
         const string name = "John Smith";
 
         // Act
-        var fullName = new FullName(name);
+        FullName fullName = new FullName(name);
 
         // Assert
         Assert.Equal(name, fullName.Value);
@@ -24,11 +24,11 @@ public class FullNameTests
     public void FromNames_CreatesFullName()
     {
         // Arrange
-        var firstName = new FirstName("John");
-        var lastName = new LastName("Smith");
+        FirstName firstName = new FirstName("John");
+        LastName lastName = new LastName("Smith");
 
         // Act
-        var fullName = FullName.FromNames(firstName, lastName);
+        FullName fullName = FullName.FromNames(firstName, lastName);
 
         // Assert
         Assert.Equal("John Smith", fullName.Value);
@@ -43,7 +43,7 @@ public class FullNameTests
     public void IsValidFormat_ReturnsExpectedResult(string name, bool expected)
     {
         // Arrange
-        var fullName = new FullName(name);
+        FullName fullName = new FullName(name);
 
         // Act
         bool result = fullName.IsValidFormat();
@@ -59,7 +59,7 @@ public class FullNameTests
     public void GetFirstPart_ReturnsExpectedResult(string name, string expected)
     {
         // Arrange
-        var fullName = new FullName(name);
+        FullName fullName = new FullName(name);
 
         // Act
         string result = fullName.GetFirstPart();
@@ -75,7 +75,7 @@ public class FullNameTests
     public void GetLastPart_ReturnsExpectedResult(string name, string expected)
     {
         // Arrange
-        var fullName = new FullName(name);
+        FullName fullName = new FullName(name);
 
         // Act
         string result = fullName.GetLastPart();
@@ -93,7 +93,7 @@ public class FullNameTests
     public void GetInitials_ReturnsExpectedResult(string name, string expected)
     {
         // Arrange
-        var fullName = new FullName(name);
+        FullName fullName = new FullName(name);
 
         // Act
         string result = fullName.GetInitials();
@@ -106,8 +106,8 @@ public class FullNameTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var name1 = new FullName("John Smith");
-        var name2 = new FullName("John Smith");
+        FullName name1 = new FullName("John Smith");
+        FullName name2 = new FullName("John Smith");
 
         // Act & Assert
         Assert.Equal(name1, name2);
@@ -118,8 +118,8 @@ public class FullNameTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var name1 = new FullName("John Smith");
-        var name2 = new FullName("Jane Doe");
+        FullName name1 = new FullName("John Smith");
+        FullName name2 = new FullName("Jane Doe");
 
         // Act & Assert
         Assert.NotEqual(name1, name2);
@@ -131,7 +131,7 @@ public class FullNameTests
     {
         // Arrange
         const string name = "John Smith";
-        var fullName = new FullName(name);
+        FullName fullName = new FullName(name);
 
         // Act
         string result = fullName.ToString();
@@ -144,8 +144,8 @@ public class FullNameTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var name1 = new FullName("John Smith");
-        var name2 = new FullName("John Smith");
+        FullName name1 = new FullName("John Smith");
+        FullName name2 = new FullName("John Smith");
 
         // Act & Assert
         Assert.Equal(name1.GetHashCode(), name2.GetHashCode());
@@ -158,7 +158,7 @@ public class FullNameTests
         const string name = "John Smith";
 
         // Act
-        var fullName = FullName.From(name);
+        FullName fullName = FullName.From(name);
 
         // Assert
         Assert.Equal(name, fullName.Value);
@@ -168,7 +168,7 @@ public class FullNameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<FullName>();
+        StrongStringTypeConverter<FullName> converter = new StrongStringTypeConverter<FullName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -181,11 +181,11 @@ public class FullNameTests
     public void TypeConverter_ConvertFromString_ReturnsFullName()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<FullName>();
+        StrongStringTypeConverter<FullName> converter = new StrongStringTypeConverter<FullName>();
         const string name = "John Smith";
 
         // Act
-        var result = converter.ConvertFrom(name) as FullName;
+        FullName? result = converter.ConvertFrom(name) as FullName;
 
         // Assert
         Assert.NotNull(result);
@@ -196,7 +196,7 @@ public class FullNameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<FullName>();
+        StrongStringTypeConverter<FullName> converter = new StrongStringTypeConverter<FullName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

@@ -30,19 +30,29 @@ Enables route values, query strings, and form fields to be automatically parsed 
 
 ### Setup
 
-Register the built-in StrongOf model binder provider in your ASP.NET Core startup:
+Register the built-in StrongOf model binder provider in your ASP.NET Core startup.
+For most applications, passing the StrongOf model types directly is the simplest option:
 
 ```csharp
 using StrongOf.AspNetCore.Mvc;
 
 // Program.cs
 builder.Services.AddControllers(options =>
-    options.AddStrongOfModelBinderProvider(new Dictionary<Type, Type>
-        {
-            { typeof(UserId),       typeof(StrongGuidBinder<UserId>)   },
-            { typeof(EmailAddress), typeof(StrongStringBinder<EmailAddress>) },
-        }));
+    options.AddStrongOfModelBinderProvider(
+        typeof(UserId),
+        typeof(EmailAddress)));
 ```
+
+If you want to register all StrongOf types from one or more assemblies, you can scan them automatically:
+
+```csharp
+using StrongOf.AspNetCore.Mvc;
+
+builder.Services.AddControllers(options =>
+    options.AddStrongOfModelBinderProviderFromAssemblies(typeof(UserId).Assembly));
+```
+
+The explicit `Dictionary<Type, Type>` overload remains available when you need full manual control.
 
 ### Custom Binders
 

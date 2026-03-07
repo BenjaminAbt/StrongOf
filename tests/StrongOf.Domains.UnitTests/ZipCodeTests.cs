@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Postal.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="ZipCode"/>.
@@ -14,7 +14,7 @@ public class ZipCodeTests
         const string value = "12345";
 
         // Act
-        var zipCode = new ZipCode(value);
+        ZipCode zipCode = new ZipCode(value);
 
         // Assert
         Assert.Equal(value, zipCode.Value);
@@ -31,7 +31,7 @@ public class ZipCodeTests
     public void IsValidFormat_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var zipCode = new ZipCode(value);
+        ZipCode zipCode = new ZipCode(value);
 
         // Act
         bool result = zipCode.IsValidFormat();
@@ -50,7 +50,7 @@ public class ZipCodeTests
     public void IsValidUsFormat_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var zipCode = new ZipCode(value);
+        ZipCode zipCode = new ZipCode(value);
 
         // Act
         bool result = zipCode.IsValidUsFormat();
@@ -66,7 +66,7 @@ public class ZipCodeTests
     public void GetNormalized_ReturnsExpectedResult(string value, string expected)
     {
         // Arrange
-        var zipCode = new ZipCode(value);
+        ZipCode zipCode = new ZipCode(value);
 
         // Act
         string result = zipCode.GetNormalized();
@@ -79,8 +79,8 @@ public class ZipCodeTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var zip1 = new ZipCode("12345");
-        var zip2 = new ZipCode("12345");
+        ZipCode zip1 = new ZipCode("12345");
+        ZipCode zip2 = new ZipCode("12345");
 
         // Act & Assert
         Assert.Equal(zip1, zip2);
@@ -91,8 +91,8 @@ public class ZipCodeTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var zip1 = new ZipCode("12345");
-        var zip2 = new ZipCode("67890");
+        ZipCode zip1 = new ZipCode("12345");
+        ZipCode zip2 = new ZipCode("67890");
 
         // Act & Assert
         Assert.NotEqual(zip1, zip2);
@@ -104,7 +104,7 @@ public class ZipCodeTests
     {
         // Arrange
         const string value = "12345";
-        var zipCode = new ZipCode(value);
+        ZipCode zipCode = new ZipCode(value);
 
         // Act
         string result = zipCode.ToString();
@@ -117,8 +117,8 @@ public class ZipCodeTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var zip1 = new ZipCode("12345");
-        var zip2 = new ZipCode("12345");
+        ZipCode zip1 = new ZipCode("12345");
+        ZipCode zip2 = new ZipCode("12345");
 
         // Act & Assert
         Assert.Equal(zip1.GetHashCode(), zip2.GetHashCode());
@@ -131,7 +131,7 @@ public class ZipCodeTests
         const string value = "12345";
 
         // Act
-        var zipCode = ZipCode.From(value);
+        ZipCode zipCode = ZipCode.From(value);
 
         // Assert
         Assert.Equal(value, zipCode.Value);
@@ -141,7 +141,7 @@ public class ZipCodeTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<ZipCode>();
+        StrongStringTypeConverter<ZipCode> converter = new StrongStringTypeConverter<ZipCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -154,11 +154,11 @@ public class ZipCodeTests
     public void TypeConverter_ConvertFromString_ReturnsZipCode()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<ZipCode>();
+        StrongStringTypeConverter<ZipCode> converter = new StrongStringTypeConverter<ZipCode>();
         const string value = "12345";
 
         // Act
-        var result = converter.ConvertFrom(value) as ZipCode;
+        ZipCode? result = converter.ConvertFrom(value) as ZipCode;
 
         // Assert
         Assert.NotNull(result);
@@ -169,7 +169,7 @@ public class ZipCodeTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<ZipCode>();
+        StrongStringTypeConverter<ZipCode> converter = new StrongStringTypeConverter<ZipCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

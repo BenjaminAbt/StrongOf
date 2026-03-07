@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.People.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="LastName"/>.
@@ -14,7 +14,7 @@ public class LastNameTests
         const string name = "Smith";
 
         // Act
-        var lastName = new LastName(name);
+        LastName lastName = new LastName(name);
 
         // Assert
         Assert.Equal(name, lastName.Value);
@@ -32,7 +32,7 @@ public class LastNameTests
     public void IsValidFormat_ReturnsExpectedResult(string name, bool expected)
     {
         // Arrange
-        var lastName = new LastName(name);
+        LastName lastName = new LastName(name);
 
         // Act
         bool result = lastName.IsValidFormat();
@@ -50,7 +50,7 @@ public class LastNameTests
     public void ToTitleCase_ReturnsExpectedResult(string name, string expected)
     {
         // Arrange
-        var lastName = new LastName(name);
+        LastName lastName = new LastName(name);
 
         // Act
         string result = lastName.ToTitleCase();
@@ -66,7 +66,7 @@ public class LastNameTests
     public void ToUpperCase_ReturnsExpectedResult(string name, string expected)
     {
         // Arrange
-        var lastName = new LastName(name);
+        LastName lastName = new LastName(name);
 
         // Act
         string result = lastName.ToUpperCase();
@@ -79,8 +79,8 @@ public class LastNameTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var name1 = new LastName("Smith");
-        var name2 = new LastName("Smith");
+        LastName name1 = new LastName("Smith");
+        LastName name2 = new LastName("Smith");
 
         // Act & Assert
         Assert.Equal(name1, name2);
@@ -91,8 +91,8 @@ public class LastNameTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var name1 = new LastName("Smith");
-        var name2 = new LastName("Jones");
+        LastName name1 = new LastName("Smith");
+        LastName name2 = new LastName("Jones");
 
         // Act & Assert
         Assert.NotEqual(name1, name2);
@@ -104,7 +104,7 @@ public class LastNameTests
     {
         // Arrange
         const string name = "Smith";
-        var lastName = new LastName(name);
+        LastName lastName = new LastName(name);
 
         // Act
         string result = lastName.ToString();
@@ -117,8 +117,8 @@ public class LastNameTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var name1 = new LastName("Smith");
-        var name2 = new LastName("Smith");
+        LastName name1 = new LastName("Smith");
+        LastName name2 = new LastName("Smith");
 
         // Act & Assert
         Assert.Equal(name1.GetHashCode(), name2.GetHashCode());
@@ -131,7 +131,7 @@ public class LastNameTests
         const string name = "Smith";
 
         // Act
-        var lastName = LastName.From(name);
+        LastName lastName = LastName.From(name);
 
         // Assert
         Assert.Equal(name, lastName.Value);
@@ -141,7 +141,7 @@ public class LastNameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<LastName>();
+        StrongStringTypeConverter<LastName> converter = new StrongStringTypeConverter<LastName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -154,11 +154,11 @@ public class LastNameTests
     public void TypeConverter_ConvertFromString_ReturnsLastName()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<LastName>();
+        StrongStringTypeConverter<LastName> converter = new StrongStringTypeConverter<LastName>();
         const string name = "Smith";
 
         // Act
-        var result = converter.ConvertFrom(name) as LastName;
+        LastName? result = converter.ConvertFrom(name) as LastName;
 
         // Assert
         Assert.NotNull(result);
@@ -169,7 +169,7 @@ public class LastNameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<LastName>();
+        StrongStringTypeConverter<LastName> converter = new StrongStringTypeConverter<LastName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

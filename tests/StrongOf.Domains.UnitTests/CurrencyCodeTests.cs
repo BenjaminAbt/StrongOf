@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Finance.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="CurrencyCode"/>.
@@ -14,7 +14,7 @@ public class CurrencyCodeTests
         const string code = "USD";
 
         // Act
-        var currencyCode = new CurrencyCode(code);
+        CurrencyCode currencyCode = new CurrencyCode(code);
 
         // Assert
         Assert.Equal(code, currencyCode.Value);
@@ -33,7 +33,7 @@ public class CurrencyCodeTests
     public void IsValidFormat_ReturnsExpectedResult(string code, bool expected)
     {
         // Arrange
-        var currencyCode = new CurrencyCode(code);
+        CurrencyCode currencyCode = new CurrencyCode(code);
 
         // Act
         bool result = currencyCode.IsValidFormat();
@@ -49,7 +49,7 @@ public class CurrencyCodeTests
     public void ToUpperCase_ReturnsExpectedResult(string code, string expected)
     {
         // Arrange
-        var currencyCode = new CurrencyCode(code);
+        CurrencyCode currencyCode = new CurrencyCode(code);
 
         // Act
         string result = currencyCode.ToUpperCase();
@@ -62,8 +62,8 @@ public class CurrencyCodeTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var code1 = new CurrencyCode("USD");
-        var code2 = new CurrencyCode("USD");
+        CurrencyCode code1 = new CurrencyCode("USD");
+        CurrencyCode code2 = new CurrencyCode("USD");
 
         // Act & Assert
         Assert.Equal(code1, code2);
@@ -74,8 +74,8 @@ public class CurrencyCodeTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var code1 = new CurrencyCode("USD");
-        var code2 = new CurrencyCode("EUR");
+        CurrencyCode code1 = new CurrencyCode("USD");
+        CurrencyCode code2 = new CurrencyCode("EUR");
 
         // Act & Assert
         Assert.NotEqual(code1, code2);
@@ -87,7 +87,7 @@ public class CurrencyCodeTests
     {
         // Arrange
         const string code = "USD";
-        var currencyCode = new CurrencyCode(code);
+        CurrencyCode currencyCode = new CurrencyCode(code);
 
         // Act
         string result = currencyCode.ToString();
@@ -100,8 +100,8 @@ public class CurrencyCodeTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var code1 = new CurrencyCode("USD");
-        var code2 = new CurrencyCode("USD");
+        CurrencyCode code1 = new CurrencyCode("USD");
+        CurrencyCode code2 = new CurrencyCode("USD");
 
         // Act & Assert
         Assert.Equal(code1.GetHashCode(), code2.GetHashCode());
@@ -114,7 +114,7 @@ public class CurrencyCodeTests
         const string code = "USD";
 
         // Act
-        var currencyCode = CurrencyCode.From(code);
+        CurrencyCode currencyCode = CurrencyCode.From(code);
 
         // Assert
         Assert.Equal(code, currencyCode.Value);
@@ -130,7 +130,7 @@ public class CurrencyCodeTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<CurrencyCode>();
+        StrongStringTypeConverter<CurrencyCode> converter = new StrongStringTypeConverter<CurrencyCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -143,11 +143,11 @@ public class CurrencyCodeTests
     public void TypeConverter_ConvertFromString_ReturnsCurrencyCode()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<CurrencyCode>();
+        StrongStringTypeConverter<CurrencyCode> converter = new StrongStringTypeConverter<CurrencyCode>();
         const string code = "USD";
 
         // Act
-        var result = converter.ConvertFrom(code) as CurrencyCode;
+        CurrencyCode? result = converter.ConvertFrom(code) as CurrencyCode;
 
         // Assert
         Assert.NotNull(result);
@@ -158,7 +158,7 @@ public class CurrencyCodeTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<CurrencyCode>();
+        StrongStringTypeConverter<CurrencyCode> converter = new StrongStringTypeConverter<CurrencyCode>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

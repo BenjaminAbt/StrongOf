@@ -183,11 +183,18 @@ You can just use [StrongOf.AspNetCore](https://www.nuget.org/packages/StrongOf.A
 using StrongOf.AspNetCore.Mvc;
 
 builder.Services.AddControllers(options =>
-    options.AddStrongOfModelBinderProvider(new Dictionary<Type, Type>
-    {
-        { typeof(UserId), typeof(StrongGuidBinder<UserId>) }
-        // ... more here ...
-    }));
+    options.AddStrongOfModelBinderProvider(
+        typeof(UserId),
+        typeof(EmailAddress)));
+```
+
+If your strong types live in one or more assemblies, you can also register them by assembly scan:
+
+```csharp
+using StrongOf.AspNetCore.Mvc;
+
+builder.Services.AddControllers(options =>
+    options.AddStrongOfModelBinderProviderFromAssemblies(typeof(UserId).Assembly));
 ```
 
 You can also create a customized binder

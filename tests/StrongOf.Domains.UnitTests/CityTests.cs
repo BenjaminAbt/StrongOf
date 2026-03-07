@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Postal.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="City"/>.
@@ -14,7 +14,7 @@ public class CityTests
         const string value = "New York";
 
         // Act
-        var city = new City(value);
+        City city = new City(value);
 
         // Assert
         Assert.Equal(value, city.Value);
@@ -32,7 +32,7 @@ public class CityTests
     public void IsValidFormat_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var city = new City(value);
+        City city = new City(value);
 
         // Act
         bool result = city.IsValidFormat();
@@ -45,8 +45,8 @@ public class CityTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var city1 = new City("New York");
-        var city2 = new City("New York");
+        City city1 = new City("New York");
+        City city2 = new City("New York");
 
         // Act & Assert
         Assert.Equal(city1, city2);
@@ -57,8 +57,8 @@ public class CityTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var city1 = new City("New York");
-        var city2 = new City("Los Angeles");
+        City city1 = new City("New York");
+        City city2 = new City("Los Angeles");
 
         // Act & Assert
         Assert.NotEqual(city1, city2);
@@ -70,7 +70,7 @@ public class CityTests
     {
         // Arrange
         const string value = "New York";
-        var city = new City(value);
+        City city = new City(value);
 
         // Act
         string result = city.ToString();
@@ -83,8 +83,8 @@ public class CityTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var city1 = new City("New York");
-        var city2 = new City("New York");
+        City city1 = new City("New York");
+        City city2 = new City("New York");
 
         // Act & Assert
         Assert.Equal(city1.GetHashCode(), city2.GetHashCode());
@@ -97,7 +97,7 @@ public class CityTests
         const string value = "New York";
 
         // Act
-        var city = City.From(value);
+        City city = City.From(value);
 
         // Assert
         Assert.Equal(value, city.Value);
@@ -107,7 +107,7 @@ public class CityTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<City>();
+        StrongStringTypeConverter<City> converter = new StrongStringTypeConverter<City>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -120,11 +120,11 @@ public class CityTests
     public void TypeConverter_ConvertFromString_ReturnsCity()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<City>();
+        StrongStringTypeConverter<City> converter = new StrongStringTypeConverter<City>();
         const string value = "New York";
 
         // Act
-        var result = converter.ConvertFrom(value) as City;
+        City? result = converter.ConvertFrom(value) as City;
 
         // Assert
         Assert.NotNull(result);
@@ -135,7 +135,7 @@ public class CityTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<City>();
+        StrongStringTypeConverter<City> converter = new StrongStringTypeConverter<City>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

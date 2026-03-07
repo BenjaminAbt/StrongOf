@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Commerce.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 public class SkuTests
 {
@@ -14,22 +14,22 @@ public class SkuTests
     [InlineData("has@special", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var sku = new Sku(value);
+        Sku sku = new Sku(value);
         Assert.Equal(expected, sku.IsValidFormat());
     }
 
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var sku = new Sku("PROD-001");
+        Sku sku = new Sku("PROD-001");
         Assert.Equal("PROD-001", sku.Value);
     }
 
     [Fact]
     public void Equality_SameValue_ReturnsTrue()
     {
-        var sku1 = new Sku("PROD-001");
-        var sku2 = new Sku("PROD-001");
+        Sku sku1 = new Sku("PROD-001");
+        Sku sku2 = new Sku("PROD-001");
         Assert.Equal(sku1, sku2);
         Assert.True(sku1 == sku2);
     }
@@ -37,23 +37,23 @@ public class SkuTests
     [Fact]
     public void Equality_DifferentValues_ReturnsFalse()
     {
-        var sku1 = new Sku("PROD-001");
-        var sku2 = new Sku("PROD-002");
+        Sku sku1 = new Sku("PROD-001");
+        Sku sku2 = new Sku("PROD-002");
         Assert.NotEqual(sku1, sku2);
     }
 
     [Fact]
     public void TypeConverter_CanConvertFromString()
     {
-        var converter = new StrongStringTypeConverter<Sku>();
+        StrongStringTypeConverter<Sku> converter = new StrongStringTypeConverter<Sku>();
         Assert.True(converter.CanConvertFrom(typeof(string)));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsSku()
     {
-        var converter = new StrongStringTypeConverter<Sku>();
-        var result = converter.ConvertFrom("PROD-001") as Sku;
+        StrongStringTypeConverter<Sku> converter = new StrongStringTypeConverter<Sku>();
+        Sku? result = converter.ConvertFrom("PROD-001") as Sku;
         Assert.NotNull(result);
         Assert.Equal("PROD-001", result.Value);
     }

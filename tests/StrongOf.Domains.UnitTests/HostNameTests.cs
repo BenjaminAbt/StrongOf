@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Networking.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="HostName"/>.
@@ -14,7 +14,7 @@ public class HostNameTests
         const string value = "www.example.com";
 
         // Act
-        var hostName = new HostName(value);
+        HostName hostName = new HostName(value);
 
         // Assert
         Assert.Equal(value, hostName.Value);
@@ -34,7 +34,7 @@ public class HostNameTests
     public void IsValidFormat_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var hostName = new HostName(value);
+        HostName hostName = new HostName(value);
 
         // Act
         bool result = hostName.IsValidFormat();
@@ -48,7 +48,7 @@ public class HostNameTests
     {
         // Arrange
         string value = new('a', 254); // 254 chars, max is 253
-        var hostName = new HostName(value);
+        HostName hostName = new HostName(value);
 
         // Act
         bool result = hostName.IsValidFormat();
@@ -64,7 +64,7 @@ public class HostNameTests
     public void ToLowerCase_ReturnsExpectedResult(string value, string expected)
     {
         // Arrange
-        var hostName = new HostName(value);
+        HostName hostName = new HostName(value);
 
         // Act
         string result = hostName.ToLowerCase();
@@ -80,7 +80,7 @@ public class HostNameTests
     public void GetTopLevelDomain_ReturnsExpectedResult(string value, string expected)
     {
         // Arrange
-        var hostName = new HostName(value);
+        HostName hostName = new HostName(value);
 
         // Act
         string result = hostName.GetTopLevelDomain();
@@ -93,8 +93,8 @@ public class HostNameTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var host1 = new HostName("www.example.com");
-        var host2 = new HostName("www.example.com");
+        HostName host1 = new HostName("www.example.com");
+        HostName host2 = new HostName("www.example.com");
 
         // Act & Assert
         Assert.Equal(host1, host2);
@@ -105,8 +105,8 @@ public class HostNameTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var host1 = new HostName("www.example.com");
-        var host2 = new HostName("www.other.com");
+        HostName host1 = new HostName("www.example.com");
+        HostName host2 = new HostName("www.other.com");
 
         // Act & Assert
         Assert.NotEqual(host1, host2);
@@ -118,7 +118,7 @@ public class HostNameTests
     {
         // Arrange
         const string value = "www.example.com";
-        var hostName = new HostName(value);
+        HostName hostName = new HostName(value);
 
         // Act
         string result = hostName.ToString();
@@ -131,8 +131,8 @@ public class HostNameTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var host1 = new HostName("www.example.com");
-        var host2 = new HostName("www.example.com");
+        HostName host1 = new HostName("www.example.com");
+        HostName host2 = new HostName("www.example.com");
 
         // Act & Assert
         Assert.Equal(host1.GetHashCode(), host2.GetHashCode());
@@ -145,7 +145,7 @@ public class HostNameTests
         const string value = "www.example.com";
 
         // Act
-        var hostName = HostName.From(value);
+        HostName hostName = HostName.From(value);
 
         // Assert
         Assert.Equal(value, hostName.Value);
@@ -167,7 +167,7 @@ public class HostNameTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<HostName>();
+        StrongStringTypeConverter<HostName> converter = new StrongStringTypeConverter<HostName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -180,11 +180,11 @@ public class HostNameTests
     public void TypeConverter_ConvertFromString_ReturnsHostName()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<HostName>();
+        StrongStringTypeConverter<HostName> converter = new StrongStringTypeConverter<HostName>();
         const string value = "www.example.com";
 
         // Act
-        var result = converter.ConvertFrom(value) as HostName;
+        HostName? result = converter.ConvertFrom(value) as HostName;
 
         // Assert
         Assert.NotNull(result);
@@ -195,7 +195,7 @@ public class HostNameTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<HostName>();
+        StrongStringTypeConverter<HostName> converter = new StrongStringTypeConverter<HostName>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

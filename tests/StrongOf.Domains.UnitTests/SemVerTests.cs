@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Software.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="SemVer"/>.
@@ -10,7 +10,7 @@ public class SemVerTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var version = new SemVer("1.2.3");
+        SemVer version = new SemVer("1.2.3");
         Assert.Equal("1.2.3", version.Value);
     }
 
@@ -22,14 +22,14 @@ public class SemVerTests
     [InlineData("1.2", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var version = new SemVer(value);
+        SemVer version = new SemVer(value);
         Assert.Equal(expected, version.IsValidFormat());
     }
 
     [Fact]
     public void TryGetMajor_ReturnsExpected()
     {
-        var version = new SemVer("2.1.0");
+        SemVer version = new SemVer("2.1.0");
         Assert.True(version.TryGetMajor(out int major));
         Assert.Equal(2, major);
     }
@@ -37,15 +37,15 @@ public class SemVerTests
     [Fact]
     public void TryGetMajor_WithInvalid_ReturnsFalse()
     {
-        var version = new SemVer(string.Empty);
+        SemVer version = new SemVer(string.Empty);
         Assert.False(version.TryGetMajor(out int _));
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<SemVer>();
-        var result = converter.ConvertFrom("1.2.3") as SemVer;
+        StrongStringTypeConverter<SemVer> converter = new StrongStringTypeConverter<SemVer>();
+        SemVer? result = converter.ConvertFrom("1.2.3") as SemVer;
 
         Assert.NotNull(result);
         Assert.Equal("1.2.3", result.Value);
@@ -54,7 +54,7 @@ public class SemVerTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<SemVer>();
+        StrongStringTypeConverter<SemVer> converter = new StrongStringTypeConverter<SemVer>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

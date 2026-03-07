@@ -1,8 +1,8 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
 using System.Net;
 
-namespace StrongOf.Domains.Networking.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="IpAddress"/>.
@@ -16,7 +16,7 @@ public class IpAddressTests
         const string value = "192.168.1.1";
 
         // Act
-        var ipAddress = new IpAddress(value);
+        IpAddress ipAddress = new IpAddress(value);
 
         // Assert
         Assert.Equal(value, ipAddress.Value);
@@ -34,7 +34,7 @@ public class IpAddressTests
     public void IsValidFormat_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var ipAddress = new IpAddress(value);
+        IpAddress ipAddress = new IpAddress(value);
 
         // Act
         bool result = ipAddress.IsValidFormat();
@@ -52,7 +52,7 @@ public class IpAddressTests
     public void IsIPv4_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var ipAddress = new IpAddress(value);
+        IpAddress ipAddress = new IpAddress(value);
 
         // Act
         bool result = ipAddress.IsIPv4();
@@ -70,7 +70,7 @@ public class IpAddressTests
     public void IsIPv6_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var ipAddress = new IpAddress(value);
+        IpAddress ipAddress = new IpAddress(value);
 
         // Act
         bool result = ipAddress.IsIPv6();
@@ -88,7 +88,7 @@ public class IpAddressTests
     public void IsLoopback_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var ipAddress = new IpAddress(value);
+        IpAddress ipAddress = new IpAddress(value);
 
         // Act
         bool result = ipAddress.IsLoopback();
@@ -101,7 +101,7 @@ public class IpAddressTests
     public void ToIPAddress_ValidIp_ReturnsIPAddress()
     {
         // Arrange
-        var ipAddress = new IpAddress("192.168.1.1");
+        IpAddress ipAddress = new IpAddress("192.168.1.1");
 
         // Act
         IPAddress? result = ipAddress.ToIPAddress();
@@ -115,7 +115,7 @@ public class IpAddressTests
     public void ToIPAddress_InvalidIp_ReturnsNull()
     {
         // Arrange
-        var ipAddress = new IpAddress("invalid");
+        IpAddress ipAddress = new IpAddress("invalid");
 
         // Act
         IPAddress? result = ipAddress.ToIPAddress();
@@ -128,8 +128,8 @@ public class IpAddressTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var ip1 = new IpAddress("192.168.1.1");
-        var ip2 = new IpAddress("192.168.1.1");
+        IpAddress ip1 = new IpAddress("192.168.1.1");
+        IpAddress ip2 = new IpAddress("192.168.1.1");
 
         // Act & Assert
         Assert.Equal(ip1, ip2);
@@ -140,8 +140,8 @@ public class IpAddressTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var ip1 = new IpAddress("192.168.1.1");
-        var ip2 = new IpAddress("10.0.0.1");
+        IpAddress ip1 = new IpAddress("192.168.1.1");
+        IpAddress ip2 = new IpAddress("10.0.0.1");
 
         // Act & Assert
         Assert.NotEqual(ip1, ip2);
@@ -153,7 +153,7 @@ public class IpAddressTests
     {
         // Arrange
         const string value = "192.168.1.1";
-        var ipAddress = new IpAddress(value);
+        IpAddress ipAddress = new IpAddress(value);
 
         // Act
         string result = ipAddress.ToString();
@@ -166,8 +166,8 @@ public class IpAddressTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var ip1 = new IpAddress("192.168.1.1");
-        var ip2 = new IpAddress("192.168.1.1");
+        IpAddress ip1 = new IpAddress("192.168.1.1");
+        IpAddress ip2 = new IpAddress("192.168.1.1");
 
         // Act & Assert
         Assert.Equal(ip1.GetHashCode(), ip2.GetHashCode());
@@ -180,7 +180,7 @@ public class IpAddressTests
         const string value = "192.168.1.1";
 
         // Act
-        var ipAddress = IpAddress.From(value);
+        IpAddress ipAddress = IpAddress.From(value);
 
         // Assert
         Assert.Equal(value, ipAddress.Value);
@@ -190,7 +190,7 @@ public class IpAddressTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<IpAddress>();
+        StrongStringTypeConverter<IpAddress> converter = new StrongStringTypeConverter<IpAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -203,11 +203,11 @@ public class IpAddressTests
     public void TypeConverter_ConvertFromString_ReturnsIpAddress()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<IpAddress>();
+        StrongStringTypeConverter<IpAddress> converter = new StrongStringTypeConverter<IpAddress>();
         const string value = "192.168.1.1";
 
         // Act
-        var result = converter.ConvertFrom(value) as IpAddress;
+        IpAddress? result = converter.ConvertFrom(value) as IpAddress;
 
         // Assert
         Assert.NotNull(result);
@@ -218,7 +218,7 @@ public class IpAddressTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<IpAddress>();
+        StrongStringTypeConverter<IpAddress> converter = new StrongStringTypeConverter<IpAddress>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

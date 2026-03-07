@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Localization.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="TimeZoneId"/>.
@@ -10,28 +10,28 @@ public class TimeZoneIdTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var id = new TimeZoneId(TimeZoneInfo.Utc.Id);
+        TimeZoneId id = new TimeZoneId(TimeZoneInfo.Utc.Id);
         Assert.Equal(TimeZoneInfo.Utc.Id, id.Value);
     }
 
     [Fact]
     public void IsValidId_WithUtc_ReturnsTrue()
     {
-        var id = new TimeZoneId(TimeZoneInfo.Utc.Id);
+        TimeZoneId id = new TimeZoneId(TimeZoneInfo.Utc.Id);
         Assert.True(id.IsValidId());
     }
 
     [Fact]
     public void IsValidId_WithInvalid_ReturnsFalse()
     {
-        var id = new TimeZoneId("Not/AZone");
+        TimeZoneId id = new TimeZoneId("Not/AZone");
         Assert.False(id.IsValidId());
     }
 
     [Fact]
     public void TryGetTimeZone_ReturnsExpected()
     {
-        var id = new TimeZoneId(TimeZoneInfo.Utc.Id);
+        TimeZoneId id = new TimeZoneId(TimeZoneInfo.Utc.Id);
         Assert.True(id.TryGetTimeZone(out TimeZoneInfo? tz));
         Assert.NotNull(tz);
     }
@@ -39,8 +39,8 @@ public class TimeZoneIdTests
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<TimeZoneId>();
-        var result = converter.ConvertFrom(TimeZoneInfo.Utc.Id) as TimeZoneId;
+        StrongStringTypeConverter<TimeZoneId> converter = new StrongStringTypeConverter<TimeZoneId>();
+        TimeZoneId? result = converter.ConvertFrom(TimeZoneInfo.Utc.Id) as TimeZoneId;
 
         Assert.NotNull(result);
         Assert.Equal(TimeZoneInfo.Utc.Id, result.Value);
@@ -49,7 +49,7 @@ public class TimeZoneIdTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<TimeZoneId>();
+        StrongStringTypeConverter<TimeZoneId> converter = new StrongStringTypeConverter<TimeZoneId>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

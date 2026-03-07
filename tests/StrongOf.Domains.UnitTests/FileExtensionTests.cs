@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Media.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="FileExtension"/>.
@@ -10,7 +10,7 @@ public class FileExtensionTests
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var ext = new FileExtension(".txt");
+        FileExtension ext = new FileExtension(".txt");
         Assert.Equal(".txt", ext.Value);
     }
 
@@ -21,22 +21,22 @@ public class FileExtensionTests
     [InlineData(".", false)]
     public void IsValidFormat_ReturnsExpected(string value, bool expected)
     {
-        var ext = new FileExtension(value);
+        FileExtension ext = new FileExtension(value);
         Assert.Equal(expected, ext.IsValidFormat());
     }
 
     [Fact]
     public void WithoutDot_ReturnsExpected()
     {
-        var ext = new FileExtension(".txt");
+        FileExtension ext = new FileExtension(".txt");
         Assert.Equal("txt", ext.WithoutDot());
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<FileExtension>();
-        var result = converter.ConvertFrom(".txt") as FileExtension;
+        StrongStringTypeConverter<FileExtension> converter = new StrongStringTypeConverter<FileExtension>();
+        FileExtension? result = converter.ConvertFrom(".txt") as FileExtension;
 
         Assert.NotNull(result);
         Assert.Equal(".txt", result.Value);
@@ -45,7 +45,7 @@ public class FileExtensionTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<FileExtension>();
+        StrongStringTypeConverter<FileExtension> converter = new StrongStringTypeConverter<FileExtension>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

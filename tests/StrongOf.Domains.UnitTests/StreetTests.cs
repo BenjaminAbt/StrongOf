@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Postal.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="Street"/>.
@@ -14,7 +14,7 @@ public class StreetTests
         const string value = "123 Main Street";
 
         // Act
-        var street = new Street(value);
+        Street street = new Street(value);
 
         // Assert
         Assert.Equal(value, street.Value);
@@ -29,7 +29,7 @@ public class StreetTests
     public void IsValidFormat_ReturnsExpectedResult(string value, bool expected)
     {
         // Arrange
-        var street = new Street(value);
+        Street street = new Street(value);
 
         // Act
         bool result = street.IsValidFormat();
@@ -44,7 +44,7 @@ public class StreetTests
     public void GetNormalized_ReturnsExpectedResult(string value, string expected)
     {
         // Arrange
-        var street = new Street(value);
+        Street street = new Street(value);
 
         // Act
         string result = street.GetNormalized();
@@ -57,8 +57,8 @@ public class StreetTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var street1 = new Street("123 Main Street");
-        var street2 = new Street("123 Main Street");
+        Street street1 = new Street("123 Main Street");
+        Street street2 = new Street("123 Main Street");
 
         // Act & Assert
         Assert.Equal(street1, street2);
@@ -69,8 +69,8 @@ public class StreetTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var street1 = new Street("123 Main Street");
-        var street2 = new Street("456 Oak Avenue");
+        Street street1 = new Street("123 Main Street");
+        Street street2 = new Street("456 Oak Avenue");
 
         // Act & Assert
         Assert.NotEqual(street1, street2);
@@ -82,7 +82,7 @@ public class StreetTests
     {
         // Arrange
         const string value = "123 Main Street";
-        var street = new Street(value);
+        Street street = new Street(value);
 
         // Act
         string result = street.ToString();
@@ -95,8 +95,8 @@ public class StreetTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var street1 = new Street("123 Main Street");
-        var street2 = new Street("123 Main Street");
+        Street street1 = new Street("123 Main Street");
+        Street street2 = new Street("123 Main Street");
 
         // Act & Assert
         Assert.Equal(street1.GetHashCode(), street2.GetHashCode());
@@ -109,7 +109,7 @@ public class StreetTests
         const string value = "123 Main Street";
 
         // Act
-        var street = Street.From(value);
+        Street street = Street.From(value);
 
         // Assert
         Assert.Equal(value, street.Value);
@@ -119,7 +119,7 @@ public class StreetTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Street>();
+        StrongStringTypeConverter<Street> converter = new StrongStringTypeConverter<Street>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -132,11 +132,11 @@ public class StreetTests
     public void TypeConverter_ConvertFromString_ReturnsStreet()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Street>();
+        StrongStringTypeConverter<Street> converter = new StrongStringTypeConverter<Street>();
         const string value = "123 Main Street";
 
         // Act
-        var result = converter.ConvertFrom(value) as Street;
+        Street? result = converter.ConvertFrom(value) as Street;
 
         // Assert
         Assert.NotNull(result);
@@ -147,7 +147,7 @@ public class StreetTests
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongStringTypeConverter<Street>();
+        StrongStringTypeConverter<Street> converter = new StrongStringTypeConverter<Street>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));

@@ -1,16 +1,18 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.Networking.UnitTests;
+using DomainHttpMethod = StrongOf.Domains.Networking.HttpMethod;
+
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
-/// Tests for <see cref="HttpMethod"/>.
+/// Tests for <see cref="global::StrongOf.Domains.Networking.HttpMethod"/>.
 /// </summary>
 public class HttpMethodTests
 {
     [Fact]
     public void Constructor_WithValue_SetsValue()
     {
-        var method = new HttpMethod("GET");
+        DomainHttpMethod method = new DomainHttpMethod("GET");
         Assert.Equal("GET", method.Value);
     }
 
@@ -21,22 +23,22 @@ public class HttpMethodTests
     [InlineData("", false)]
     public void IsStandard_ReturnsExpected(string value, bool expected)
     {
-        var method = new HttpMethod(value);
+        DomainHttpMethod method = new DomainHttpMethod(value);
         Assert.Equal(expected, method.IsStandard());
     }
 
     [Fact]
     public void ToUpperCase_ReturnsExpected()
     {
-        var method = new HttpMethod("post");
+        DomainHttpMethod method = new DomainHttpMethod("post");
         Assert.Equal("POST", method.ToUpperCase());
     }
 
     [Fact]
     public void TypeConverter_ConvertFromString_ReturnsInstance()
     {
-        var converter = new StrongStringTypeConverter<HttpMethod>();
-        var result = converter.ConvertFrom("GET") as HttpMethod;
+        StrongStringTypeConverter<DomainHttpMethod> converter = new StrongStringTypeConverter<DomainHttpMethod>();
+        DomainHttpMethod? result = converter.ConvertFrom("GET") as DomainHttpMethod;
 
         Assert.NotNull(result);
         Assert.Equal("GET", result.Value);
@@ -45,7 +47,7 @@ public class HttpMethodTests
     [Fact]
     public void TypeConverter_CanConvertFromInt_ReturnsFalse()
     {
-        var converter = new StrongStringTypeConverter<HttpMethod>();
+        StrongStringTypeConverter<DomainHttpMethod> converter = new StrongStringTypeConverter<DomainHttpMethod>();
         Assert.False(converter.CanConvertFrom(typeof(int)));
     }
 }

@@ -1,6 +1,6 @@
-﻿// Copyright © Benjamin Abt 2025. All rights reserved.
+// Copyright © Benjamin Abt 2025. All rights reserved.
 
-namespace StrongOf.Domains.People.UnitTests;
+namespace StrongOf.Domains.UnitTests;
 
 /// <summary>
 /// Tests for <see cref="Age"/>.
@@ -14,7 +14,7 @@ public class AgeTests
         const int value = 25;
 
         // Act
-        var age = new Age(value);
+        Age age = new Age(value);
 
         // Assert
         Assert.Equal(value, age.Value);
@@ -28,7 +28,7 @@ public class AgeTests
         DateTime birthDate = today.AddYears(-25);
 
         // Act
-        var age = Age.FromBirthDate(birthDate);
+        Age age = Age.FromBirthDate(birthDate);
 
         // Assert
         Assert.Equal(25, age.Value);
@@ -42,7 +42,7 @@ public class AgeTests
         DateTime birthDate = today.AddYears(-25).AddDays(1); // Birthday is tomorrow
 
         // Act
-        var age = Age.FromBirthDate(birthDate);
+        Age age = Age.FromBirthDate(birthDate);
 
         // Assert
         Assert.Equal(24, age.Value);
@@ -57,7 +57,7 @@ public class AgeTests
     public void IsValidRange_ReturnsExpectedResult(int value, bool expected)
     {
         // Arrange
-        var age = new Age(value);
+        Age age = new Age(value);
 
         // Act
         bool result = age.IsValidRange();
@@ -75,7 +75,7 @@ public class AgeTests
     public void IsAdult_DefaultThreshold_ReturnsExpectedResult(int value, bool expected)
     {
         // Arrange
-        var age = new Age(value);
+        Age age = new Age(value);
 
         // Act
         bool result = age.IsAdult();
@@ -92,7 +92,7 @@ public class AgeTests
     public void IsAdult_CustomThreshold_ReturnsExpectedResult(int value, int threshold, bool expected)
     {
         // Arrange
-        var age = new Age(value);
+        Age age = new Age(value);
 
         // Act
         bool result = age.IsAdult(threshold);
@@ -109,7 +109,7 @@ public class AgeTests
     public void IsMinor_DefaultThreshold_ReturnsExpectedResult(int value, bool expected)
     {
         // Arrange
-        var age = new Age(value);
+        Age age = new Age(value);
 
         // Act
         bool result = age.IsMinor();
@@ -124,7 +124,7 @@ public class AgeTests
     public void IsMinor_CustomThreshold_ReturnsExpectedResult(int value, int threshold, bool expected)
     {
         // Arrange
-        var age = new Age(value);
+        Age age = new Age(value);
 
         // Act
         bool result = age.IsMinor(threshold);
@@ -137,8 +137,8 @@ public class AgeTests
     public void Equality_SameValue_ReturnsTrue()
     {
         // Arrange
-        var age1 = new Age(25);
-        var age2 = new Age(25);
+        Age age1 = new Age(25);
+        Age age2 = new Age(25);
 
         // Act & Assert
         Assert.Equal(age1, age2);
@@ -149,8 +149,8 @@ public class AgeTests
     public void Equality_DifferentValue_ReturnsFalse()
     {
         // Arrange
-        var age1 = new Age(25);
-        var age2 = new Age(30);
+        Age age1 = new Age(25);
+        Age age2 = new Age(30);
 
         // Act & Assert
         Assert.NotEqual(age1, age2);
@@ -161,8 +161,8 @@ public class AgeTests
     public void GetHashCode_SameValue_ReturnsSameHashCode()
     {
         // Arrange
-        var age1 = new Age(25);
-        var age2 = new Age(25);
+        Age age1 = new Age(25);
+        Age age2 = new Age(25);
 
         // Act & Assert
         Assert.Equal(age1.GetHashCode(), age2.GetHashCode());
@@ -175,7 +175,7 @@ public class AgeTests
         const int value = 25;
 
         // Act
-        var age = Age.From(value);
+        Age age = Age.From(value);
 
         // Assert
         Assert.Equal(value, age.Value);
@@ -203,7 +203,7 @@ public class AgeTests
     public void TypeConverter_CanConvertFromInt()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Age>();
+        StrongInt32TypeConverter<Age> converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(int));
@@ -216,7 +216,7 @@ public class AgeTests
     public void TypeConverter_CanConvertFromString()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Age>();
+        StrongInt32TypeConverter<Age> converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(string));
@@ -229,10 +229,10 @@ public class AgeTests
     public void TypeConverter_ConvertFromInt_ReturnsAge()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Age>();
+        StrongInt32TypeConverter<Age> converter = new StrongInt32TypeConverter<Age>();
 
         // Act
-        var result = converter.ConvertFrom(25) as Age;
+        Age? result = converter.ConvertFrom(25) as Age;
 
         // Assert
         Assert.NotNull(result);
@@ -243,10 +243,10 @@ public class AgeTests
     public void TypeConverter_ConvertFromString_ReturnsAge()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Age>();
+        StrongInt32TypeConverter<Age> converter = new StrongInt32TypeConverter<Age>();
 
         // Act
-        var result = converter.ConvertFrom("25") as Age;
+        Age? result = converter.ConvertFrom("25") as Age;
 
         // Assert
         Assert.NotNull(result);
@@ -257,7 +257,7 @@ public class AgeTests
     public void TypeConverter_CanConvertFromGuid_ReturnsFalse()
     {
         // Arrange
-        var converter = new StrongInt32TypeConverter<Age>();
+        StrongInt32TypeConverter<Age> converter = new StrongInt32TypeConverter<Age>();
 
         // Act
         bool canConvert = converter.CanConvertFrom(typeof(Guid));
