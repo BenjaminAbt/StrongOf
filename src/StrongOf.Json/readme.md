@@ -1,6 +1,6 @@
 # StrongOf.Json
 
-System.Text.Json converters for [StrongOf](https://www.nuget.org/packages/StrongOf) types.
+System.Text.Json converters for [StrongOf](https://NuBrowse.com/packages/StrongOf) types.
 
 ## Recommended Usage - Register Once
 

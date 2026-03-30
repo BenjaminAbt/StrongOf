@@ -1,6 +1,6 @@
 # StrongOf.FluentValidation
 
-FluentValidation extensions for [StrongOf](https://www.nuget.org/packages/StrongOf) types.
+FluentValidation extensions for [StrongOf](https://NuBrowse.com/packages/StrongOf) types.
 
 ## Why Not `NotNull()`?
 
