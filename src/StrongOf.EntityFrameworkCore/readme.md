@@ -1,6 +1,6 @@
 # StrongOf.EntityFrameworkCore
 
-Entity Framework Core value converters for [StrongOf](https://www.nuget.org/packages/StrongOf/) strongly-typed primitives.
+Entity Framework Core value converters for [StrongOf](https://NuBrowse.com/packages/StrongOf/) strongly-typed primitives.
 Seamlessly persist strong types like `UserId`, `Email`, or `Amount` to and from the database - without losing type safety.
 
 ## Installation

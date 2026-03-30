@@ -1,6 +1,6 @@
 # StrongOf.AspNetCore
 
-ASP.NET Core integration for [StrongOf](https://www.nuget.org/packages/StrongOf) types. Includes MVC model binders, Minimal API validation, and OpenAPI schema transformation.
+ASP.NET Core integration for [StrongOf](https://NuBrowse.com/packages/StrongOf) types. Includes MVC model binders, Minimal API validation, and OpenAPI schema transformation.
 
 ## Installation
 

@@ -1,6 +1,6 @@
 # StrongOf.Domains
 
-Predefined strongly-typed domain models based on [StrongOf](https://www.nuget.org/packages/StrongOf) for common use cases.
+Predefined strongly-typed domain models based on [StrongOf](https://NuBrowse.com/packages/StrongOf) for common use cases.
 
 The namespace structure is deliberately designed so that namespace names do **not** collide with common class names you might use in your own codebase (e.g. `Address`, `Person`, `Network`).
 
