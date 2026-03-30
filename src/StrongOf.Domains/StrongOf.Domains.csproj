@@ -4,7 +4,6 @@
         <PackageId>StrongOf.Domains</PackageId>
         <IsPackable>true</IsPackable>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
-        <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     </PropertyGroup>
 
     <!-- Suppress MA0095 - Base classes (StrongString, StrongGuid, etc.) already implement Equals(object) correctly -->
