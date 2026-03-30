@@ -48,7 +48,7 @@
     <DebugType>portable</DebugType>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  
+
   <PropertyGroup Label="Performance">
     <!-- Enable Dynamic Profile-Guided Optimization for runtime performance -->
     <TieredPGO>true</TieredPGO>
@@ -70,6 +70,7 @@
     </Description>
     <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
     <RepositoryUrl>https://github.com/BenjaminAbt/StrongOf</RepositoryUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
     <!-- Central package icon for NuGet packages (file is included into the package via ItemGroup below) -->
     <PackageIcon>benjamin-abt-strongof.png</PackageIcon>
