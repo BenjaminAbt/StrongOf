@@ -30,7 +30,7 @@ public class Order
 
 ### Option 1: Register Converters Once with `ConfigureConventions` (Recommended)
 
-The best approach is to register converters **once** in `ConfigureConventions`, so every property of that type is automatically converted - no per-property configuration needed:
+For most applications, the best approach is to register converters once in `ConfigureConventions`, so every property of that type is automatically converted across the model:
 
 ```csharp
 public class AppDbContext : DbContext
@@ -39,24 +39,20 @@ public class AppDbContext : DbContext
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        // Register once - applies to ALL properties of these types across ALL entities
-        configurationBuilder.Properties<UserId>()
-            .HaveConversion<StrongOfValueConverter<UserId, Guid>>();
-
-        configurationBuilder.Properties<Email>()
-            .HaveConversion<StrongOfValueConverter<Email, string>>();
-
-        configurationBuilder.Properties<Amount>()
-            .HaveConversion<StrongOfValueConverter<Amount, decimal>>();
+        configurationBuilder.RegisterStrongOf<UserId, Guid>();
+        configurationBuilder.RegisterStrongOf<Email, string>();
+        configurationBuilder.RegisterStrongOf<Amount, decimal>();
     }
 }
 ```
 
-> **This is the recommended approach.** You register each strong type exactly once, and EF Core applies the converter everywhere that type appears - in any entity, in any `DbSet`. No per-property calls to `HasConversion` or `HasStrongOfConversion` are needed.
+> **This is the recommended approach.** You register each strong type once, and EF Core applies the converter everywhere that type appears.
 
-### Option 2: Per-Property Configuration with `HasStrongOfConversion`
+> `ConfigureConventions` uses EF Core's pre-convention activation path. `StrongOfValueConverter<TStrong, TTarget>` therefore exposes the public parameterless constructor EF Core expects for `HaveConversion<TConversion>()`.
 
-If you prefer explicit per-property control (e.g., only certain properties should be converted, or different column types):
+### Option 2: Configure Properties in `OnModelCreating`
+
+If you prefer explicit per-property control, or want the conversion next to property-specific facets such as length or precision, configure it in `OnModelCreating`:
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -204,8 +200,9 @@ decimal? total = await db.Orders
 
 ### Best Practices
 
-1. **Use `ConfigureConventions`** to register converters once - avoid repetitive per-property configuration.
-2. **Compare strong types against strong types** in LINQ, not against raw primitives.
-3. **Convert lists before querying** - use `StrongType.From(rawValues)` to create a `List<TStrong>` for `Contains` queries.
-4. **Format and transform client-side** - select entities first, then access `.Value` or call `.ToString()` in memory.
-5. **Test your queries** - always verify that your LINQ queries translate to SQL correctly by checking the generated SQL (e.g., via logging or `ToQueryString()`).
+1. **Prefer `ConfigureConventions`** when the same mapping should apply globally to every property of the strong type.
+2. **Use `OnModelCreating` with `HasStrongOfConversion`** when you want explicit mappings and property-specific facets in one place.
+3. **Compare strong types against strong types** in LINQ, not against raw primitives.
+4. **Convert lists before querying** - use `StrongType.From(rawValues)` to create a `List<TStrong>` for `Contains` queries.
+5. **Format and transform client-side** - select entities first, then access `.Value` or call `.ToString()` in memory.
+6. **Test your queries** - always verify that your LINQ queries translate to SQL correctly by checking the generated SQL (e.g., via logging or `ToQueryString()`).

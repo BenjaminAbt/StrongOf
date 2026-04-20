@@ -14,6 +14,10 @@ public static class StrongOfPropertyBuilderExtensions
     /// Configures the property to use a <see cref="StrongOfValueConverter{TStrong,TTarget}"/>
     /// for converting between the strong type and its underlying primitive.
     /// </summary>
+    /// <remarks>
+    /// Use this method in <c>OnModelCreating</c> when you want explicit, per-property EF Core mapping
+    /// in addition to or instead of model-wide configuration in <c>ConfigureConventions</c>.
+    /// </remarks>
     /// <typeparam name="TStrong">The concrete strong type.</typeparam>
     /// <typeparam name="TTarget">The underlying primitive type.</typeparam>
     /// <param name="builder">The property builder.</param>

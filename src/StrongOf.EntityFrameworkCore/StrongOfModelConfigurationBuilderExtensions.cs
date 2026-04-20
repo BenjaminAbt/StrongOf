@@ -13,6 +13,10 @@ namespace StrongOf.EntityFrameworkCore;
 /// Use these methods in <c>ConfigureConventions</c> to avoid configuring each
 /// strong type property individually.
 /// </para>
+/// <para>
+/// This is the preferred setup when the same converter should apply globally to every property
+/// of a given strong type throughout the model.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code>
@@ -29,6 +33,10 @@ public static class StrongOfModelConfigurationBuilderExtensions
     /// Registers a <see cref="StrongOfValueConverter{TStrong,TTarget}"/> convention so that
     /// every property of type <typeparamref name="TStrong"/> is automatically converted.
     /// </summary>
+    /// <remarks>
+    /// Use this as the recommended setup when the same conversion should apply model-wide for every
+    /// property of the strong type.
+    /// </remarks>
     /// <typeparam name="TStrong">The concrete strong type.</typeparam>
     /// <typeparam name="TTarget">The underlying primitive type.</typeparam>
     /// <param name="builder">The model configuration builder.</param>

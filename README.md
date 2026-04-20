@@ -278,7 +278,7 @@ dotnet add package StrongOf.EntityFrameworkCore
 
 ### Register Converters Once with `ConfigureConventions` (Recommended)
 
-Register each strong type once in `ConfigureConventions` and EF Core applies the converter globally across all entities and `DbSet`s - no per-property configuration required:
+For most applications, register each strong type once in `ConfigureConventions`. EF Core then applies the converter globally across all entities and `DbSet`s with no per-property configuration required:
 
 ```csharp
 public class AppDbContext : DbContext
@@ -288,22 +288,18 @@ public class AppDbContext : DbContext
 
     protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
     {
-        // Register once - applies everywhere these types appear
-        configurationBuilder.Properties<UserId>()
-            .HaveConversion<StrongOfValueConverter<UserId, Guid>>();
-
-        configurationBuilder.Properties<Email>()
-            .HaveConversion<StrongOfValueConverter<Email, string>>();
-
-        configurationBuilder.Properties<Amount>()
-            .HaveConversion<StrongOfValueConverter<Amount, decimal>>();
+        configurationBuilder.RegisterStrongOf<UserId, Guid>();
+        configurationBuilder.RegisterStrongOf<Email, string>();
+        configurationBuilder.RegisterStrongOf<Amount, decimal>();
     }
 }
 ```
 
-### Per-Property Configuration
+`ConfigureConventions` uses EF Core's pre-convention activation path. `StrongOfValueConverter<TStrong, TTarget>` supports this by exposing the public parameterless constructor EF Core expects for `HaveConversion<TConversion>()`.
 
-For explicit control over individual properties (e.g. column constraints):
+### Configure Strong Types in `OnModelCreating`
+
+If you want explicit control over individual properties or want the conversion right next to length, precision, or column-type settings, configure it in `OnModelCreating`:
 
 ```csharp
 protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -316,6 +312,13 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
         entity.Property(e => e.Email)
               .HasStrongOfConversion<Email, string>()
               .HasMaxLength(256);
+    });
+
+    modelBuilder.Entity<Order>(entity =>
+    {
+        entity.Property(e => e.Total)
+              .HasStrongOfConversion<Amount, decimal>()
+              .HasPrecision(18, 2);
     });
 }
 ```
@@ -333,7 +336,7 @@ See the [StrongOf.EntityFrameworkCore readme](src/StrongOf.EntityFrameworkCore/r
 
 ### Why No Source Generator for EF Core?
 
-The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type. A source generator would add Roslyn coupling complexity and contradicts the project's design philosophy (see FAQ below) - for zero practical benefit.
+The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type, while `OnModelCreating` remains available when you want more explicit per-property control. A source generator would add Roslyn coupling complexity and contradicts the project's design philosophy (see FAQ below) - for zero practical benefit.
 
 ## Usage with FluentValidation
 
