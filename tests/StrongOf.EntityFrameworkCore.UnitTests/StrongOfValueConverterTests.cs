@@ -1,5 +1,8 @@
 // Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
+using System.Reflection;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 using StrongOf.EntityFrameworkCore;
 using Xunit;
 
@@ -160,5 +163,87 @@ public class StrongOfValueConverterTests
         object? roundTripped = converter.ConvertFromProvider(providerValue!);
         Assert.IsType<TestDateTimeOffsetOf>(roundTripped);
         Assert.Equal(dto, ((TestDateTimeOffsetOf)roundTripped!).Value);
+    }
+
+    [Fact]
+    public void StrongOfValueConverter_DefaultConstructor_IsAvailableForConfigureConventions()
+    {
+        ConstructorInfo? constructor = typeof(StrongOfValueConverter<TestGuidOf, Guid>).GetConstructor(Type.EmptyTypes);
+        Assert.NotNull(constructor);
+    }
+
+    [Fact]
+    public void RegisterStrongOf_ConfigureConventions_BuildsModelAndConfiguresProviderType()
+    {
+        DbContextOptions<ConventionDbContext> options = CreateOptions<ConventionDbContext>();
+        using ConventionDbContext dbContext = new(options);
+
+        IProperty property = dbContext.Model.FindEntityType(typeof(TestEntity))!.FindProperty(nameof(TestEntity.Id))!;
+        Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter? converter = property.GetValueConverter();
+
+        Assert.NotNull(converter);
+        Assert.IsType<StrongOfValueConverter<TestGuidOf, Guid>>(converter);
+        Assert.Equal(typeof(TestGuidOf), converter.ModelClrType);
+        Assert.Equal(typeof(Guid), converter.ProviderClrType);
+    }
+
+    [Fact]
+    public void HasStrongOfConversion_OnModelCreating_BuildsModelAndConfiguresProviderType()
+    {
+        DbContextOptions<PropertyBuilderDbContext> options = CreateOptions<PropertyBuilderDbContext>();
+        using PropertyBuilderDbContext dbContext = new(options);
+
+        IProperty property = dbContext.Model.FindEntityType(typeof(TestEntity))!.FindProperty(nameof(TestEntity.Id))!;
+        Microsoft.EntityFrameworkCore.Storage.ValueConversion.ValueConverter? converter = property.GetValueConverter();
+
+        Assert.NotNull(converter);
+        Assert.IsType<StrongOfValueConverter<TestGuidOf, Guid>>(converter);
+        Assert.Equal(typeof(TestGuidOf), converter.ModelClrType);
+        Assert.Equal(typeof(Guid), converter.ProviderClrType);
+    }
+
+    private static DbContextOptions<TContext> CreateOptions<TContext>()
+        where TContext : DbContext
+    {
+        return new DbContextOptionsBuilder<TContext>()
+            .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
+            .Options;
+    }
+
+    private sealed class TestEntity
+    {
+        public TestGuidOf Id { get; set; } = null!;
+
+        public TestStringOf Name { get; set; } = null!;
+    }
+
+    private sealed class ConventionDbContext(DbContextOptions<ConventionDbContext> options)
+        : DbContext(options)
+    {
+        public DbSet<TestEntity> Entities => Set<TestEntity>();
+
+        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder.RegisterStrongOf<TestGuidOf, Guid>();
+            configurationBuilder.RegisterStrongOf<TestStringOf, string>();
+        }
+    }
+
+    private sealed class PropertyBuilderDbContext(DbContextOptions<PropertyBuilderDbContext> options)
+        : DbContext(options)
+    {
+        public DbSet<TestEntity> Entities => Set<TestEntity>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<TestEntity>(entity =>
+            {
+                entity.Property(e => e.Id)
+                      .HasStrongOfConversion<TestGuidOf, Guid>();
+
+                entity.Property(e => e.Name)
+                      .HasStrongOfConversion<TestStringOf, string>();
+            });
+        }
     }
 }
