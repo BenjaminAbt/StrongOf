@@ -136,7 +136,7 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Label="Default Analyzers">
+  <ItemGroup Label="Default Analyzers" Condition="'$(IsRoslynComponent)' != 'true'">
     <PackageReference Include="Roslynator.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

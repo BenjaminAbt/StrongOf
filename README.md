@@ -132,9 +132,67 @@ public sealed class Email(string value) : StrongString<Email>(value)
 
 This keeps construction explicit and allows validation without moving logic into the primary constructor.
 
-### Native AOT / trimming note
+### Native AOT / trimming - the source generator
 
-If you target Native AOT or aggressive trimming and want to avoid the fallback expression-based factory path entirely, implement the static abstract `Create` member on your concrete type:
+The shipped Roslyn source generator turns a single attribute-marked partial class into a fully
+implemented strong type, with **zero** Expression-based factory dependency. The result is fully
+Native AOT and trim safe.
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[StrongGuid]   public partial class UserId;
+[StrongString] public partial class Email;
+[StrongInt32]  public partial class Quantity;
+[StrongDecimal] public partial class Amount;
+```
+
+The generator emits the primary constructor, the base type (`StrongGuid<UserId>`,
+`StrongString<Email>`, …) and an AOT-friendly static `Create` method that the generic `From(...)`
+dispatch resolves directly to `new TStrong(value)`. No reflection, no `Expression.Compile`.
+
+Available marker attributes (in `StrongOf.SourceGeneration`):
+
+| Attribute | Wraps |
+|-----------|-------|
+| `[StrongBoolean]` | `bool` |
+| `[StrongChar]` | `char` |
+| `[StrongDateTime]` | `DateTime` |
+| `[StrongDateTimeOffset]` | `DateTimeOffset` |
+| `[StrongDecimal]` | `decimal` |
+| `[StrongDouble]` | `double` |
+| `[StrongGuid]` | `Guid` |
+| `[StrongInt32]` | `int` |
+| `[StrongInt64]` | `long` |
+| `[StrongString]` | `string` |
+| `[StrongTimeSpan]` | `TimeSpan` |
+
+You can still extend the type with your own partial - the generator only contributes the
+constructor / base type / `Create` member, never the body:
+
+```csharp
+[StrongString]
+public partial class Email
+{
+    public bool LooksLikeEmail() => Value.Contains('@');
+}
+```
+
+The generator ships inside the `StrongOf` NuGet package (no extra reference required) and emits
+two diagnostics where appropriate:
+
+- `STRONG001`: the marked class must be declared `partial`.
+- `STRONG002`: the marked class must be top-level (nested types are not supported).
+
+If you want to keep the classic hand-written form, you still can - just declare the strong type
+the traditional way:
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value);
+```
+
+For full AOT/trim safety with the hand-written form, override the static abstract `Create`
+member yourself:
 
 ```csharp
 public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
@@ -143,7 +201,7 @@ public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
 }
 ```
 
-This keeps `From(...)` AOT-friendly while preserving the normal API shape.
+The generator does exactly this for you.
 
 ## Usage with StrongOf.Domains
 
@@ -513,9 +571,21 @@ __Why no records?__
 
 Records (currently) have a few disadvantages, which is why they are not suitable for this type of class. For example, it is currently not possible to validly inherit `GetHashCode`. `sealed` on `GetHashCode` is only available if the record itself is `sealed`, which does not make sense here.
 
-__Why no Code Generator?__
+__Why a Code Generator now?__
 
-Code generators are great, were my first idea too, but have proven to be a disadvantage in everyday life, e.g. when implementing generic extensions / implementations. This library is based on the experience of other libraries that have tended to be too large and their disadvantages.
+For years the answer was: code generators add Roslyn coupling and tend to fight generic extensions
+or implementations. The hand-written form (`public sealed class UserId(Guid value) : StrongGuid<UserId>(value);`)
+remained intentionally tiny on purpose.
+
+The decisive change is **Native AOT / trimming**: the generic `From(...)` path historically relied
+on an `Expression`-compiled factory delegate, which is incompatible with AOT and aggressive trimming.
+Implementing the `IStrongOf<TTarget, TSelf>.Create` member by hand on every type is mechanical
+boilerplate - the perfect candidate for a tiny, opt-in, focused source generator.
+
+The generator only emits the constructor, the base type and the `Create` method. It never
+generates business logic, never generates JSON converters, EF converters or model binders, and it
+never replaces the existing hand-written form - which still works exactly as before. See the
+"Native AOT / trimming" section above for the full surface.
 
 __Why no structs?__
 
