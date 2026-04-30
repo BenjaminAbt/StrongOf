@@ -93,6 +93,58 @@ The clearest distinction to other approaches is that all `StrongOf` types inheri
 private sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
 ```
 
+Prefer direct instantiation with `new` in hot paths:
+
+```csharp
+UserId userId1 = new(Guid.NewGuid());
+UserId userId2 = UserId.From(Guid.NewGuid());
+```
+
+`From(...)` is intended for generic scenarios where the concrete strong type is not known statically.
+
+### Bulk conversion helpers
+
+For collections of primitive values, StrongOf provides dedicated conversion helpers:
+
+```csharp
+Guid[] ids = [Guid.NewGuid(), Guid.NewGuid()];
+
+List<UserId>? list = UserId.From(ids);
+UserId[]? array = UserId.FromArray(ids);
+UserId[] spanArray = UserId.FromSpan(ids);
+```
+
+Use `FromArray(...)` or `FromSpan(...)` when you want a compact array result with a single allocation.
+
+### Validation helpers for custom domain types
+
+If you build your own validated domain types, prefer explicit factory methods over implicit conversions:
+
+```csharp
+public sealed class Email(string value) : StrongString<Email>(value)
+{
+    public static bool TryCreate(string? value, out Email? result)
+        => StrongValidation.TryCreate(value, IsValid, static v => new Email(v), out result);
+
+    private static bool IsValid(string value) => value.Contains('@');
+}
+```
+
+This keeps construction explicit and allows validation without moving logic into the primary constructor.
+
+### Native AOT / trimming note
+
+If you target Native AOT or aggressive trimming and want to avoid the fallback expression-based factory path entirely, implement the static abstract `Create` member on your concrete type:
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
+{
+    public static UserId Create(Guid value) => new(value);
+}
+```
+
+This keeps `From(...)` AOT-friendly while preserving the normal API shape.
+
 ## Usage with StrongOf.Domains
 
 `StrongOf.Domains` ships a collection of ready-to-use strong types organized into namespaces by domain area:
@@ -175,6 +227,8 @@ JsonSerializerOptions serializeOptions = new JsonSerializerOptions()
 
 string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
 ```
+
+`AddStrongOfConverters()` registers the built-in `StrongOfJsonConverterFactory`, so all built-in StrongOf base types are covered without per-type registration.
 
 If you want explicit control, you can still register individual converters in `JsonSerializerOptions`:
 
@@ -297,6 +351,17 @@ public class AppDbContext : DbContext
 
 `ConfigureConventions` uses EF Core's pre-convention activation path. `StrongOfValueConverter<TStrong, TTarget>` supports this by exposing the public parameterless constructor EF Core expects for `HaveConversion<TConversion>()`.
 
+If your strong types live in one or more assemblies, you can also register them by assembly scan:
+
+```csharp
+protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
+{
+    configurationBuilder.RegisterStrongOfFromAssembly(typeof(UserId).Assembly);
+}
+```
+
+This is convenient for larger codebases with many strong types. For trim-sensitive applications, the explicit per-type registration remains the safest option.
+
 ### Configure Strong Types in `OnModelCreating`
 
 If you want explicit control over individual properties or want the conversion right next to length, precision, or column-type settings, configure it in `OnModelCreating`:
@@ -340,7 +405,7 @@ The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all pe
 
 ## Usage with FluentValidation
 
-FluentValidation is a great library for validating models; especially popular in the ASP.NET Core world.\
+FluentValidation is a great library for validating models; especially popular in the ASP.NET Core world.
 Therefore, separate validations are available for `StrongOf` models, which are constantly being expanded.
 
 In order not to forget the namespace, separate methods are available that differ from the default ValidationContext.
@@ -352,6 +417,8 @@ public class MySubmitModel
     //  marked as not null, but can still be null at 
     //  runtime if no value has been passed.
     public MyStrongString MyUserName { get; set; } = null!;
+
+    public UserId UserId { get; set; } = null!;
 }
 
 public class MySubmitModelValidator : AbstractValidator<MySubmitModel>
@@ -362,9 +429,32 @@ public class MySubmitModelValidator : AbstractValidator<MySubmitModel>
             .HasValue() // not NotNull
             .WithMessage("No user name passed.");
 
-        // more validations...
+        RuleFor(x => x.MyUserName)
+            .IsNotNull();
+
+        RuleFor(x => x.UserId)
+            .HasNonDefaultValue<MySubmitModel, UserId, Guid>();
+
+        RuleFor(x => x.UserId)
+            .ValueMust<MySubmitModel, UserId, Guid>(value => value != Guid.Empty);
+    }
+}
 ```
 
+There are also generic rules for all StrongOf types:
+
+```csharp
+RuleFor(x => x.SomeStrongValue)
+    .IsNotNull();
+
+RuleFor(x => x.SomeStrongValue)
+    .HasNonDefaultValue<MyModel, SomeStrongValue, Guid>();
+
+RuleFor(x => x.SomeStrongValue)
+    .ValueMust<MyModel, SomeStrongValue, Guid>(value => value != Guid.Empty);
+```
+
+These are useful for non-string strong types where `HasValue()` is not expressive enough.
 
 ## Performance matters
 

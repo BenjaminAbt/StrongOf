@@ -1,5 +1,6 @@
 ﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 using StrongOf.Factories;
@@ -39,10 +40,9 @@ namespace StrongOf;
 /// <param name="value">The underlying value to wrap.</param>
 public abstract class StrongOf<TTarget, TStrong>(TTarget value)
         : IStrongOf<TTarget, TStrong>, IEquatable<StrongOf<TTarget, TStrong>>, IEquatable<TTarget>
-    where TStrong : StrongOf<TTarget, TStrong>
+    where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
 {
     private static readonly Func<TTarget, TStrong> s_factoryWithParameter;
-    private static readonly EqualityComparer<TTarget> s_comparer = EqualityComparer<TTarget>.Default;
 
     /// <summary>
     /// Gets the underlying primitive value.
@@ -55,10 +55,12 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// </example>
     public TTarget Value { get; } = value;
 
+#pragma warning disable IL2026, IL3050 // Static ctor uses Expression.Compile (RequiresDynamicCode/UnreferencedCode); annotated on factory.
     static StrongOf()
     {
         s_factoryWithParameter = StrongOfInstanceFactory.CreateWithOneParameterDelegate<TStrong, TTarget>();
     }
+#pragma warning restore IL2026, IL3050
 
     // From
 
@@ -93,20 +95,27 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// }
     /// </code>
     /// </example>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TStrong From(TTarget value)
     {
-        return s_factoryWithParameter(value);
+        // Dispatch via the static abstract member on IStrongOf<TTarget, TStrong>.
+        // When TStrong is a sealed concrete type the JIT can specialize / devirtualize
+        // and -- if the derived type overrides Create with a direct "new TStrong(value)"
+        // implementation -- the call site becomes equivalent to "new TStrong(value)",
+        // making this AOT- and trim-safe. The default implementation (provided by this
+        // base class) falls back to a cached Expression-compiled delegate.
+        return TStrong.Create(value);
     }
 
     /// <summary>
-    /// Creates a new instance of the strong type from the specified value.
-    /// This is the <see cref="IStrongOf{TTarget, TSelf}"/> interface implementation
-    /// that enables compile-time safe factory usage in generic code.
+    /// Default implementation of <see cref="IStrongOf{TTarget, TSelf}.Create(TTarget)"/>.
+    /// Uses a cached factory delegate (Expression-compiled in the static constructor).
+    /// Derived sealed types may override this with a direct <c>new TStrong(value)</c>
+    /// to remove the reflection dependency entirely (AOT/trim friendly).
     /// </summary>
     /// <param name="value">The underlying value to wrap.</param>
     /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static TStrong IStrongOf<TTarget, TStrong>.Create(TTarget value)
     {
         return s_factoryWithParameter(value);
@@ -135,7 +144,6 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// List&lt;UserId&gt;? nullResult = UserId.From((IEnumerable&lt;Guid&gt;?)null); // Returns null
     /// </code>
     /// </example>
-    [MethodImpl(MethodImplOptions.AggressiveOptimization)]
     [return: NotNullIfNotNull(nameof(source))]
     public static List<TStrong>? From(IEnumerable<TTarget>? source)
     {
@@ -166,6 +174,17 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
             return list;
         }
 
+        // Fast path for IReadOnlyList<T> - indexer access without enumerator allocation
+        if (source is IReadOnlyList<TTarget> rol)
+        {
+            List<TStrong> list = new(rol.Count);
+            for (int i = 0; i < rol.Count; i++)
+            {
+                list.Add(From(rol[i]));
+            }
+            return list;
+        }
+
         // Pre-size list when possible and avoid LINQ iterator allocations
         if (source is ICollection<TTarget> c)
         {
@@ -180,7 +199,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
         if (source is IReadOnlyCollection<TTarget> roc)
         {
             List<TStrong> list = new(roc.Count);
-            foreach (TTarget item in source)
+            foreach (TTarget item in roc)
             {
                 list.Add(From(item));
             }
@@ -198,13 +217,51 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
         }
     }
 
+    /// <summary>
+    /// Creates an array of strong types from a <see cref="ReadOnlySpan{T}"/> of underlying values.
+    /// Allocates exactly one array; no enumerator or list re-sizing.
+    /// </summary>
+    /// <param name="source">The source span of values to convert.</param>
+    /// <returns>A new array containing the converted strong types.</returns>
+    public static TStrong[] FromSpan(ReadOnlySpan<TTarget> source)
+    {
+        if (source.Length == 0)
+        {
+            return [];
+        }
+
+        TStrong[] result = new TStrong[source.Length];
+        for (int i = 0; i < source.Length; i++)
+        {
+            result[i] = From(source[i]);
+        }
+        return result;
+    }
+
+    /// <summary>
+    /// Creates an array of strong types from an array of underlying values.
+    /// Returns a new array of the same length; the source is not retained.
+    /// </summary>
+    /// <param name="source">The source array of values to convert. Can be <c>null</c>.</param>
+    /// <returns>A new array of strong types, or <c>null</c> if <paramref name="source"/> is <c>null</c>.</returns>
+    [return: NotNullIfNotNull(nameof(source))]
+    public static TStrong[]? FromArray(TTarget[]? source)
+    {
+        if (source is null)
+        {
+            return null;
+        }
+
+        return FromSpan(source);
+    }
+
     // Operators
 
     /// <summary>
     /// Determines whether two specified instances of <see cref="StrongOf{TTarget, TStrong}"/> are equal.
     /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare. Can be a <typeparamref name="TTarget"/> value or another <see cref="StrongOf{TTarget, TStrong}"/>.</param>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
     /// <returns><c>true</c> if both values are equal; otherwise, <c>false</c>.</returns>
     /// <example>
     /// <code>
@@ -212,10 +269,47 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// var id2 = new UserId(Guid.Parse("550e8400-e29b-41d4-a716-446655440000"));
     ///
     /// bool equal = id1 == id2; // true
-    /// bool equalToRaw = id1 == Guid.Parse("550e8400-e29b-41d4-a716-446655440000"); // true
     /// </code>
     /// </example>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator ==(StrongOf<TTarget, TStrong>? left, StrongOf<TTarget, TStrong>? right)
+    {
+        if (ReferenceEquals(left, right))
+        {
+            return true;
+        }
+
+        if (left is null || right is null)
+        {
+            return false;
+        }
+
+        return EqualityComparer<TTarget>.Default.Equals(left.Value, right.Value);
+    }
+
+    /// <summary>
+    /// Determines whether two specified instances of <see cref="StrongOf{TTarget, TStrong}"/> are not equal.
+    /// </summary>
+    /// <param name="left">The first instance to compare.</param>
+    /// <param name="right">The second instance to compare.</param>
+    /// <returns><c>true</c> if the values are not equal; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool operator !=(StrongOf<TTarget, TStrong>? left, StrongOf<TTarget, TStrong>? right)
+    {
+        return (left == right) is false;
+    }
+
+    /// <summary>
+    /// Legacy <c>object</c>-based equality operator. Hidden from IntelliSense to discourage
+    /// accidental cross-type or boxed comparisons. Prefer the typed
+    /// <see cref="operator ==(StrongOf{TTarget, TStrong}?, StrongOf{TTarget, TStrong}?)"/> overload
+    /// or <see cref="Equals(StrongOf{TTarget, TStrong}?)"/>.
+    /// </summary>
+    /// <param name="strong">The strong type instance.</param>
+    /// <param name="other">An arbitrary object to compare with.</param>
+    /// <returns><c>true</c> if both represent the same value.</returns>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator ==(StrongOf<TTarget, TStrong>? strong, object? other)
     {
         if (strong is null)
@@ -223,26 +317,27 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
             return other is null;
         }
 
-        if (other is TTarget targetValue)
-        {
-            return s_comparer.Equals(strong.Value, targetValue);
-        }
-
         if (other is StrongOf<TTarget, TStrong> otherStrong)
         {
-            return s_comparer.Equals(strong.Value, otherStrong.Value);
+            return EqualityComparer<TTarget>.Default.Equals(strong.Value, otherStrong.Value);
+        }
+
+        if (other is TTarget targetValue)
+        {
+            return EqualityComparer<TTarget>.Default.Equals(strong.Value, targetValue);
         }
 
         return false;
     }
 
     /// <summary>
-    /// Determines whether two specified instances of <see cref="StrongOf{TTarget, TStrong}"/> are not equal.
+    /// Legacy inequality counterpart. Hidden from IntelliSense.
     /// </summary>
-    /// <param name="strong">The first instance to compare.</param>
-    /// <param name="other">The object to compare.</param>
-    /// <returns><c>true</c> if the values are not equal; otherwise, <c>false</c>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    /// <param name="strong">The strong type instance.</param>
+    /// <param name="other">An arbitrary object to compare with.</param>
+    /// <returns><c>true</c> if not equal.</returns>
+    [EditorBrowsable(EditorBrowsableState.Never)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool operator !=(StrongOf<TTarget, TStrong>? strong, object? other)
     {
         return (strong == other) is false;
@@ -259,7 +354,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// This method supports comparison with both the underlying <typeparamref name="TTarget"/> type
     /// and other <see cref="StrongOf{TTarget, TStrong}"/> instances.
     /// </remarks>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override bool Equals(object? other)
     {
         if (other is null)
@@ -274,12 +369,12 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
 
         if (other is StrongOf<TTarget, TStrong> strong)
         {
-            return s_comparer.Equals(Value, strong.Value);
+            return EqualityComparer<TTarget>.Default.Equals(Value, strong.Value);
         }
 
         if (other is TTarget target)
         {
-            return s_comparer.Equals(Value, target);
+            return EqualityComparer<TTarget>.Default.Equals(Value, target);
         }
 
         return false;
@@ -290,7 +385,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// </summary>
     /// <param name="other">The strong type to compare with the current instance.</param>
     /// <returns><c>true</c> if the specified strong type has the same underlying value; otherwise, <c>false</c>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public virtual bool Equals(StrongOf<TTarget, TStrong>? other)
     {
         if (other is null)
@@ -298,7 +393,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
             return false;
         }
 
-        return s_comparer.Equals(Value, other.Value);
+        return EqualityComparer<TTarget>.Default.Equals(Value, other.Value);
     }
 
     /// <summary>
@@ -312,7 +407,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// bool isEqual = userId.Equals(Guid.Parse("550e8400-e29b-41d4-a716-446655440000")); // true
     /// </code>
     /// </example>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool Equals(TTarget? other)
     {
         if (other is null)
@@ -320,7 +415,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
             return false;
         }
 
-        return s_comparer.Equals(Value, other);
+        return EqualityComparer<TTarget>.Default.Equals(Value, other);
     }
 
     /// <summary>
@@ -330,10 +425,10 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// <remarks>
     /// Two instances with equal underlying values will have the same hash code.
     /// </remarks>
-    [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override int GetHashCode()
     {
-        return s_comparer.GetHashCode(Value!);
+        return EqualityComparer<TTarget>.Default.GetHashCode(Value!);
     }
 
     // ToString

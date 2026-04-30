@@ -1,5 +1,6 @@
 ﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -8,6 +9,13 @@ namespace StrongOf.Factories;
 /// <summary>
 /// A factory class for creating Lambda Expressions.
 /// </summary>
+/// <remarks>
+/// This factory uses <see cref="LambdaExpression"/>.Compile() internally, which is incompatible with
+/// Native AOT and aggressive trimming. For AOT-friendly scenarios, override the static abstract
+/// <c>IStrongOf&lt;TTarget, TSelf&gt;.Create</c> in your derived strong type with a direct
+/// <c>new TStrong(value)</c> implementation. The base class only falls back to this factory
+/// when no override is provided.
+/// </remarks>
 public static class StrongOfInstanceFactory
 {
     /// <summary>
@@ -25,6 +33,8 @@ public static class StrongOfInstanceFactory
     /// TestClass instance = func.Invoke(42);
     /// </code>
     /// </example>
+    [RequiresDynamicCode("Uses Expression.Compile which generates code at runtime; not Native AOT compatible.")]
+    [RequiresUnreferencedCode("Looks up constructors via reflection; trimming may remove the target constructor.")]
     public static LambdaExpression CreateWithOneParameterExpression<TStrong, TTarget>()
         where TStrong : class, IStrongOf
     {
@@ -47,6 +57,8 @@ public static class StrongOfInstanceFactory
     /// <typeparam name="TStrong">The type of the object to be created.</typeparam>
     /// <typeparam name="TTarget">The type of the parameter for the constructor.</typeparam>
     /// <returns>A Func delegate that represents the creation of an object of type TStrong with a constructor parameter of type TTarget.</returns>
+    [RequiresDynamicCode("Uses Expression.Compile which generates code at runtime; not Native AOT compatible.")]
+    [RequiresUnreferencedCode("Looks up constructors via reflection; trimming may remove the target constructor.")]
     public static Func<TTarget, TStrong> CreateWithOneParameterDelegate<TStrong, TTarget>()
         where TStrong : class, IStrongOf
     {

@@ -77,4 +77,45 @@ public static class Strong
     {
         return strong?.IsEmpty() is false;
     }
+
+    /// <summary>
+    /// Determines whether the underlying value of the specified strong type equals the default value
+    /// for the underlying primitive (<c>default(TTarget)</c>).
+    /// </summary>
+    /// <typeparam name="TStrong">The concrete strong type.</typeparam>
+    /// <typeparam name="TTarget">The underlying primitive type.</typeparam>
+    /// <param name="strong">The strong type instance to inspect. May be <c>null</c>.</param>
+    /// <returns>
+    /// <c>true</c> if <paramref name="strong"/> is <c>null</c> or its <c>Value</c> equals
+    /// <c>default(TTarget)</c>; otherwise <c>false</c>.
+    /// </returns>
+    /// <remarks>
+    /// Generalises <see cref="IsNullOrEmpty{TStrong}"/> beyond strings: works for <c>Guid</c>
+    /// (compares with <see cref="Guid.Empty"/>), numerics (compares with <c>0</c>),
+    /// <see cref="DateTime"/> (compares with <see cref="DateTime.MinValue"/>) and so on.
+    /// </remarks>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static bool IsDefault<TStrong, TTarget>(TStrong? strong)
+        where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
+    {
+        if (strong is null)
+        {
+            return true;
+        }
+
+        return EqualityComparer<TTarget>.Default.Equals(strong.Value, default!);
+    }
+
+    /// <summary>
+    /// Inverse of <see cref="IsDefault{TStrong,TTarget}"/>: returns <c>true</c> when the strong
+    /// type instance is non-null and its underlying value differs from <c>default(TTarget)</c>.
+    /// </summary>
+    /// <typeparam name="TStrong">The concrete strong type.</typeparam>
+    /// <typeparam name="TTarget">The underlying primitive type.</typeparam>
+    /// <param name="strong">The strong type instance to inspect.</param>
+    /// <returns><c>true</c> if non-null and not the default underlying value.</returns>
+    [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
+    public static bool HasNonDefaultValue<TStrong, TTarget>(TStrong? strong)
+        where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
+        => !IsDefault<TStrong, TTarget>(strong);
 }
