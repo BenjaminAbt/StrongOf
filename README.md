@@ -138,11 +138,19 @@ The shipped Roslyn source generator turns a single attribute-marked partial clas
 implemented strong type, with **zero** Expression-based factory dependency. The result is fully
 Native AOT and trim safe.
 
+Recommended style is the generic form `Strong<TTarget>`:
+
+- Preferred: `[Strong<Guid>]`
+- Also supported: `[StrongGuid]` and `[Strong(typeof(Guid))]`
+- Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
+
 ```csharp
 using StrongOf.SourceGeneration;
 
-[StrongGuid]   public partial class UserId;
+[Strong<Guid>] public partial class UserId;
+[StrongGuid]   public partial class LegacyUserId;
 [StrongString] public partial class Email;
+[Strong<string>] public partial class Alias;
 [StrongInt32]  public partial class Quantity;
 [StrongDecimal] public partial class Amount;
 ```
@@ -155,6 +163,7 @@ Available marker attributes (in `StrongOf.SourceGeneration`):
 
 | Attribute | Wraps |
 |-----------|-------|
+| `[Strong<TTarget>]` | Generic form (same supported primitive set as below) |
 | `[StrongBoolean]` | `bool` |
 | `[StrongChar]` | `char` |
 | `[StrongDateTime]` | `DateTime` |
@@ -183,6 +192,95 @@ two diagnostics where appropriate:
 
 - `STRONG001`: the marked class must be declared `partial`.
 - `STRONG002`: the marked class must be top-level (nested types are not supported).
+
+### Migration guide: StrongOf v2 -> v3 (Source Generators)
+
+This section shows how to migrate existing hand-written strong types to the v3 generator-based style.
+
+1. Update NuGet package(s) to v3 (`StrongOf` and optional integration packages).
+2. Add `using StrongOf.SourceGeneration;` in files where you declare strong types.
+3. Replace hand-written inheritance with attribute + `partial class`.
+4. Keep domain-specific behavior in additional partial class bodies.
+
+#### 1) Basic type migration
+
+Before (v2 / hand-written):
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
+{
+    public static UserId Create(Guid value) => new(value);
+}
+```
+
+After (v3 / recommended):
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong<Guid>]
+public partial class UserId;
+```
+
+Also valid:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[StrongGuid]
+public partial class UserId;
+```
+
+#### 2) Keep custom domain methods/validation
+
+If your old type had custom members, keep them in a separate partial body:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong<string>]
+public partial class Email;
+
+public partial class Email
+{
+    public bool LooksLikeEmail() => Value.Contains('@');
+}
+```
+
+#### 3) Interop for other source generators
+
+If other generators in your solution need explicit primitive metadata, add:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong(typeof(Guid))]
+public partial class UserId;
+```
+
+`[Strong(typeof(...))]` is optional for StrongOf itself, but useful as metadata for external generators.
+
+#### 4) Quick migration checklist
+
+- Replace `public sealed class X(T value) : StrongY<X>(value)` with `[Strong<T>] public partial class X;`
+- Remove hand-written static `Create` methods (generator emits them)
+- Keep only domain logic in partial class bodies
+- Build and run tests to confirm behavior parity
+
+### Interop metadata for other source generators
+
+If you use additional source generators and want to expose the primitive target type as explicit
+metadata, you can use `Strong(typeof(...))` directly as your single marker:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong(typeof(Guid))]
+public partial class UserId;
+```
+
+`StrongAttribute` (non-generic form) is provided for interoperability and discovery by external generators. StrongOf's
+own generator does not require it.
 
 If you want to keep the classic hand-written form, you still can - just declare the strong type
 the traditional way:

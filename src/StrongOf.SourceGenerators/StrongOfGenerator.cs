@@ -1,7 +1,6 @@
 // Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Text;
 using System.Threading;
 using Microsoft.CodeAnalysis;
@@ -63,6 +62,30 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
             context.RegisterSourceOutput(validTargets, static (spc, target) => Emit(spc, target));
         }
+
+        IncrementalValuesProvider<TargetType?> genericTargets = context.SyntaxProvider
+            .ForAttributeWithMetadataName(
+                AttributeNamespace + ".StrongAttribute`1",
+                static (node, _) => node is ClassDeclarationSyntax,
+                static (ctx, ct) => ToGenericTarget(ctx, ct));
+
+        IncrementalValuesProvider<TargetType> validGenericTargets = genericTargets
+            .Where(static t => t is not null)
+            .Select(static (t, _) => t!.Value);
+
+        context.RegisterSourceOutput(validGenericTargets, static (spc, target) => Emit(spc, target));
+
+        IncrementalValuesProvider<TargetType?> typeofTargets = context.SyntaxProvider
+            .ForAttributeWithMetadataName(
+                AttributeNamespace + ".StrongAttribute",
+                static (node, _) => node is ClassDeclarationSyntax,
+                static (ctx, ct) => ToTypeofTarget(ctx, ct));
+
+        IncrementalValuesProvider<TargetType> validTypeofTargets = typeofTargets
+            .Where(static t => t is not null)
+            .Select(static (t, _) => t!.Value);
+
+        context.RegisterSourceOutput(validTypeofTargets, static (spc, target) => Emit(spc, target));
     }
 
     private static TargetType? ToTarget(
@@ -111,8 +134,239 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             DiagnosticLocation: classDecl.Identifier.GetLocation());
     }
 
+    private static TargetType? ToGenericTarget(
+        GeneratorAttributeSyntaxContext context,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (context.TargetSymbol is not INamedTypeSymbol typeSymbol)
+        {
+            return null;
+        }
+
+        if (context.TargetNode is not ClassDeclarationSyntax classDecl)
+        {
+            return null;
+        }
+
+        if (context.Attributes.Length == 0)
+        {
+            return null;
+        }
+
+        AttributeData attribute = context.Attributes[0];
+        if (attribute.AttributeClass?.TypeArguments.Length != 1)
+        {
+            return null;
+        }
+
+        ITypeSymbol targetType = attribute.AttributeClass.TypeArguments[0];
+        if (!TryMapTargetType(targetType, out string baseTypeName, out string primitiveType))
+        {
+            return new TargetType(
+                TypeName: typeSymbol.Name,
+                Namespace: typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
+                BaseTypeName: string.Empty,
+                PrimitiveType: string.Empty,
+                IsPartial: false,
+                IsNested: false,
+                DiagnosticLocation: classDecl.Identifier.GetLocation(),
+                UnsupportedTypeName: targetType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat));
+        }
+
+        bool isPartial = false;
+        foreach (SyntaxToken modifier in classDecl.Modifiers)
+        {
+            if (modifier.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.PartialKeyword))
+            {
+                isPartial = true;
+                break;
+            }
+        }
+
+        bool isNested = typeSymbol.ContainingType is not null;
+        string? namespaceName = typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } targetNs
+            ? targetNs.ToDisplayString()
+            : null;
+
+        return new TargetType(
+            TypeName: typeSymbol.Name,
+            Namespace: namespaceName,
+            BaseTypeName: baseTypeName,
+            PrimitiveType: primitiveType,
+            IsPartial: isPartial,
+            IsNested: isNested,
+            DiagnosticLocation: classDecl.Identifier.GetLocation());
+    }
+
+    private static TargetType? ToTypeofTarget(
+        GeneratorAttributeSyntaxContext context,
+        CancellationToken cancellationToken)
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        if (context.TargetSymbol is not INamedTypeSymbol typeSymbol)
+        {
+            return null;
+        }
+
+        if (context.TargetNode is not ClassDeclarationSyntax classDecl)
+        {
+            return null;
+        }
+
+        if (context.Attributes.Length == 0)
+        {
+            return null;
+        }
+
+        AttributeData attribute = context.Attributes[0];
+        if (attribute.ConstructorArguments.Length != 1)
+        {
+            return null;
+        }
+
+        TypedConstant argument = attribute.ConstructorArguments[0];
+        if (argument.Kind != TypedConstantKind.Type || argument.Value is not ITypeSymbol targetType)
+        {
+            return null;
+        }
+
+        if (!TryMapTargetType(targetType, out string baseTypeName, out string primitiveType))
+        {
+            return new TargetType(
+                TypeName: typeSymbol.Name,
+                Namespace: typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
+                BaseTypeName: string.Empty,
+                PrimitiveType: string.Empty,
+                IsPartial: false,
+                IsNested: false,
+                DiagnosticLocation: classDecl.Identifier.GetLocation(),
+                UnsupportedTypeName: targetType.ToDisplayString(SymbolDisplayFormat.CSharpErrorMessageFormat));
+        }
+
+        bool isPartial = false;
+        foreach (SyntaxToken modifier in classDecl.Modifiers)
+        {
+            if (modifier.IsKind(Microsoft.CodeAnalysis.CSharp.SyntaxKind.PartialKeyword))
+            {
+                isPartial = true;
+                break;
+            }
+        }
+
+        bool isNested = typeSymbol.ContainingType is not null;
+        string? namespaceName = typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } targetNs
+            ? targetNs.ToDisplayString()
+            : null;
+
+        return new TargetType(
+            TypeName: typeSymbol.Name,
+            Namespace: namespaceName,
+            BaseTypeName: baseTypeName,
+            PrimitiveType: primitiveType,
+            IsPartial: isPartial,
+            IsNested: isNested,
+            DiagnosticLocation: classDecl.Identifier.GetLocation());
+    }
+
+    private static bool TryMapTargetType(ITypeSymbol type, out string baseTypeName, out string primitiveType)
+    {
+        if (type.SpecialType == SpecialType.System_Boolean)
+        {
+            baseTypeName = "StrongBoolean";
+            primitiveType = "global::System.Boolean";
+            return true;
+        }
+
+        if (type.SpecialType == SpecialType.System_Char)
+        {
+            baseTypeName = "StrongChar";
+            primitiveType = "global::System.Char";
+            return true;
+        }
+
+        if (type.SpecialType == SpecialType.System_Decimal)
+        {
+            baseTypeName = "StrongDecimal";
+            primitiveType = "global::System.Decimal";
+            return true;
+        }
+
+        if (type.SpecialType == SpecialType.System_Double)
+        {
+            baseTypeName = "StrongDouble";
+            primitiveType = "global::System.Double";
+            return true;
+        }
+
+        if (type.SpecialType == SpecialType.System_Int32)
+        {
+            baseTypeName = "StrongInt32";
+            primitiveType = "global::System.Int32";
+            return true;
+        }
+
+        if (type.SpecialType == SpecialType.System_Int64)
+        {
+            baseTypeName = "StrongInt64";
+            primitiveType = "global::System.Int64";
+            return true;
+        }
+
+        if (type.SpecialType == SpecialType.System_String)
+        {
+            baseTypeName = "StrongString";
+            primitiveType = "global::System.String";
+            return true;
+        }
+
+        if (type is INamedTypeSymbol named)
+        {
+            string metadataName = named.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
+            if (metadataName == "global::System.Guid")
+            {
+                baseTypeName = "StrongGuid";
+                primitiveType = "global::System.Guid";
+                return true;
+            }
+
+            if (metadataName == "global::System.DateTime")
+            {
+                baseTypeName = "StrongDateTime";
+                primitiveType = "global::System.DateTime";
+                return true;
+            }
+
+            if (metadataName == "global::System.DateTimeOffset")
+            {
+                baseTypeName = "StrongDateTimeOffset";
+                primitiveType = "global::System.DateTimeOffset";
+                return true;
+            }
+
+            if (metadataName == "global::System.TimeSpan")
+            {
+                baseTypeName = "StrongTimeSpan";
+                primitiveType = "global::System.TimeSpan";
+                return true;
+            }
+        }
+
+        baseTypeName = string.Empty;
+        primitiveType = string.Empty;
+        return false;
+    }
+
     private static void Emit(SourceProductionContext spc, TargetType target)
     {
+        if (target.UnsupportedTypeName is not null)
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(Diagnostics.UnsupportedStrongTargetType, target.DiagnosticLocation, target.UnsupportedTypeName));
+            return;
+        }
+
         if (target.IsNested)
         {
             spc.ReportDiagnostic(Diagnostic.Create(Diagnostics.NestedNotSupported, target.DiagnosticLocation, target.TypeName));
@@ -163,7 +417,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         string PrimitiveType,
         bool IsPartial,
         bool IsNested,
-        Location DiagnosticLocation);
+        Location DiagnosticLocation,
+        string? UnsupportedTypeName = null);
 
     private static class Diagnostics
     {
@@ -179,6 +434,14 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             id: "STRONG002",
             title: "StrongOf marker not supported on nested types",
             messageFormat: "'{0}' is a nested type; the StrongOf source generator only supports top-level (non-nested) classes",
+            category: "StrongOf",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public static readonly DiagnosticDescriptor UnsupportedStrongTargetType = new(
+            id: "STRONG003",
+            title: "Unsupported Strong target type",
+            messageFormat: "Type '{0}' is not supported by [Strong<TTarget>] or [Strong(typeof(TTarget))]. Use one of: bool, char, DateTime, DateTimeOffset, decimal, double, Guid, int, long, string, TimeSpan.",
             category: "StrongOf",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);
