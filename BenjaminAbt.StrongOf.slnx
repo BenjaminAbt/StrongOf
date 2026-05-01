@@ -20,8 +20,10 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="src/StrongOf.EntityFrameworkCore/StrongOf.EntityFrameworkCore.csproj" />
+    <Project Path="tests/StrongOf.AspNetCore.IntegrationTests/StrongOf.AspNetCore.IntegrationTests.csproj" />
     <Project Path="tests/StrongOf.AspNetCore.UnitTests/StrongOf.AspNetCore.UnitTests.csproj" />
     <Project Path="tests/StrongOf.Domains.UnitTests/StrongOf.Domains.UnitTests.csproj" />
+    <Project Path="tests/StrongOf.EntityFrameworkCore.IntegrationTests/StrongOf.EntityFrameworkCore.IntegrationTests.csproj" />
     <Project Path="tests/StrongOf.EntityFrameworkCore.UnitTests/StrongOf.EntityFrameworkCore.UnitTests.csproj" />
     <Project Path="tests/StrongOf.FluentValidation.UnitTests/StrongOf.FluentValidation.UnitTests.csproj" />
     <Project Path="tests/StrongOf.Json.UnitTests/StrongOf.Json.UnitTests.csproj" />
@@ -38,6 +40,4 @@
     <File Path="README.md" />
     <File Path="version.json" />
   </Folder>
-  <Project Path="tests/StrongOf.AspNetCore.IntegrationTests/StrongOf.AspNetCore.IntegrationTests.csproj" />
-  <Project Path="tests/StrongOf.EntityFrameworkCore.IntegrationTests/StrongOf.EntityFrameworkCore.IntegrationTests.csproj" />
 </Solution>
