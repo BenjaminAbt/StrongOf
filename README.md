@@ -39,6 +39,35 @@ This library was created because C# still does not support [type abbreviations](
 It is currently unclear whether this feature will ever become part of the language:  
 [Proposal: Type aliases / abbreviations / newtype](https://github.com/dotnet/csharplang/issues/410)
 
+## Table of Contents
+
+- [The idea](#the-idea)
+- [Usage](#usage)
+    - [Usage with source generators](#usage-with-source-generators)
+    - [Usage without source generators](#usage-without-source-generators)
+    - [Bulk conversion helpers](#bulk-conversion-helpers)
+    - [Validation helpers for custom domain types](#validation-helpers-for-custom-domain-types)
+    - [Available marker attributes](#available-marker-attributes)
+- [StrongOf.Domains](#usage-with-strongofdomains)
+    - [Global Usings - avoid repetitive `using` directives](#global-usings---avoid-repetitive-using-directives)
+    - [Namespace naming rationale](#namespace-naming-rationale)
+- [Json](#usage-with-json)
+- [ASP.NET Core](#usage-with-aspnet-core)
+    - [Usage with Minimal APIs](#usage-with-minimal-apis)
+    - [Usage with OpenApi (.NET 9+)](#usage-with-openapi-net-9)
+- [Entity Framework Core](#usage-with-entity-framework-core)
+    - [Register Converters Once with `ConfigureConventions` (Recommended)](#register-converters-once-with-configureconventions-recommended)
+    - [Configure Strong Types in `OnModelCreating`](#configure-strong-types-in-onmodelcreating)
+    - [LINQ Limitations](#linq-limitations)
+    - [Why No Source Generator for EF Core?](#why-no-source-generator-for-ef-core)
+- [FluentValidation](#usage-with-fluentvalidation)
+- [Migrations](#migrations)
+    - [Migration guide: StrongOf v2 -> v3 (Source Generators)](#migration-guide-strongof-v2---v3-source-generators)
+    - [Interop metadata for other source generators](#interop-metadata-for-other-source-generators)
+- [Performance matters](#performance-matters)
+- [FAQ](#faq)
+
+
 ## The idea
 
 The frequent problem in code implementation is that values are not given any meaning and many methods are simply a technical string of values or data classes are just a list of types.
