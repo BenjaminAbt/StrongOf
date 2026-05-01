@@ -23,7 +23,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<FullName>))]
-public sealed class FullName(string value) : StrongString<FullName>(value), IValidatable
+[StrongString]
+public sealed partial class FullName : IValidatable
 {
     /// <summary>
     /// Creates a <see cref="FullName"/> from a <see cref="FirstName"/> and <see cref="LastName"/>.

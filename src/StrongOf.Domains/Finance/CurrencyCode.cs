@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Finance;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<CurrencyCode>))]
-public sealed class CurrencyCode(string value) : StrongString<CurrencyCode>(value), IValidatable
+[StrongString]
+public sealed partial class CurrencyCode : IValidatable
 {
     /// <summary>
     /// The required length for a valid ISO 4217 currency code.

@@ -22,7 +22,8 @@ namespace StrongOf.Domains.Identity;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongGuidTypeConverter<CorrelationId>))]
-public sealed class CorrelationId(Guid value) : StrongGuid<CorrelationId>(value)
+[StrongGuid]
+public sealed partial class CorrelationId
 {
     /// <summary>
     /// Determines whether the correlation ID has a non-empty value.

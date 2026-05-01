@@ -28,7 +28,8 @@ namespace StrongOf.Domains.Localization;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<TimeZoneId>))]
-public sealed class TimeZoneId(string value) : StrongString<TimeZoneId>(value), IValidatable
+[StrongString]
+public sealed partial class TimeZoneId : IValidatable
 {
     /// <summary>
     /// Validates whether the time zone identifier is recognized on the current system.

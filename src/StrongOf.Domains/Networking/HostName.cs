@@ -24,7 +24,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<HostName>))]
-public sealed partial class HostName(string value) : StrongString<HostName>(value), IValidatable
+[StrongString]
+public sealed partial class HostName : IValidatable
 {
     /// <summary>
     /// Maximum length for a valid hostname.

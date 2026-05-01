@@ -16,6 +16,9 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="..\StrongOf.SourceGenerators\StrongOf.SourceGenerators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
         <ProjectReference Include="..\StrongOf\StrongOf.csproj" />
     </ItemGroup>
 

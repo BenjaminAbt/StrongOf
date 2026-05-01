@@ -6,6 +6,15 @@ using BenchmarkDotNet.Jobs;
 
 namespace StrongOf.Benchmarks.StrongDictionary;
 
+[StrongGuid]
+public sealed partial class TestStrongGuid;
+
+[StrongInt32]
+public sealed partial class TestStrongInt32;
+
+[StrongString]
+public sealed partial class TestStrongString;
+
 #pragma warning disable CA1822 // Mark members as static
 
 /// <summary>
@@ -85,8 +94,4 @@ public class StrongDictionaryBenchmark
         }
         return sum;
     }
-
-    private sealed class TestStrongGuid(Guid value) : StrongGuid<TestStrongGuid>(value);
-    private sealed class TestStrongInt32(int value) : StrongInt32<TestStrongInt32>(value);
-    private sealed class TestStrongString(string value) : StrongString<TestStrongString>(value);
 }

@@ -38,6 +38,11 @@ public class StrongCollectionBenchmark
 
 // Test Classes
 
-public sealed class TestStrongGuid(Guid Value) : StrongGuid<TestStrongGuid>(Value);
-public sealed class TestStrongInt32(int Value) : StrongInt32<TestStrongInt32>(Value);
-public sealed class TestStrongString(string Value) : StrongString<TestStrongString>(Value);
+[StrongGuid]
+public sealed partial class TestStrongGuid;
+
+[StrongInt32]
+public sealed partial class TestStrongInt32;
+
+[StrongString]
+public sealed partial class TestStrongString;

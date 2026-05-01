@@ -2,11 +2,14 @@
 
 namespace StrongOf.AspNetCore.IntegrationTests.TestApplication;
 
-public sealed class TestUserId(Guid value) : StrongGuid<TestUserId>(value) { }
+[StrongGuid]
+public sealed partial class TestUserId { }
 
-public sealed class TestDuration(TimeSpan value) : StrongTimeSpan<TestDuration>(value) { }
+[StrongTimeSpan]
+public sealed partial class TestDuration { }
 
-public sealed class TestEmailAddress(string value) : StrongString<TestEmailAddress>(value), IValidatable
+[StrongString]
+public sealed partial class TestEmailAddress : IValidatable
 {
     public bool IsValidFormat() => Value.Contains('@', StringComparison.Ordinal);
 }

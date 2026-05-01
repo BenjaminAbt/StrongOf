@@ -22,7 +22,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongInt32TypeConverter<Port>))]
-public sealed class Port(int value) : StrongInt32<Port>(value), IValidatable
+[StrongInt32]
+public sealed partial class Port : IValidatable
 {
     /// <summary>
     /// The minimum valid port number.

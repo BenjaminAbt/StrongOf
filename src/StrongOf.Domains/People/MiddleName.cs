@@ -23,7 +23,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<MiddleName>))]
-public sealed class MiddleName(string value) : StrongString<MiddleName>(value), IValidatable
+[StrongString]
+public sealed partial class MiddleName : IValidatable
 {
     /// <summary>
     /// Minimum length for a valid middle name.

@@ -24,7 +24,8 @@ namespace StrongOf.Domains.Commerce;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Sku>))]
-public sealed partial class Sku(string value) : StrongString<Sku>(value), IValidatable
+[StrongString]
+public sealed partial class Sku : IValidatable
 {
     /// <summary>
     /// Regular expression pattern validating SKU format: alphanumeric characters and hyphens, 1–64 characters.

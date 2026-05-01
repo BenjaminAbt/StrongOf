@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<FileExtension>))]
-public sealed partial class FileExtension(string value) : StrongString<FileExtension>(value), IValidatable
+[StrongString]
+public sealed partial class FileExtension : IValidatable
 {
     [GeneratedRegex(@"^\.[A-Za-z0-9]{1,10}$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex FileExtensionRegex();

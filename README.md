@@ -64,11 +64,11 @@ public User AddUser(Guid tenantId, Guid userId, string firstName, string lastNam
 The idea is to use a domain-driven design approach to give specific values a meaning through their own types.
 
 ```csharp
-private sealed class TenantId(Guid value)    : StrongGuid<TenantId>(value) { }
-private sealed class UserId(Guid value)      : StrongGuid<UserId>(value) { }
-private sealed class FirstName(string value) : StrongString<FirstName>(value) { }
-private sealed class LastName(string value)  : StrongString<LastName>(value) { }
-private sealed class Email(string value)     : StrongString<Email>(value) { }
+private sealed class TenantId(Guid value)    : StrongGuid<TenantId>(value);
+private sealed class UserId(Guid value)      : StrongGuid<UserId>(value);
+private sealed class FirstName(string value) : StrongString<FirstName>(value);
+private sealed class LastName(string value)  : StrongString<LastName>(value);
+private sealed class Email(string value)     : StrongString<Email>(value);
 
 public class User
 {    
@@ -87,10 +87,63 @@ Now you are safe!
 
 ## Usage
 
-The clearest distinction to other approaches is that all `StrongOf` types inherit from `StrongOf<T>` in order to be able to implement generic approaches. Furthermore, it is possible to extend the class, e.g. to implement validations.
+The recommended approach is to define strong types with the built-in source generator. If you prefer the classic hand-written form, that is still fully supported and shown afterwards.
+
+### Usage with source generators
+
+> For v2 users: see migration guide to v3 at the end of this readme.
+
+The shipped Roslyn source generator turns a single attribute-marked partial class into a fully implemented strong type, with **zero** Expression-based factory dependency. The result is fully Native AOT and trim safe.
+
+Recommended style is the generic form `Strong<TTarget>`:
+
+- Preferred: `[Strong<Guid>]`
+- Also supported: `[StrongGuid]` and `[Strong(typeof(Guid))]`
+- Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
 
 ```csharp
-private sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
+using StrongOf.SourceGeneration;
+
+[Strong<Guid>]
+public partial class UserId;
+
+[StrongGuid] 
+public partial class LegacyUserId;
+
+[StrongString]
+public partial class Email;
+[Strong<string>]
+public partial class Alias;
+
+[StrongInt32] 
+public partial class Quantity;
+
+[StrongDecimal]
+public partial class Amount;
+```
+
+The generator emits the primary constructor, the base type (`StrongGuid<UserId>`,
+`StrongString<Email>`, ...) and an AOT-friendly static `Create` method that the generic `From(...)`
+dispatch resolves directly to `new TStrong(value)`. No reflection, no `Expression.Compile`.
+
+You can still extend the type with your own partial - the generator only contributes the
+constructor / base type / `Create` member, never the body:
+
+```csharp
+[StrongString]
+public partial class Email
+{
+    public bool LooksLikeEmail() => Value.Contains('@');
+}
+```
+
+
+### Usage without source generators
+
+The classic hand-written form keeps the implementation explicit. All `StrongOf` types inherit from `StrongOf<T>` so they can participate in generic approaches, and you can extend the class for domain-specific behavior or validation.
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value);
 ```
 
 Prefer direct instantiation with `new` in hot paths:
@@ -120,6 +173,23 @@ Use `FromArray(...)` or `FromSpan(...)` when you want a compact array result wit
 
 If you build your own validated domain types, prefer explicit factory methods over implicit conversions:
 
+With source generators:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[StrongString]
+public partial class Email
+{
+    public static bool TryCreate(string? value, out Email? result)
+        => StrongValidation.TryCreate(value, IsValid, static v => new Email(v), out result);
+
+    private static bool IsValid(string value) => value.Contains('@');
+}
+```
+
+Without source generators:
+
 ```csharp
 public sealed class Email(string value) : StrongString<Email>(value)
 {
@@ -132,34 +202,9 @@ public sealed class Email(string value) : StrongString<Email>(value)
 
 This keeps construction explicit and allows validation without moving logic into the primary constructor.
 
-### Native AOT / trimming - the source generator
+### Available marker attributes
 
-The shipped Roslyn source generator turns a single attribute-marked partial class into a fully
-implemented strong type, with **zero** Expression-based factory dependency. The result is fully
-Native AOT and trim safe.
-
-Recommended style is the generic form `Strong<TTarget>`:
-
-- Preferred: `[Strong<Guid>]`
-- Also supported: `[StrongGuid]` and `[Strong(typeof(Guid))]`
-- Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
-
-```csharp
-using StrongOf.SourceGeneration;
-
-[Strong<Guid>] public partial class UserId;
-[StrongGuid]   public partial class LegacyUserId;
-[StrongString] public partial class Email;
-[Strong<string>] public partial class Alias;
-[StrongInt32]  public partial class Quantity;
-[StrongDecimal] public partial class Amount;
-```
-
-The generator emits the primary constructor, the base type (`StrongGuid<UserId>`,
-`StrongString<Email>`, …) and an AOT-friendly static `Create` method that the generic `From(...)`
-dispatch resolves directly to `new TStrong(value)`. No reflection, no `Expression.Compile`.
-
-Available marker attributes (in `StrongOf.SourceGeneration`):
+The following marker attributes are available in `StrongOf.SourceGeneration`:
 
 | Attribute | Wraps |
 |-----------|-------|
@@ -175,131 +220,6 @@ Available marker attributes (in `StrongOf.SourceGeneration`):
 | `[StrongInt64]` | `long` |
 | `[StrongString]` | `string` |
 | `[StrongTimeSpan]` | `TimeSpan` |
-
-You can still extend the type with your own partial - the generator only contributes the
-constructor / base type / `Create` member, never the body:
-
-```csharp
-[StrongString]
-public partial class Email
-{
-    public bool LooksLikeEmail() => Value.Contains('@');
-}
-```
-
-The generator ships inside the `StrongOf` NuGet package (no extra reference required) and emits
-two diagnostics where appropriate:
-
-- `STRONG001`: the marked class must be declared `partial`.
-- `STRONG002`: the marked class must be top-level (nested types are not supported).
-
-### Migration guide: StrongOf v2 -> v3 (Source Generators)
-
-This section shows how to migrate existing hand-written strong types to the v3 generator-based style.
-
-1. Update NuGet package(s) to v3 (`StrongOf` and optional integration packages).
-2. Add `using StrongOf.SourceGeneration;` in files where you declare strong types.
-3. Replace hand-written inheritance with attribute + `partial class`.
-4. Keep domain-specific behavior in additional partial class bodies.
-
-#### 1) Basic type migration
-
-Before (v2 / hand-written):
-
-```csharp
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
-{
-    public static UserId Create(Guid value) => new(value);
-}
-```
-
-After (v3 / recommended):
-
-```csharp
-using StrongOf.SourceGeneration;
-
-[Strong<Guid>]
-public partial class UserId;
-```
-
-Also valid:
-
-```csharp
-using StrongOf.SourceGeneration;
-
-[StrongGuid]
-public partial class UserId;
-```
-
-#### 2) Keep custom domain methods/validation
-
-If your old type had custom members, keep them in a separate partial body:
-
-```csharp
-using StrongOf.SourceGeneration;
-
-[Strong<string>]
-public partial class Email;
-
-public partial class Email
-{
-    public bool LooksLikeEmail() => Value.Contains('@');
-}
-```
-
-#### 3) Interop for other source generators
-
-If other generators in your solution need explicit primitive metadata, add:
-
-```csharp
-using StrongOf.SourceGeneration;
-
-[Strong(typeof(Guid))]
-public partial class UserId;
-```
-
-`[Strong(typeof(...))]` is optional for StrongOf itself, but useful as metadata for external generators.
-
-#### 4) Quick migration checklist
-
-- Replace `public sealed class X(T value) : StrongY<X>(value)` with `[Strong<T>] public partial class X;`
-- Remove hand-written static `Create` methods (generator emits them)
-- Keep only domain logic in partial class bodies
-- Build and run tests to confirm behavior parity
-
-### Interop metadata for other source generators
-
-If you use additional source generators and want to expose the primitive target type as explicit
-metadata, you can use `Strong(typeof(...))` directly as your single marker:
-
-```csharp
-using StrongOf.SourceGeneration;
-
-[Strong(typeof(Guid))]
-public partial class UserId;
-```
-
-`StrongAttribute` (non-generic form) is provided for interoperability and discovery by external generators. StrongOf's
-own generator does not require it.
-
-If you want to keep the classic hand-written form, you still can - just declare the strong type
-the traditional way:
-
-```csharp
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value);
-```
-
-For full AOT/trim safety with the hand-written form, override the static abstract `Create`
-member yourself:
-
-```csharp
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
-{
-    public static UserId Create(Guid value) => new(value);
-}
-```
-
-The generator does exactly this for you.
 
 ## Usage with StrongOf.Domains
 
@@ -612,53 +532,163 @@ RuleFor(x => x.SomeStrongValue)
 
 These are useful for non-string strong types where `HasValue()` is not expressive enough.
 
+## Migrations
+
+### Migration guide: StrongOf v2 -> v3 (Source Generators)
+
+This section shows how to migrate existing hand-written strong types to the v3 generator-based style.
+
+1. Update NuGet package(s) to v3 (`StrongOf` and optional integration packages).
+2. Add `using StrongOf.SourceGeneration;` in files where you declare strong types.
+3. Replace hand-written inheritance with attribute + `partial class`.
+4. Keep domain-specific behavior in additional partial class bodies.
+
+#### 1) Basic type migration
+
+Before (v2 / hand-written):
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
+{
+    public static UserId Create(Guid value) => new(value);
+}
+```
+
+After (v3 / recommended):
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong<Guid>]
+public partial class UserId;
+```
+
+Also valid:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[StrongGuid]
+public partial class UserId;
+```
+
+#### 2) Keep custom domain methods/validation
+
+If your old type had custom members, keep them in a separate partial body:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong<string>]
+public partial class Email;
+
+public partial class Email
+{
+    public bool LooksLikeEmail() => Value.Contains('@');
+}
+```
+
+#### 3) Interop for other source generators
+
+If other generators in your solution need explicit primitive metadata, add:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong(typeof(Guid))]
+public partial class UserId;
+```
+
+`[Strong(typeof(...))]` is optional for StrongOf itself, but useful as metadata for external generators.
+
+#### 4) Quick migration checklist
+
+- Replace `public sealed class X(T value) : StrongY<X>(value)` with `[Strong<T>] public partial class X;`
+- Remove hand-written static `Create` methods (generator emits them)
+- Keep only domain logic in partial class bodies
+- Build and run tests to confirm behavior parity
+
+### Interop metadata for other source generators
+
+If you use additional source generators and want to expose the primitive target type as explicit
+metadata, you can use `Strong(typeof(...))` directly as your single marker:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong(typeof(Guid))]
+public partial class UserId;
+```
+
+`StrongAttribute` (non-generic form) is provided for interoperability and discovery by external generators. StrongOf's
+own generator does not require it.
+
+If you want to keep the classic hand-written form, you still can - just declare the strong type
+the traditional way:
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value);
+```
+
+For full AOT/trim safety with the hand-written form, override the static abstract `Create`
+member yourself:
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
+{
+    public static UserId Create(Guid value) => new(value);
+}
+```
+
+The generator does exactly this for you.
+
 ## Performance matters
 
 Since the strong types created here can still be instantiated with `new()`, this also means an enormous performance advantage over libraries that have to work with `Activator.CreateInstance` or `Expression.New`.
 
 ```shell
-BenchmarkDotNet v0.15.2, Windows 10 (10.0.19045.6216/22H2/2022Update)
+BenchmarkDotNet v0.15.8, Windows 10 (10.0.19045.7184/22H2/2022Update)
 AMD Ryzen 9 9950X 4.30GHz, 1 CPU, 32 logical and 16 physical cores
-.NET SDK 10.0.100-preview.7.25380.108
-  [Host]    : .NET 10.0.0 (10.0.25.38108), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 10.0 : .NET 10.0.0 (10.0.25.38108), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 8.0  : .NET 8.0.19 (8.0.1925.36514), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 9.0  : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+.NET SDK 11.0.100-preview.2.26159.112
+  [Host]    : .NET 10.0.7 (10.0.7, 10.0.726.21808), X64 RyuJIT x86-64-v4
+  .NET 10.0 : .NET 10.0.7 (10.0.7, 10.0.726.21808), X64 RyuJIT x86-64-v4
+  .NET 8.0  : .NET 8.0.26 (8.0.26, 8.0.2626.16921), X64 RyuJIT x86-64-v4
+  .NET 9.0  : .NET 9.0.15 (9.0.15, 9.0.1526.17522), X64 RyuJIT x86-64-v4
 
 
-| Method      | Runtime   | Categories   | Mean     | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated |
-|------------ |---------- |------------- |---------:|----------:|----------:|------:|--------:|-------:|----------:|
-| Guid_New    | .NET 8.0  | StrongGuid   | 1.738 ns | 0.0645 ns | 0.0571 ns |  1.00 |    0.03 | 0.0019 |      32 B |
-| Guid_New    | .NET 9.0  | StrongGuid   | 1.701 ns | 0.0288 ns | 0.0255 ns |  0.98 |    0.02 | 0.0019 |      32 B |
-| Guid_New    | .NET 10.0 | StrongGuid   | 1.732 ns | 0.0249 ns | 0.0208 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Guid_From   | .NET 8.0  | StrongGuid   | 3.347 ns | 0.0263 ns | 0.0246 ns |  1.33 |    0.02 | 0.0019 |      32 B |
-| Guid_From   | .NET 9.0  | StrongGuid   | 2.525 ns | 0.0243 ns | 0.0203 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-| Guid_From   | .NET 10.0 | StrongGuid   | 2.523 ns | 0.0472 ns | 0.0394 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int32_New   | .NET 8.0  | StrongInt32  | 1.677 ns | 0.0315 ns | 0.0263 ns |  0.97 |    0.04 | 0.0014 |      24 B |
-| Int32_New   | .NET 9.0  | StrongInt32  | 1.737 ns | 0.0645 ns | 0.0690 ns |  1.01 |    0.05 | 0.0014 |      24 B |
-| Int32_New   | .NET 10.0 | StrongInt32  | 1.728 ns | 0.0663 ns | 0.0588 ns |  1.00 |    0.05 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int32_From  | .NET 8.0  | StrongInt32  | 2.895 ns | 0.0911 ns | 0.0852 ns |  1.55 |    0.05 | 0.0014 |      24 B |
-| Int32_From  | .NET 9.0  | StrongInt32  | 1.928 ns | 0.0325 ns | 0.0304 ns |  1.03 |    0.02 | 0.0014 |      24 B |
-| Int32_From  | .NET 10.0 | StrongInt32  | 1.872 ns | 0.0182 ns | 0.0161 ns |  1.00 |    0.01 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int64_New   | .NET 8.0  | StrongInt64  | 1.684 ns | 0.0255 ns | 0.0213 ns |  0.95 |    0.06 | 0.0014 |      24 B |
-| Int64_New   | .NET 9.0  | StrongInt64  | 1.746 ns | 0.0530 ns | 0.0496 ns |  0.99 |    0.06 | 0.0014 |      24 B |
-| Int64_New   | .NET 10.0 | StrongInt64  | 1.776 ns | 0.0700 ns | 0.1089 ns |  1.00 |    0.09 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int64_From  | .NET 8.0  | StrongInt64  | 2.764 ns | 0.0379 ns | 0.0354 ns |  1.42 |    0.03 | 0.0014 |      24 B |
-| Int64_From  | .NET 9.0  | StrongInt64  | 1.978 ns | 0.0289 ns | 0.0256 ns |  1.02 |    0.02 | 0.0014 |      24 B |
-| Int64_From  | .NET 10.0 | StrongInt64  | 1.943 ns | 0.0369 ns | 0.0345 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| String_New  | .NET 8.0  | StrongString | 1.667 ns | 0.0367 ns | 0.0326 ns |  0.97 |    0.02 | 0.0014 |      24 B |
-| String_New  | .NET 9.0  | StrongString | 1.646 ns | 0.0292 ns | 0.0273 ns |  0.96 |    0.02 | 0.0014 |      24 B |
-| String_New  | .NET 10.0 | StrongString | 1.710 ns | 0.0237 ns | 0.0198 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| String_From | .NET 8.0  | StrongString | 3.638 ns | 0.0637 ns | 0.0596 ns |  1.26 |    0.03 | 0.0014 |      24 B |
-| String_From | .NET 9.0  | StrongString | 2.803 ns | 0.0401 ns | 0.0376 ns |  0.97 |    0.02 | 0.0014 |      24 B |
-| String_From | .NET 10.0 | StrongString | 2.882 ns | 0.0695 ns | 0.0650 ns |  1.00 |    0.03 | 0.0014 |      24 B |
+| Method      | Runtime   | Mean     | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated |
+|------------ |---------- |---------:|----------:|----------:|------:|--------:|-------:|----------:|
+| Guid_New    | .NET 10.0 | 1.714 ns | 0.0301 ns | 0.0281 ns |  1.00 |    0.02 | 0.0019 |      32 B |
+| Guid_New    | .NET 8.0  | 1.764 ns | 0.0344 ns | 0.0287 ns |  1.03 |    0.02 | 0.0019 |      32 B |
+| Guid_New    | .NET 9.0  | 1.714 ns | 0.0221 ns | 0.0207 ns |  1.00 |    0.02 | 0.0019 |      32 B |
+|             |           |          |           |           |       |         |        |           |
+| Guid_From   | .NET 10.0 | 2.534 ns | 0.0322 ns | 0.0285 ns |  1.00 |    0.02 | 0.0019 |      32 B |
+| Guid_From   | .NET 8.0  | 3.411 ns | 0.0985 ns | 0.0922 ns |  1.35 |    0.04 | 0.0019 |      32 B |
+| Guid_From   | .NET 9.0  | 2.462 ns | 0.0267 ns | 0.0237 ns |  0.97 |    0.01 | 0.0019 |      32 B |
+|             |           |          |           |           |       |         |        |           |
+| Int32_New   | .NET 10.0 | 1.688 ns | 0.0301 ns | 0.0267 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+| Int32_New   | .NET 8.0  | 1.687 ns | 0.0214 ns | 0.0190 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+| Int32_New   | .NET 9.0  | 1.648 ns | 0.0363 ns | 0.0339 ns |  0.98 |    0.02 | 0.0014 |      24 B |
+|             |           |          |           |           |       |         |        |           |
+| Int32_From  | .NET 10.0 | 2.079 ns | 0.0274 ns | 0.0243 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+| Int32_From  | .NET 8.0  | 2.876 ns | 0.0865 ns | 0.1093 ns |  1.38 |    0.05 | 0.0014 |      24 B |
+| Int32_From  | .NET 9.0  | 1.966 ns | 0.0527 ns | 0.0493 ns |  0.95 |    0.03 | 0.0014 |      24 B |
+|             |           |          |           |           |       |         |        |           |
+| Int64_New   | .NET 10.0 | 1.598 ns | 0.0229 ns | 0.0191 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+| Int64_New   | .NET 8.0  | 1.599 ns | 0.0170 ns | 0.0159 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+| Int64_New   | .NET 9.0  | 1.630 ns | 0.0180 ns | 0.0151 ns |  1.02 |    0.01 | 0.0014 |      24 B |
+|             |           |          |           |           |       |         |        |           |
+| Int64_From  | .NET 10.0 | 1.883 ns | 0.0248 ns | 0.0207 ns |  1.00 |    0.01 | 0.0014 |      24 B |
+| Int64_From  | .NET 8.0  | 2.634 ns | 0.0414 ns | 0.0387 ns |  1.40 |    0.02 | 0.0014 |      24 B |
+| Int64_From  | .NET 9.0  | 1.922 ns | 0.0266 ns | 0.0223 ns |  1.02 |    0.02 | 0.0014 |      24 B |
+|             |           |          |           |           |       |         |        |           |
+| String_New  | .NET 10.0 | 1.617 ns | 0.0136 ns | 0.0128 ns |  1.00 |    0.01 | 0.0014 |      24 B |
+| String_New  | .NET 8.0  | 1.726 ns | 0.0626 ns | 0.0586 ns |  1.07 |    0.04 | 0.0014 |      24 B |
+| String_New  | .NET 9.0  | 1.614 ns | 0.0317 ns | 0.0281 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+|             |           |          |           |           |       |         |        |           |
+| String_From | .NET 10.0 | 2.759 ns | 0.0330 ns | 0.0309 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+| String_From | .NET 8.0  | 3.530 ns | 0.0540 ns | 0.0505 ns |  1.28 |    0.02 | 0.0014 |      24 B |
+| String_From | .NET 9.0  | 2.764 ns | 0.0416 ns | 0.0369 ns |  1.00 |    0.02 | 0.0014 |      24 B |
 ```
 
 For certain scenarios, this library also has an `Expression.New` implementation (through a static From method); but not for general instantiation.

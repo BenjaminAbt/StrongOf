@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Postal;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<CountryCode>))]
-public sealed class CountryCode(string value) : StrongString<CountryCode>(value), IValidatable
+[StrongString]
+public sealed partial class CountryCode : IValidatable
 {
     /// <summary>
     /// The required length for a valid ISO 3166-1 alpha-2 country code.

@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<FilePath>))]
-public sealed class FilePath(string value) : StrongString<FilePath>(value), IValidatable
+[StrongString]
+public sealed partial class FilePath : IValidatable
 {
     /// <summary>
     /// Validates whether the file path contains no invalid path characters.

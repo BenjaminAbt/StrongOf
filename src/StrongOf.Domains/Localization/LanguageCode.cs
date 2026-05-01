@@ -13,7 +13,8 @@ namespace StrongOf.Domains.Localization;
 /// </summary>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<LanguageCode>))]
-public sealed partial class LanguageCode(string value) : StrongString<LanguageCode>(value), IValidatable
+[StrongString]
+public sealed partial class LanguageCode : IValidatable
 {
     [GeneratedRegex(@"^[A-Za-z]{2,3}(?:-[A-Za-z]{2})?$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex LanguageCodeRegex();

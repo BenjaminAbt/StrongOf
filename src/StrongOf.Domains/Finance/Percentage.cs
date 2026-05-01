@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Finance;
 /// </example>
 [DebuggerDisplay("{Value}%")]
 [TypeConverter(typeof(StrongDecimalTypeConverter<Percentage>))]
-public sealed class Percentage(decimal value) : StrongDecimal<Percentage>(value)
+[StrongDecimal]
+public sealed partial class Percentage
 {
     /// <summary>
     /// The minimum valid percentage value.

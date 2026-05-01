@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<MacAddress>))]
-public sealed partial class MacAddress(string value) : StrongString<MacAddress>(value), IValidatable
+[StrongString]
+public sealed partial class MacAddress : IValidatable
 {
     /// <summary>
     /// Regular expression pattern for validating MAC addresses.

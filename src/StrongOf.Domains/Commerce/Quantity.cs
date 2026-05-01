@@ -22,7 +22,8 @@ namespace StrongOf.Domains.Commerce;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongInt32TypeConverter<Quantity>))]
-public sealed class Quantity(int value) : StrongInt32<Quantity>(value)
+[StrongInt32]
+public sealed partial class Quantity
 {
     /// <summary>
     /// Gets a <see cref="Quantity"/> representing zero.

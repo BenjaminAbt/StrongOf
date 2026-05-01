@@ -25,7 +25,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<PhoneNumber>))]
-public sealed partial class PhoneNumber(string value) : StrongString<PhoneNumber>(value), IValidatable
+[StrongString]
+public sealed partial class PhoneNumber : IValidatable
 {
     /// <summary>
     /// Regular expression pattern for validating phone numbers.

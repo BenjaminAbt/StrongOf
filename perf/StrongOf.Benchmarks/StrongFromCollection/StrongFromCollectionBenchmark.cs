@@ -6,6 +6,9 @@ using BenchmarkDotNet.Jobs;
 
 namespace StrongOf.Benchmarks.StrongFromCollection;
 
+[StrongGuid]
+public sealed partial class TestStrongGuid;
+
 #pragma warning disable CA1822 // Mark members as static
 
 /// <summary>
@@ -56,6 +59,4 @@ public class StrongFromCollectionBenchmark
     [BenchmarkCategory("FromList")]
     public int From_IEnumerable_List()
         => TestStrongGuid.From((IEnumerable<Guid>)_guidList)!.Count;
-
-    private sealed class TestStrongGuid(Guid value) : StrongGuid<TestStrongGuid>(value);
 }

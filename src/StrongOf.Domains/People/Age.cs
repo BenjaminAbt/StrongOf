@@ -22,7 +22,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value} years")]
 [TypeConverter(typeof(StrongInt32TypeConverter<Age>))]
-public sealed class Age(int value) : StrongInt32<Age>(value), IValidatable
+[StrongInt32]
+public sealed partial class Age : IValidatable
 {
     /// <summary>
     /// The minimum valid age value.

@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<EmailAddress>))]
-public sealed partial class EmailAddress(string value) : StrongString<EmailAddress>(value), IValidatable
+[StrongString]
+public sealed partial class EmailAddress : IValidatable
 {
     /// <summary>
     /// Regular expression pattern for validating email addresses.

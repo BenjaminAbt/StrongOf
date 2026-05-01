@@ -25,7 +25,8 @@ namespace StrongOf.Domains.Postal;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<HouseNumber>))]
-public sealed partial class HouseNumber(string value) : StrongString<HouseNumber>(value), IValidatable
+[StrongString]
+public sealed partial class HouseNumber : IValidatable
 {
     /// <summary>
     /// Regular expression for house numbers such as "12", "12A", "12/3".

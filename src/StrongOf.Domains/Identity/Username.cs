@@ -25,7 +25,8 @@ namespace StrongOf.Domains.Identity;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Username>))]
-public sealed partial class Username(string value) : StrongString<Username>(value), IValidatable
+[StrongString]
+public sealed partial class Username : IValidatable
 {
     /// <summary>
     /// The minimum length for a valid username.

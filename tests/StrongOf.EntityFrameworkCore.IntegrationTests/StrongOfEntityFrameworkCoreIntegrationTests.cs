@@ -7,6 +7,15 @@ using Xunit;
 
 namespace StrongOf.EntityFrameworkCore.IntegrationTests;
 
+[StrongGuid]
+public sealed partial class EfUserId { }
+
+[StrongString]
+public sealed partial class EfTenantId { }
+
+[StrongInt64]
+public sealed partial class EfVersion { }
+
 public sealed class StrongOfEntityFrameworkCoreIntegrationTests
 {
     [Fact]
@@ -92,12 +101,6 @@ public sealed class StrongOfEntityFrameworkCoreIntegrationTests
             .UseInMemoryDatabase(Guid.NewGuid().ToString("N"))
             .Options;
     }
-
-    public sealed class EfUserId(Guid value) : StrongGuid<EfUserId>(value) { }
-
-    public sealed class EfTenantId(string value) : StrongString<EfTenantId>(value) { }
-
-    public sealed class EfVersion(long value) : StrongInt64<EfVersion>(value) { }
 
     public sealed class EfEntity
     {

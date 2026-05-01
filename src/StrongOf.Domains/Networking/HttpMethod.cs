@@ -24,7 +24,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<HttpMethod>))]
-public sealed class HttpMethod(string value) : StrongString<HttpMethod>(value), IValidatable
+[StrongString]
+public sealed partial class HttpMethod : IValidatable
 {
     private static readonly HashSet<string> s_standardMethods = new(StringComparer.OrdinalIgnoreCase)
     {

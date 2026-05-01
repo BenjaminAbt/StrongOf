@@ -22,7 +22,8 @@ namespace StrongOf.Domains.Identity;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongGuidTypeConverter<TenantId>))]
-public sealed class TenantId(Guid value) : StrongGuid<TenantId>(value)
+[StrongGuid]
+public sealed partial class TenantId
 {
     /// <summary>
     /// Determines whether the tenant ID has a non-empty value.

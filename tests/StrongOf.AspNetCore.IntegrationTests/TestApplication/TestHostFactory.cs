@@ -1,9 +1,9 @@
 // Copyright (c) BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.Extensions.DependencyInjection;
 using StrongOf.AspNetCore.MinimalApis;
 using StrongOf.AspNetCore.Mvc;
 using Xunit;

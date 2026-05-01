@@ -24,7 +24,8 @@ namespace StrongOf.Domains.Geography;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongDecimalTypeConverter<Longitude>))]
-public sealed class Longitude(decimal value) : StrongDecimal<Longitude>(value), IValidatable
+[StrongDecimal]
+public sealed partial class Longitude : IValidatable
 {
     /// <summary>
     /// Minimum valid longitude.

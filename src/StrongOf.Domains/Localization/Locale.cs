@@ -25,7 +25,8 @@ namespace StrongOf.Domains.Localization;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Locale>))]
-public sealed partial class Locale(string value) : StrongString<Locale>(value), IValidatable
+[StrongString]
+public sealed partial class Locale : IValidatable
 {
     /// <summary>
     /// Regular expression pattern validating BCP 47 locale format.

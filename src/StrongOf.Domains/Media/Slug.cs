@@ -25,7 +25,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Slug>))]
-public sealed partial class Slug(string value) : StrongString<Slug>(value), IValidatable
+[StrongString]
+public sealed partial class Slug : IValidatable
 {
     /// <summary>
     /// Regular expression pattern validating slug format: lowercase letters, digits, and hyphens.

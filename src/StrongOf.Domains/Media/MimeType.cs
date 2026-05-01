@@ -27,7 +27,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<MimeType>))]
-public sealed partial class MimeType(string value) : StrongString<MimeType>(value), IValidatable
+[StrongString]
+public sealed partial class MimeType : IValidatable
 {
     [GeneratedRegex(@"^[A-Za-z0-9!#$&^_.+-]+\/[A-Za-z0-9!#$&^_.+-]+$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex MimeTypeRegex();

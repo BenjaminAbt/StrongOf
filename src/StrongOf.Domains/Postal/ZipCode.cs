@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Postal;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<ZipCode>))]
-public sealed class ZipCode(string value) : StrongString<ZipCode>(value), IValidatable
+[StrongString]
+public sealed partial class ZipCode : IValidatable
 {
     /// <summary>
     /// Validates whether the ZIP code has a valid format (non-empty alphanumeric with optional spaces/hyphens).

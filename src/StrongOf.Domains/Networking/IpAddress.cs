@@ -25,7 +25,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<IpAddress>))]
-public sealed class IpAddress(string value) : StrongString<IpAddress>(value), IValidatable
+[StrongString]
+public sealed partial class IpAddress : IValidatable
 {
     /// <summary>
     /// Validates whether the IP address has a valid format.

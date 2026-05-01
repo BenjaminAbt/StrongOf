@@ -23,7 +23,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongInt32TypeConverter<BirthYear>))]
-public sealed class BirthYear(int value) : StrongInt32<BirthYear>(value)
+[StrongInt32]
+public sealed partial class BirthYear
 {
     /// <summary>
     /// Minimum supported year.

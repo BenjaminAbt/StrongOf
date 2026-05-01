@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Finance;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Iban>))]
-public sealed partial class Iban(string value) : StrongString<Iban>(value), IValidatable
+[StrongString]
+public sealed partial class Iban : IValidatable
 {
     /// <summary>
     /// Regular expression pattern validating basic IBAN structure.

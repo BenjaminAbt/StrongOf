@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Postal;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<City>))]
-public sealed class City(string value) : StrongString<City>(value), IValidatable
+[StrongString]
+public sealed partial class City : IValidatable
 {
     /// <summary>
     /// Validates whether the city name has a valid format.
