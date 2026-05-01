@@ -23,8 +23,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed boolean types
-/// public sealed class IsActive(bool value) : StrongBoolean&lt;IsActive&gt;(value) { }
-/// public sealed class IsVerified(bool value) : StrongBoolean&lt;IsVerified&gt;(value) { }
+/// public sealed class IsActive(bool value) : StrongBoolean&lt;IsActive&gt;(value), IStrongOf&lt;bool, IsActive&gt; { public static IsActive Create(bool value) =&gt; new(value); }
+/// public sealed class IsVerified(bool value) : StrongBoolean&lt;IsVerified&gt;(value), IStrongOf&lt;bool, IsVerified&gt; { public static IsVerified Create(bool value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public void UpdateUser(IsActive isActive, IsVerified isVerified)
@@ -41,7 +41,7 @@ namespace StrongOf;
 public abstract partial class StrongBoolean<TStrong>(bool Value)
         : StrongOf<bool, TStrong>(Value), IEquatable<TStrong>, IStrongBoolean,
           IParsable<TStrong>, ISpanParsable<TStrong>
-    where TStrong : StrongBoolean<TStrong>
+    where TStrong : StrongBoolean<TStrong>, IStrongOf<bool, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="bool"/> value.

@@ -397,7 +397,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         sb.Append("partial class ").Append(target.TypeName)
           .Append('(').Append(target.PrimitiveType).Append(" value)").AppendLine()
           .Append("    : global::StrongOf.").Append(target.BaseTypeName)
-          .Append('<').Append(target.TypeName).Append(">(value)")
+                    .Append('<').Append(target.TypeName).Append(">(value), global::StrongOf.IStrongOf<")
+                    .Append(target.PrimitiveType).Append(", ").Append(target.TypeName).Append(">")
           .AppendLine();
 
         sb.AppendLine("{");

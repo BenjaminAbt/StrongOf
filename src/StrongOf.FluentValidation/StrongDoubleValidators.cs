@@ -17,7 +17,7 @@ public static class StrongDoubleValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongDouble<TStrong>
+        where TStrong : StrongDouble<TStrong>, IStrongOf<double, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
@@ -29,7 +29,7 @@ public static class StrongDoubleValidators
     /// <param name="min">The minimum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, double min)
-        where TStrong : StrongDouble<TStrong>
+        where TStrong : StrongDouble<TStrong>, IStrongOf<double, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
@@ -41,7 +41,7 @@ public static class StrongDoubleValidators
     /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, double max)
-        where TStrong : StrongDouble<TStrong>
+        where TStrong : StrongDouble<TStrong>, IStrongOf<double, TStrong>
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
@@ -54,6 +54,6 @@ public static class StrongDoubleValidators
     /// <param name="max">The maximum value of the range.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, double min, double max)
-        where TStrong : StrongDouble<TStrong>
+        where TStrong : StrongDouble<TStrong>, IStrongOf<double, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);
 }

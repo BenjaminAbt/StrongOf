@@ -25,8 +25,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed string types
-/// public sealed class Email(string value) : StrongString&lt;Email&gt;(value) { }
-/// public sealed class FirstName(string value) : StrongString&lt;FirstName&gt;(value) { }
+/// public sealed class Email(string value) : StrongString&lt;Email&gt;(value), IStrongOf&lt;string, Email&gt; { public static Email Create(string value) =&gt; new(value); }
+/// public sealed class FirstName(string value) : StrongString&lt;FirstName&gt;(value), IStrongOf&lt;string, FirstName&gt; { public static FirstName Create(string value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public void CreateUser(FirstName firstName, Email email)
@@ -45,7 +45,7 @@ namespace StrongOf;
 public abstract partial class StrongString<TStrong>(string Value)
         : StrongOf<string, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongString,
           IParsable<TStrong>, ISpanParsable<TStrong>
-    where TStrong : StrongString<TStrong>
+    where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="string"/> value.

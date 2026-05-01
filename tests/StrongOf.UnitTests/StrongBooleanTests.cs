@@ -6,8 +6,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongBooleanTests
 {
-    private sealed class TestBoolOf(bool value) : StrongBoolean<TestBoolOf>(value) { }
-    private sealed class OtherTestBoolOf(bool value) : StrongBoolean<OtherTestBoolOf>(value) { }
+    private sealed class TestBoolOf(bool value) : StrongBoolean<TestBoolOf>(value), IStrongOf<bool, TestBoolOf>
+    {
+        public static TestBoolOf Create(bool value) => new(value);
+    }
+
+    private sealed class OtherTestBoolOf(bool value) : StrongBoolean<OtherTestBoolOf>(value), IStrongOf<bool, OtherTestBoolOf>
+    {
+        public static OtherTestBoolOf Create(bool value) => new(value);
+    }
 
     [Fact]
     public void Equals_WithSameValue_ReturnsTrue()

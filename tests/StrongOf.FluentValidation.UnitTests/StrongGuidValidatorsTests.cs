@@ -14,7 +14,10 @@ public class StrongGuidValidatorsTests
     private class TestValidator : AbstractValidator<TestModel> { }
     private readonly TestValidator _validator = new();
 
-    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value);
+    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value), IStrongOf<Guid, TestGuidOf>
+    {
+        public static TestGuidOf Create(Guid value) => new(value);
+    }
 
     private class TestModel
     {

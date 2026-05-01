@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongInt64_As_Tests
 {
-    private sealed class TestInt64Of(long Value) : StrongInt64<TestInt64Of>(Value) { }
+    private sealed class TestInt64Of(long Value) : StrongInt64<TestInt64Of>(Value), IStrongOf<long, TestInt64Of>
+    {
+        public static TestInt64Of Create(long value) => new(value);
+    }
 
     [Fact]
     public void AsLong_ReturnsCorrectResult()

@@ -8,7 +8,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongInt32JsonConverterTests
 {
-    private sealed class TestInt32Of(int value) : StrongInt32<TestInt32Of>(value) { }
+    private sealed class TestInt32Of(int value) : StrongInt32<TestInt32Of>(value), IStrongOf<int, TestInt32Of>
+    {
+        public static TestInt32Of Create(int value) => new(value);
+    }
 
     private readonly StrongInt32JsonConverter<TestInt32Of> _converter = new();
     private readonly JsonSerializerOptions _options = new();

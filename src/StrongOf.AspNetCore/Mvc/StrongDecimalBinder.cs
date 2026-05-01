@@ -10,7 +10,7 @@ namespace StrongOf.AspNetCore.Mvc;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDecimal.</typeparam>
 public class StrongDecimalBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongDecimal<TStrong>
+    where TStrong : StrongDecimal<TStrong>, IStrongOf<decimal, TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.

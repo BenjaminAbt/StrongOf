@@ -11,7 +11,7 @@ namespace StrongOf.Json;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongTimeSpan.</typeparam>
 public class StrongTimeSpanJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongTimeSpan<TStrong>
+    where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
 {
     /// <summary>
     /// Reads and converts the JSON to type TStrong.

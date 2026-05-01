@@ -3,7 +3,6 @@
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
-using StrongOf.Factories;
 
 namespace StrongOf;
 
@@ -28,7 +27,10 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define a strongly-typed UserId
-/// public sealed class UserId(Guid value) : StrongGuid&lt;UserId&gt;(value) { }
+/// public sealed class UserId(Guid value) : StrongGuid&lt;UserId&gt;(value), IStrongOf&lt;Guid, UserId&gt;
+/// {
+///     public static UserId Create(Guid value) => new(value);
+/// }
 ///
 /// // Usage with compile-time safety
 /// public void ProcessUser(UserId userId, TenantId tenantId)
@@ -39,11 +41,9 @@ namespace StrongOf;
 /// </example>
 /// <param name="value">The underlying value to wrap.</param>
 public abstract class StrongOf<TTarget, TStrong>(TTarget value)
-        : IStrongOf<TTarget, TStrong>, IEquatable<StrongOf<TTarget, TStrong>>, IEquatable<TTarget>
+        : IStrongOf, IEquatable<StrongOf<TTarget, TStrong>>, IEquatable<TTarget>
     where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
 {
-    private static readonly Func<TTarget, TStrong> s_factoryWithParameter;
-
     /// <summary>
     /// Gets the underlying primitive value.
     /// </summary>
@@ -55,28 +55,25 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// </example>
     public TTarget Value { get; } = value;
 
-#pragma warning disable IL2026, IL3050 // Static ctor uses Expression.Compile (RequiresDynamicCode/UnreferencedCode); annotated on factory.
-    static StrongOf()
-    {
-        s_factoryWithParameter = StrongOfInstanceFactory.CreateWithOneParameterDelegate<TStrong, TTarget>();
-    }
-#pragma warning restore IL2026, IL3050
-
     // From
 
     /// <summary>
-    /// Creates a new instance of the strong type from the specified value using a cached factory delegate.
+    /// Creates a new instance of the strong type from the specified value using the concrete type's
+    /// <see cref="IStrongOf{TTarget,TSelf}.Create(TTarget)"/> implementation.
     /// </summary>
     /// <param name="value">The underlying value to wrap.</param>
     /// <returns>A new instance of <typeparamref name="TStrong"/> wrapping the specified value.</returns>
     /// <remarks>
     /// <para>
-    /// This method uses a pre-compiled expression delegate for instantiation, making it suitable
-    /// for generic scenarios where <c>new()</c> cannot be used directly.
+    /// This method is intended for generic scenarios where <c>new()</c> cannot be used directly.
     /// </para>
     /// <para>
-    /// <b>Performance:</b> While optimized with cached delegates, direct instantiation with <c>new()</c>
+    /// <b>Performance:</b> While <c>From()</c> is suitable for generic code, direct instantiation with <c>new()</c>
     /// is still ~40% faster. Use <c>From()</c> only when working with generic code.
+    /// </para>
+    /// <para>
+    /// Hand-written strong types must explicitly implement <c>public static Create(TTarget value)</c>.
+    /// Source-generated strong types receive that member automatically.
     /// </para>
     /// </remarks>
     /// <example>
@@ -87,9 +84,14 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     /// // Factory method (for generic scenarios)
     /// var userId = UserId.From(Guid.NewGuid());
     ///
+    /// public sealed class UserId(Guid value) : StrongGuid&lt;UserId&gt;(value), IStrongOf&lt;Guid, UserId&gt;
+    /// {
+    ///     public static UserId Create(Guid value) => new(value);
+    /// }
+    ///
     /// // Generic usage where From() is required
     /// public static TStrong CreateDefault&lt;TStrong, TValue&gt;(TValue value)
-    ///     where TStrong : StrongOf&lt;TValue, TStrong&gt;
+    ///     where TStrong : StrongOf&lt;TValue, TStrong&gt;, IStrongOf&lt;TValue, TStrong&gt;
     /// {
     ///     return TStrong.From(value);
     /// }
@@ -98,27 +100,7 @@ public abstract class StrongOf<TTarget, TStrong>(TTarget value)
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static TStrong From(TTarget value)
     {
-        // Dispatch via the static abstract member on IStrongOf<TTarget, TStrong>.
-        // When TStrong is a sealed concrete type the JIT can specialize / devirtualize
-        // and -- if the derived type overrides Create with a direct "new TStrong(value)"
-        // implementation -- the call site becomes equivalent to "new TStrong(value)",
-        // making this AOT- and trim-safe. The default implementation (provided by this
-        // base class) falls back to a cached Expression-compiled delegate.
         return TStrong.Create(value);
-    }
-
-    /// <summary>
-    /// Default implementation of <see cref="IStrongOf{TTarget, TSelf}.Create(TTarget)"/>.
-    /// Uses a cached factory delegate (Expression-compiled in the static constructor).
-    /// Derived sealed types may override this with a direct <c>new TStrong(value)</c>
-    /// to remove the reflection dependency entirely (AOT/trim friendly).
-    /// </summary>
-    /// <param name="value">The underlying value to wrap.</param>
-    /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    static TStrong IStrongOf<TTarget, TStrong>.Create(TTarget value)
-    {
-        return s_factoryWithParameter(value);
     }
 
     /// <summary>

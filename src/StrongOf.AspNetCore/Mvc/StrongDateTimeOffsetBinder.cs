@@ -9,7 +9,7 @@ namespace StrongOf.AspNetCore.Mvc;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
 public class StrongDateTimeOffsetBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongDateTimeOffset<TStrong>
+    where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.

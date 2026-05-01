@@ -24,8 +24,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed integer types
-/// public sealed class Age(int value) : StrongInt32&lt;Age&gt;(value) { }
-/// public sealed class Quantity(int value) : StrongInt32&lt;Quantity&gt;(value) { }
+/// public sealed class Age(int value) : StrongInt32&lt;Age&gt;(value), IStrongOf&lt;int, Age&gt; { public static Age Create(int value) =&gt; new(value); }
+/// public sealed class Quantity(int value) : StrongInt32&lt;Quantity&gt;(value), IStrongOf&lt;int, Quantity&gt; { public static Quantity Create(int value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public void CreateProduct(Quantity quantity, Age minAge)
@@ -43,7 +43,7 @@ public abstract partial class StrongInt32<TStrong>(int Value)
         : StrongOf<int, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt32,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
-    where TStrong : StrongInt32<TStrong>
+    where TStrong : StrongInt32<TStrong>, IStrongOf<int, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="int"/> value.

@@ -9,7 +9,7 @@ namespace StrongOf.AspNetCore.Mvc;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongBoolean.</typeparam>
 public class StrongBooleanBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongBoolean<TStrong>
+    where TStrong : StrongBoolean<TStrong>, IStrongOf<bool, TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.

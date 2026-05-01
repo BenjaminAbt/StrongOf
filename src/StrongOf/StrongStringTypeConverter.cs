@@ -12,7 +12,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong-string type.</typeparam>
 public class StrongStringTypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongString<TStrong>
+    where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)

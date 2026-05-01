@@ -20,7 +20,10 @@ public class StrongInt32ValidatorsTests
     }
 
     // Model
-    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value) { }
+    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value), IStrongOf<int, TestInt32Of>
+    {
+        public static TestInt32Of Create(int value) => new(value);
+    }
 
     [Fact]
     public void HasValue_ShouldFail_WhenNull()

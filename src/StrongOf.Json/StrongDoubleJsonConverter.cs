@@ -11,7 +11,7 @@ namespace StrongOf.Json;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDouble.</typeparam>
 public class StrongDoubleJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongDouble<TStrong>
+    where TStrong : StrongDouble<TStrong>, IStrongOf<double, TStrong>
 {
     /// <summary>
     /// Reads and converts the JSON to type TStrong.

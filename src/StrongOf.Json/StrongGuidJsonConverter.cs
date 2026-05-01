@@ -10,7 +10,7 @@ namespace StrongOf.Json;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongGuid.</typeparam>
 public class StrongGuidJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongGuid<TStrong>
+    where TStrong : StrongGuid<TStrong>, IStrongOf<Guid, TStrong>
 {
     /// <summary>
     /// Reads and converts the JSON to type TStrong.

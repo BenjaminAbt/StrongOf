@@ -28,8 +28,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed DateTimeOffset types
-/// public sealed class CreatedAt(DateTimeOffset value) : StrongDateTimeOffset&lt;CreatedAt&gt;(value) { }
-/// public sealed class LastModified(DateTimeOffset value) : StrongDateTimeOffset&lt;LastModified&gt;(value) { }
+/// public sealed class CreatedAt(DateTimeOffset value) : StrongDateTimeOffset&lt;CreatedAt&gt;(value), IStrongOf&lt;DateTimeOffset, CreatedAt&gt; { public static CreatedAt Create(DateTimeOffset value) =&gt; new(value); }
+/// public sealed class LastModified(DateTimeOffset value) : StrongDateTimeOffset&lt;LastModified&gt;(value), IStrongOf&lt;DateTimeOffset, LastModified&gt; { public static LastModified Create(DateTimeOffset value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public TimeSpan GetAge(CreatedAt createdAt, LastModified lastModified)
@@ -49,7 +49,7 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
         : StrongOf<DateTimeOffset, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDateTimeOffset,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable
-    where TStrong : StrongDateTimeOffset<TStrong>
+    where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="DateTimeOffset"/> value.

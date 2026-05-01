@@ -6,8 +6,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongOfTests_Equals
 {
-    private sealed class TestOf(int Value) : StrongOf<int, TestOf>(Value) { }
-    private sealed class OtherTestOf(int Value) : StrongOf<int, OtherTestOf>(Value) { }
+    private sealed class TestOf(int Value) : StrongOf<int, TestOf>(Value), IStrongOf<int, TestOf>
+    {
+        public static TestOf Create(int value) => new(value);
+    }
+
+    private sealed class OtherTestOf(int Value) : StrongOf<int, OtherTestOf>(Value), IStrongOf<int, OtherTestOf>
+    {
+        public static OtherTestOf Create(int value) => new(value);
+    }
 
     [Fact]
     public void Equals_WithSameReference_ReturnsTrue()

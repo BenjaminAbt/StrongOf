@@ -8,7 +8,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongBooleanJsonConverterTests
 {
-    private sealed class TestBooleanOf(bool value) : StrongBoolean<TestBooleanOf>(value) { }
+    private sealed class TestBooleanOf(bool value) : StrongBoolean<TestBooleanOf>(value), IStrongOf<bool, TestBooleanOf>
+    {
+        public static TestBooleanOf Create(bool value) => new(value);
+    }
 
     private readonly StrongBooleanJsonConverter<TestBooleanOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();

@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongString_Properties_Tests
 {
-    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
+    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value), IStrongOf<string, TestStringOf>
+    {
+        public static TestStringOf Create(string value) => new(value);
+    }
 
     [Fact]
     public void Length_ReturnsCorrectLength()

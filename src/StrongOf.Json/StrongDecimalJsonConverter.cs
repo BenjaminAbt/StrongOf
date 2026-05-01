@@ -11,7 +11,7 @@ namespace StrongOf.Json;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDecimal.</typeparam>
 public class StrongDecimalJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongDecimal<TStrong>
+    where TStrong : StrongDecimal<TStrong>, IStrongOf<decimal, TStrong>
 {
     /// <summary>
     /// Reads and converts the JSON to type TStrong.

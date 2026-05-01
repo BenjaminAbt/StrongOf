@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongChar_Operators_Tests
 {
-    private sealed class TestCharOf(char Value) : StrongChar<TestCharOf>(Value) { }
+    private sealed class TestCharOf(char Value) : StrongChar<TestCharOf>(Value), IStrongOf<char, TestCharOf>
+    {
+        public static TestCharOf Create(char value) => new(value);
+    }
 
     [Fact]
     public void EqualityOperator_WithNullStrongAndNullObject_ReturnsTrue()

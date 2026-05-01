@@ -11,7 +11,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong-int32 type.</typeparam>
 public class StrongInt32TypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongInt32<TStrong>
+    where TStrong : StrongInt32<TStrong>, IStrongOf<int, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)

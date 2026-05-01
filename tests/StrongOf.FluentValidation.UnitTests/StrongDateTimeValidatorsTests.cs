@@ -14,7 +14,10 @@ public class StrongDateTimeValidatorsTests
     private readonly TestValidator _validator = new();
 
     // Model
-    private sealed class TestStrongDateTimeOf(DateTime Value) : StrongDateTime<TestStrongDateTimeOf>(Value) { }
+    private sealed class TestStrongDateTimeOf(DateTime Value) : StrongDateTime<TestStrongDateTimeOf>(Value), IStrongOf<DateTime, TestStrongDateTimeOf>
+    {
+        public static TestStrongDateTimeOf Create(DateTime value) => new(value);
+    }
 
     private class TestModel
     {

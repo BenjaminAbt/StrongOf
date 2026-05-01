@@ -17,7 +17,7 @@ public static class StrongTimeSpanValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongTimeSpan<TStrong>
+        where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
@@ -28,7 +28,7 @@ public static class StrongTimeSpanValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsPositive<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongTimeSpan<TStrong>
+        where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
         => rule.Must(strong => strong is not null && strong.Value > TimeSpan.Zero);
 
     /// <summary>
@@ -40,7 +40,7 @@ public static class StrongTimeSpanValidators
     /// <param name="min">The minimum duration.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, TimeSpan min)
-        where TStrong : StrongTimeSpan<TStrong>
+        where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
@@ -52,6 +52,6 @@ public static class StrongTimeSpanValidators
     /// <param name="max">The maximum duration.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, TimeSpan max)
-        where TStrong : StrongTimeSpan<TStrong>
+        where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
         => rule.Must(strong => strong is not null && strong.Value <= max);
 }

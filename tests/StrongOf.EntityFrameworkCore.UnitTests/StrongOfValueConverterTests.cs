@@ -15,14 +15,45 @@ namespace StrongOf.EntityFrameworkCore.UnitTests;
 public class StrongOfValueConverterTests
 {
     // Test types
-    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value);
-    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value);
-    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value);
-    private sealed class TestInt64Of(long Value) : StrongInt64<TestInt64Of>(Value);
-    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value);
-    private sealed class TestCharOf(char Value) : StrongChar<TestCharOf>(Value);
-    private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value);
-    private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value);
+    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value), IStrongOf<Guid, TestGuidOf>
+    {
+        public static TestGuidOf Create(Guid value) => new(value);
+    }
+
+    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value), IStrongOf<string, TestStringOf>
+    {
+        public static TestStringOf Create(string value) => new(value);
+    }
+
+    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value), IStrongOf<int, TestInt32Of>
+    {
+        public static TestInt32Of Create(int value) => new(value);
+    }
+
+    private sealed class TestInt64Of(long Value) : StrongInt64<TestInt64Of>(Value), IStrongOf<long, TestInt64Of>
+    {
+        public static TestInt64Of Create(long value) => new(value);
+    }
+
+    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value), IStrongOf<decimal, TestDecimalOf>
+    {
+        public static TestDecimalOf Create(decimal value) => new(value);
+    }
+
+    private sealed class TestCharOf(char Value) : StrongChar<TestCharOf>(Value), IStrongOf<char, TestCharOf>
+    {
+        public static TestCharOf Create(char value) => new(value);
+    }
+
+    private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value), IStrongOf<DateTime, TestDateTimeOf>
+    {
+        public static TestDateTimeOf Create(DateTime value) => new(value);
+    }
+
+    private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value), IStrongOf<DateTimeOffset, TestDateTimeOffsetOf>
+    {
+        public static TestDateTimeOffsetOf Create(DateTimeOffset value) => new(value);
+    }
 
     // ==================== Guid ====================
 

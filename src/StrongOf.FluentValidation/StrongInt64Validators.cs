@@ -21,7 +21,7 @@ public static class StrongInt64Validators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongInt64<TStrong>
+        where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
@@ -33,7 +33,7 @@ public static class StrongInt64Validators
     /// <param name="min">The minimum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, long min)
-        where TStrong : StrongInt64<TStrong>
+        where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
@@ -45,7 +45,7 @@ public static class StrongInt64Validators
     /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, long max)
-        where TStrong : StrongInt64<TStrong>
+        where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
@@ -58,7 +58,7 @@ public static class StrongInt64Validators
     /// <param name="max">The maximum value of the range.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, long min, long max)
-        where TStrong : StrongInt64<TStrong>
+        where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);
 
     /// <summary>
@@ -70,10 +70,10 @@ public static class StrongInt64Validators
     /// <param name="expression">The expression that specifies the other strong Int64.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongInt64<TStrong>
+        where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
     }
@@ -87,10 +87,10 @@ public static class StrongInt64Validators
     /// <param name="expression">The expression that specifies the other strong Int64.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongInt64<TStrong>
+        where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
     }

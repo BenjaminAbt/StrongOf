@@ -169,10 +169,13 @@ public partial class Email
 
 ### Usage without source generators
 
-The classic hand-written form keeps the implementation explicit. All `StrongOf` types inherit from `StrongOf<T>` so they can participate in generic approaches, and you can extend the class for domain-specific behavior or validation.
+The classic hand-written form keeps the implementation explicit. All strong types inherit from `StrongOf<TTarget, TStrong>`, and hand-written types must implement `IStrongOf<TTarget, TStrong>` so generic `From(...)` calls can dispatch through a trim-safe static `Create` method.
 
 ```csharp
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value);
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
+{
+    public static UserId Create(Guid value) => new(value);
+}
 ```
 
 Prefer direct instantiation with `new` in hot paths:
@@ -211,7 +214,7 @@ using StrongOf.SourceGeneration;
 public partial class Email
 {
     public static bool TryCreate(string? value, out Email? result)
-        => StrongValidation.TryCreate(value, IsValid, static v => new Email(v), out result);
+        => StrongValidation.TryCreate(value, IsValid, Email.Create, out result);
 
     private static bool IsValid(string value) => value.Contains('@');
 }
@@ -220,10 +223,12 @@ public partial class Email
 Without source generators:
 
 ```csharp
-public sealed class Email(string value) : StrongString<Email>(value)
+public sealed class Email(string value) : StrongString<Email>(value), IStrongOf<string, Email>
 {
+    public static Email Create(string value) => new(value);
+
     public static bool TryCreate(string? value, out Email? result)
-        => StrongValidation.TryCreate(value, IsValid, static v => new Email(v), out result);
+        => StrongValidation.TryCreate(value, IsValid, Create, out result);
 
     private static bool IsValid(string value) => value.Contains('@');
 }
@@ -577,7 +582,7 @@ This section shows how to migrate existing hand-written strong types to the v3 g
 Before (v2 / hand-written):
 
 ```csharp
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
 {
     public static UserId Create(Guid value) => new(value);
 }
@@ -628,7 +633,7 @@ using StrongOf.SourceGeneration;
 public partial class UserId;
 ```
 
-`[Strong(typeof(...))]` is optional for StrongOf itself, but useful as metadata for external generators.
+`[Strong(typeof(...))]` is supported by StrongOf itself and is also useful as stable metadata for external generators.
 
 #### 4) Quick migration checklist
 
@@ -649,21 +654,13 @@ using StrongOf.SourceGeneration;
 public partial class UserId;
 ```
 
-`StrongAttribute` (non-generic form) is provided for interoperability and discovery by external generators. StrongOf's
-own generator does not require it.
+`StrongAttribute` (non-generic form) is supported by StrongOf's generator and also works well as explicit primitive metadata for external generators.
 
-If you want to keep the classic hand-written form, you still can - just declare the strong type
-the traditional way:
-
-```csharp
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value);
-```
-
-For full AOT/trim safety with the hand-written form, override the static abstract `Create`
-member yourself:
+If you want to keep the classic hand-written form, you still can - but you must declare the explicit
+`IStrongOf<TTarget, TStrong>` contract yourself:
 
 ```csharp
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
 {
     public static UserId Create(Guid value) => new(value);
 }

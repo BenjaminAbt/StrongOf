@@ -7,8 +7,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongDateTimeOffset_Operators_Tests
 {
-    private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value) { }
-    private sealed class OtherTestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<OtherTestDateTimeOffsetOf>(Value) { }
+    private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value), IStrongOf<DateTimeOffset, TestDateTimeOffsetOf>
+    {
+        public static TestDateTimeOffsetOf Create(DateTimeOffset value) => new(value);
+    }
+
+    private sealed class OtherTestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<OtherTestDateTimeOffsetOf>(Value), IStrongOf<DateTimeOffset, OtherTestDateTimeOffsetOf>
+    {
+        public static OtherTestDateTimeOffsetOf Create(DateTimeOffset value) => new(value);
+    }
 
     [Fact]
     public void OperatorEquals_ShouldReturnTrueForEqualValues()

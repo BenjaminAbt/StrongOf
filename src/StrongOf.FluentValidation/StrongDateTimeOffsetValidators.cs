@@ -21,7 +21,7 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
@@ -33,7 +33,7 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="min">The minimum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset min)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
@@ -45,7 +45,7 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset max)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
@@ -58,7 +58,7 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="max">The maximum value of the range.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset min, DateTimeOffset max)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);
 
     /// <summary>
@@ -70,10 +70,10 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="expression">The expression that specifies the other StrongDateTimeOffset.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
     }
@@ -87,10 +87,10 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="expression">The expression that specifies the other StrongDateTimeOffset.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
     }

@@ -24,8 +24,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed double types
-/// public sealed class Distance(double value) : StrongDouble&lt;Distance&gt;(value) { }
-/// public sealed class Speed(double value) : StrongDouble&lt;Speed&gt;(value) { }
+/// public sealed class Distance(double value) : StrongDouble&lt;Distance&gt;(value), IStrongOf&lt;double, Distance&gt; { public static Distance Create(double value) =&gt; new(value); }
+/// public sealed class Speed(double value) : StrongDouble&lt;Speed&gt;(value), IStrongOf&lt;double, Speed&gt; { public static Speed Create(double value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public double CalculateTime(Distance distance, Speed speed)
@@ -44,7 +44,7 @@ public abstract partial class StrongDouble<TStrong>(double Value)
         : StrongOf<double, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDouble,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
-    where TStrong : StrongDouble<TStrong>
+    where TStrong : StrongDouble<TStrong>, IStrongOf<double, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="double"/> value.

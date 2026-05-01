@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongOfTests_Operators
 {
-    private sealed class TestOf(int Value) : StrongOf<int, TestOf>(Value) { }
+    private sealed class TestOf(int Value) : StrongOf<int, TestOf>(Value), IStrongOf<int, TestOf>
+    {
+        public static TestOf Create(int value) => new(value);
+    }
 
     [Fact]
     public void OperatorEquals_WithNullObjects_ReturnsTrue()

@@ -8,7 +8,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongStringJsonConverterTests
 {
-    private sealed class TestStringOf(string value) : StrongString<TestStringOf>(value) { }
+    private sealed class TestStringOf(string value) : StrongString<TestStringOf>(value), IStrongOf<string, TestStringOf>
+    {
+        public static TestStringOf Create(string value) => new(value);
+    }
 
     private readonly StrongStringJsonConverter<TestStringOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();

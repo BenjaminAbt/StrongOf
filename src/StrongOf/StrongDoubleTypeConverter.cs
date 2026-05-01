@@ -12,7 +12,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong-double type.</typeparam>
 public class StrongDoubleTypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongDouble<TStrong>
+    where TStrong : StrongDouble<TStrong>, IStrongOf<double, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)

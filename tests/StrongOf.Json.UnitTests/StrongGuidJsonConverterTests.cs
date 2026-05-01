@@ -8,7 +8,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongGuidJsonConverterTests
 {
-    private sealed class TestGuidOf(Guid value) : StrongGuid<TestGuidOf>(value) { }
+    private sealed class TestGuidOf(Guid value) : StrongGuid<TestGuidOf>(value), IStrongOf<Guid, TestGuidOf>
+    {
+        public static TestGuidOf Create(Guid value) => new(value);
+    }
 
     private readonly StrongGuidJsonConverter<TestGuidOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();

@@ -24,8 +24,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed long types
-/// public sealed class FileSize(long value) : StrongInt64&lt;FileSize&gt;(value) { }
-/// public sealed class Timestamp(long value) : StrongInt64&lt;Timestamp&gt;(value) { }
+/// public sealed class FileSize(long value) : StrongInt64&lt;FileSize&gt;(value), IStrongOf&lt;long, FileSize&gt; { public static FileSize Create(long value) =&gt; new(value); }
+/// public sealed class Timestamp(long value) : StrongInt64&lt;Timestamp&gt;(value), IStrongOf&lt;long, Timestamp&gt; { public static Timestamp Create(long value) =&gt; new(value); }
 ///
 /// // Usage
 /// var fileSize = new FileSize(1024 * 1024); // 1 MB
@@ -37,7 +37,7 @@ public abstract partial class StrongInt64<TStrong>(long Value)
         : StrongOf<long, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongInt64,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
-    where TStrong : StrongInt64<TStrong>
+    where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="long"/> value.

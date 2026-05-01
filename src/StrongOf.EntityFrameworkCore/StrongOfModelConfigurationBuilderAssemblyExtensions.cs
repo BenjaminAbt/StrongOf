@@ -33,7 +33,6 @@ public static class StrongOfModelConfigurationBuilderAssemblyExtensions
     /// <param name="builder">The model configuration builder.</param>
     /// <param name="assembly">The assembly to scan.</param>
     /// <returns>The same <paramref name="builder"/> for chaining.</returns>
-    [RequiresUnreferencedCode("Reflects on all public types in the supplied assembly to discover strong types.")]
     public static ModelConfigurationBuilder RegisterStrongOfFromAssembly(
         this ModelConfigurationBuilder builder,
         Assembly assembly)
@@ -41,7 +40,7 @@ public static class StrongOfModelConfigurationBuilderAssemblyExtensions
         ArgumentNullException.ThrowIfNull(builder);
         ArgumentNullException.ThrowIfNull(assembly);
 
-        foreach (Type type in assembly.GetTypes())
+        foreach (Type type in assembly.ExportedTypes)
         {
             if (type.IsAbstract || type.IsGenericTypeDefinition)
             {

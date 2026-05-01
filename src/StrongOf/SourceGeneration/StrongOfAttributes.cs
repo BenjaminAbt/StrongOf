@@ -19,8 +19,8 @@ public sealed class StrongAttribute<TTarget> : Attribute { }
 
 /// <summary>
 /// Metadata marker for interoperability with other source generators.
-/// StrongOf itself does not consume this attribute; it exists so external
-/// tooling can discover the wrapped primitive type in a stable way.
+/// StrongOf itself can consume this attribute, and external tooling can
+/// discover the wrapped primitive type in a stable way.
 /// </summary>
 /// <example>
 /// <code>

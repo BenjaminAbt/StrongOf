@@ -21,7 +21,7 @@ public static class StrongCharValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongChar<TStrong>
+        where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
@@ -32,7 +32,7 @@ public static class StrongCharValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsLetter<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongChar<TStrong>
+        where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
         => rule.Must(strong => strong is not null && char.IsLetter(strong.Value));
 
     /// <summary>
@@ -43,7 +43,7 @@ public static class StrongCharValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsDigit<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongChar<TStrong>
+        where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
         => rule.Must(strong => strong is not null && char.IsDigit(strong.Value));
 
     /// <summary>
@@ -54,7 +54,7 @@ public static class StrongCharValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsLetterOrDigit<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongChar<TStrong>
+        where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
         => rule.Must(strong => strong is not null && char.IsLetterOrDigit(strong.Value));
 
     /// <summary>
@@ -66,10 +66,10 @@ public static class StrongCharValidators
     /// <param name="expression">The expression that specifies the other strong char.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongChar<TStrong>
+        where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
     }
@@ -83,10 +83,10 @@ public static class StrongCharValidators
     /// <param name="expression">The expression that specifies the other strong char.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongChar<TStrong>
+        where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
     }

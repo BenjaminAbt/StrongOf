@@ -10,7 +10,7 @@ namespace StrongOf.Json;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDateTime.</typeparam>
 public class StrongDateTimeJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongDateTime<TStrong>
+    where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
 {
     /// <summary>
     /// Reads and converts the JSON to type TStrong.

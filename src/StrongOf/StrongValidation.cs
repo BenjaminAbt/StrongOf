@@ -18,10 +18,12 @@ namespace StrongOf;
 /// </remarks>
 /// <example>
 /// <code>
-/// public sealed class Email(string value) : StrongString&lt;Email&gt;(value)
+/// public sealed class Email(string value) : StrongString&lt;Email&gt;(value), IStrongOf&lt;string, Email&gt;
 /// {
+///     public static Email Create(string value) =&gt; new(value);
+///
 ///     public static bool TryCreate(string? value, out Email? email)
-///         => StrongValidation.TryCreate(value, IsValid, v => new Email(v), out email);
+///         => StrongValidation.TryCreate(value, IsValid, Create, out email);
 ///
 ///     private static bool IsValid(string value) =&gt; value.Contains('@');
 /// }

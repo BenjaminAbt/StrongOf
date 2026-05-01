@@ -43,7 +43,7 @@ public static class Strong
     /// </returns>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static bool IsNullOrEmpty<TStrong>(TStrong? strong)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
         return strong?.IsEmpty() is not false;
     }
@@ -58,7 +58,7 @@ public static class Strong
     /// </returns>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static bool HasValue<TStrong>(TStrong? strong)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
         return IsNotNullOrEmpty(strong);
     }
@@ -73,7 +73,7 @@ public static class Strong
     /// </returns>
     [System.Runtime.CompilerServices.MethodImpl(System.Runtime.CompilerServices.MethodImplOptions.AggressiveInlining)]
     public static bool IsNotNullOrEmpty<TStrong>(TStrong? strong)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
         return strong?.IsEmpty() is false;
     }

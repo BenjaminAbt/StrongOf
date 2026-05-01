@@ -12,7 +12,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong-decimal type.</typeparam>
 public class StrongDecimalTypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongDecimal<TStrong>
+    where TStrong : StrongDecimal<TStrong>, IStrongOf<decimal, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)

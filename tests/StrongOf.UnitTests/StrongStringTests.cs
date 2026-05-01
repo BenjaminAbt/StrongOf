@@ -6,8 +6,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongStringTests
 {
-    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
-    private sealed class OtherTestStringOf(string Value) : StrongString<OtherTestStringOf>(Value) { }
+    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value), IStrongOf<string, TestStringOf>
+    {
+        public static TestStringOf Create(string value) => new(value);
+    }
+
+    private sealed class OtherTestStringOf(string Value) : StrongString<OtherTestStringOf>(Value), IStrongOf<string, OtherTestStringOf>
+    {
+        public static OtherTestStringOf Create(string value) => new(value);
+    }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()

@@ -42,7 +42,7 @@ public static class StrongOfModelConfigurationBuilderExtensions
     /// <param name="builder">The model configuration builder.</param>
     /// <returns>The builder for further chaining.</returns>
     public static ModelConfigurationBuilder RegisterStrongOf<TStrong, TTarget>(this ModelConfigurationBuilder builder)
-        where TStrong : StrongOf<TTarget, TStrong>
+        where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
         where TTarget : notnull
     {
         builder.Properties<TStrong>()

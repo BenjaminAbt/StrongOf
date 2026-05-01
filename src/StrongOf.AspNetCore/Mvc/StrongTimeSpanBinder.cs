@@ -9,7 +9,7 @@ namespace StrongOf.AspNetCore.Mvc;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongTimeSpan.</typeparam>
 public class StrongTimeSpanBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongTimeSpan<TStrong>
+    where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.

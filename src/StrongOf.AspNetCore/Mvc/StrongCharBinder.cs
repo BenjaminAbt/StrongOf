@@ -9,7 +9,7 @@ namespace StrongOf.AspNetCore.Mvc;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongChar.</typeparam>
 public class StrongCharBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongChar<TStrong>
+    where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
 {
     /// <summary>
     /// Tries to handle the model binding result.

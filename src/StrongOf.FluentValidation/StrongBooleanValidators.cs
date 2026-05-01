@@ -17,7 +17,7 @@ public static class StrongBooleanValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongBoolean<TStrong>
+        where TStrong : StrongBoolean<TStrong>, IStrongOf<bool, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
@@ -28,7 +28,7 @@ public static class StrongBooleanValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsTrue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongBoolean<TStrong>
+        where TStrong : StrongBoolean<TStrong>, IStrongOf<bool, TStrong>
         => rule.Must(strong => strong is not null && strong.Value);
 
     /// <summary>
@@ -39,6 +39,6 @@ public static class StrongBooleanValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsFalse<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongBoolean<TStrong>
+        where TStrong : StrongBoolean<TStrong>, IStrongOf<bool, TStrong>
         => rule.Must(strong => strong is not null && !strong.Value);
 }

@@ -7,7 +7,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongOfTests_EqualsTests
 {
-    private sealed class TestOf(int Value) : StrongOf<int, TestOf>(Value) { }
+    private sealed class TestOf(int Value) : StrongOf<int, TestOf>(Value), IStrongOf<int, TestOf>
+    {
+        public static TestOf Create(int value) => new(value);
+    }
 
     [Fact]
     public void GetHashCode_ReturnsExpectedHashCode()

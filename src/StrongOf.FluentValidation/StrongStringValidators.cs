@@ -22,7 +22,7 @@ public static class StrongStringValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
         => rule.Must(strong => strong?.IsEmpty() is false);
 
     /// <summary>
@@ -34,7 +34,7 @@ public static class StrongStringValidators
     /// <param name="minLength">The minimum length.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimumLength<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int minLength)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
         => rule.Must(content => content?.Value is not null && content.Value.Length >= minLength);
 
     /// <summary>
@@ -46,7 +46,7 @@ public static class StrongStringValidators
     /// <param name="maxLength">The maximum length.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximumLength<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int maxLength)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
         => rule.Must(content => content?.Value is null || content.Value.Length <= maxLength);
 
     /// <summary>
@@ -58,7 +58,7 @@ public static class StrongStringValidators
     /// <param name="regex">The regular expression.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsRegexMatch<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Regex regex)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
         => rule.Must(content => content?.Value is not null && regex.IsMatch(content.Value));
 
     /// <summary>
@@ -70,10 +70,10 @@ public static class StrongStringValidators
     /// <param name="expression">The expression that specifies the other strong string.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
     }
@@ -86,10 +86,10 @@ public static class StrongStringValidators
     /// <param name="expression">The expression that specifies the other strong string.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
     }
@@ -109,7 +109,7 @@ public static class StrongStringValidators
     /// If the validation fails, an error message is added to the validation context using the provided message pattern.
     /// </remarks>
     public static IRuleBuilderOptionsConditions<T, TStrong?> AllowedChars<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, ICollection<char> chars, string messagePattern, IFormatProvider? formatProvider = null)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
         return rule.Custom((topic, context) =>
         {

@@ -10,7 +10,7 @@ namespace StrongOf.Json;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
 public class StrongDateTimeOffsetJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongDateTimeOffset<TStrong>
+    where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
 {
     /// <summary>
     /// Reads and converts the JSON to type TStrong.

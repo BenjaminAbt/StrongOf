@@ -14,7 +14,10 @@ public class StrongDecimalValidatorsTests
     private class TestValidator : AbstractValidator<TestModel> { }
     private readonly TestValidator _validator = new();
 
-    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value);
+    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value), IStrongOf<decimal, TestDecimalOf>
+    {
+        public static TestDecimalOf Create(decimal value) => new(value);
+    }
 
     private class TestModel
     {

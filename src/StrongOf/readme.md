@@ -22,12 +22,12 @@ StrongOf helps to implement primitives as a strong type that represents a domain
 
 ```csharp
 // Define your types using the CRTP pattern
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
-public sealed class Email(string value) : StrongString<Email>(value) { }
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId> { public static UserId Create(Guid value) => new(value); }
+public sealed class Email(string value) : StrongString<Email>(value), IStrongOf<string, Email> { public static Email Create(string value) => new(value); }
 
 // Instantiation
 UserId userId = new(Guid.NewGuid());  // preferred - fastest
-UserId userId2 = UserId.From(Guid.NewGuid()); // via cached factory delegate
+UserId userId2 = UserId.From(Guid.NewGuid()); // via static Create for generic scenarios
 
 // Accessing the value
 Guid rawId = userId.Value;
@@ -49,7 +49,7 @@ The `StrongOf` package ships generic `TypeConverter` implementations for each ba
 
 ```csharp
 [TypeConverter(typeof(StrongGuidTypeConverter<UserId>))]
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId> { public static UserId Create(Guid value) => new(value); }
 ```
 
 Available converters: `StrongStringTypeConverter<T>`, `StrongGuidTypeConverter<T>`, `StrongInt32TypeConverter<T>`, `StrongInt64TypeConverter<T>`, `StrongDecimalTypeConverter<T>`, `StrongDoubleTypeConverter<T>`, `StrongCharTypeConverter<T>`, `StrongBooleanTypeConverter<T>`, `StrongDateTimeTypeConverter<T>`, `StrongDateTimeOffsetTypeConverter<T>`, `StrongTimeSpanTypeConverter<T>`.

@@ -10,7 +10,7 @@ namespace StrongOf.Json;
 /// </summary>
 /// <typeparam name="TStrong">The type of the StrongBoolean.</typeparam>
 public class StrongBooleanJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongBoolean<TStrong>
+    where TStrong : StrongBoolean<TStrong>, IStrongOf<bool, TStrong>
 {
     /// <summary>
     /// Reads and converts the JSON to type TStrong.

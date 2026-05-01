@@ -7,17 +7,60 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongOfJsonConverterFactoryTests
 {
-    private sealed class TestBoolean(bool value) : StrongBoolean<TestBoolean>(value) { }
-    private sealed class TestChar(char value) : StrongChar<TestChar>(value) { }
-    private sealed class TestDateTime(DateTime value) : StrongDateTime<TestDateTime>(value) { }
-    private sealed class TestDateTimeOffset(DateTimeOffset value) : StrongDateTimeOffset<TestDateTimeOffset>(value) { }
-    private sealed class TestDecimal(decimal value) : StrongDecimal<TestDecimal>(value) { }
-    private sealed class TestDouble(double value) : StrongDouble<TestDouble>(value) { }
-    private sealed class TestGuid(Guid value) : StrongGuid<TestGuid>(value) { }
-    private sealed class TestInt32(int value) : StrongInt32<TestInt32>(value) { }
-    private sealed class TestInt64(long value) : StrongInt64<TestInt64>(value) { }
-    private sealed class TestString(string value) : StrongString<TestString>(value) { }
-    private sealed class TestTimeSpan(TimeSpan value) : StrongTimeSpan<TestTimeSpan>(value) { }
+    private sealed class TestBoolean(bool value) : StrongBoolean<TestBoolean>(value), IStrongOf<bool, TestBoolean>
+    {
+        public static TestBoolean Create(bool value) => new(value);
+    }
+
+    private sealed class TestChar(char value) : StrongChar<TestChar>(value), IStrongOf<char, TestChar>
+    {
+        public static TestChar Create(char value) => new(value);
+    }
+
+    private sealed class TestDateTime(DateTime value) : StrongDateTime<TestDateTime>(value), IStrongOf<DateTime, TestDateTime>
+    {
+        public static TestDateTime Create(DateTime value) => new(value);
+    }
+
+    private sealed class TestDateTimeOffset(DateTimeOffset value) : StrongDateTimeOffset<TestDateTimeOffset>(value), IStrongOf<DateTimeOffset, TestDateTimeOffset>
+    {
+        public static TestDateTimeOffset Create(DateTimeOffset value) => new(value);
+    }
+
+    private sealed class TestDecimal(decimal value) : StrongDecimal<TestDecimal>(value), IStrongOf<decimal, TestDecimal>
+    {
+        public static TestDecimal Create(decimal value) => new(value);
+    }
+
+    private sealed class TestDouble(double value) : StrongDouble<TestDouble>(value), IStrongOf<double, TestDouble>
+    {
+        public static TestDouble Create(double value) => new(value);
+    }
+
+    private sealed class TestGuid(Guid value) : StrongGuid<TestGuid>(value), IStrongOf<Guid, TestGuid>
+    {
+        public static TestGuid Create(Guid value) => new(value);
+    }
+
+    private sealed class TestInt32(int value) : StrongInt32<TestInt32>(value), IStrongOf<int, TestInt32>
+    {
+        public static TestInt32 Create(int value) => new(value);
+    }
+
+    private sealed class TestInt64(long value) : StrongInt64<TestInt64>(value), IStrongOf<long, TestInt64>
+    {
+        public static TestInt64 Create(long value) => new(value);
+    }
+
+    private sealed class TestString(string value) : StrongString<TestString>(value), IStrongOf<string, TestString>
+    {
+        public static TestString Create(string value) => new(value);
+    }
+
+    private sealed class TestTimeSpan(TimeSpan value) : StrongTimeSpan<TestTimeSpan>(value), IStrongOf<TimeSpan, TestTimeSpan>
+    {
+        public static TestTimeSpan Create(TimeSpan value) => new(value);
+    }
 
     private sealed class TestPayload
     {

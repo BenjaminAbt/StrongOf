@@ -23,7 +23,12 @@ public interface IStrongOf
 /// <remarks>
 /// <para>
 /// This interface allows generic code to create instances of strong types without
-/// reflection or cached delegates, providing a type-safe factory pattern.
+/// reflection or runtime code generation, providing a type-safe factory pattern.
+/// </para>
+/// <para>
+/// Every concrete strong type must provide a <c>public static Create(TTarget value)</c>
+/// implementation. Types generated via <c>StrongOf.SourceGenerators</c> get this member
+/// automatically; hand-written types must declare it explicitly.
 /// </para>
 /// <para>
 /// <b>Usage in generic code:</b>
@@ -31,6 +36,11 @@ public interface IStrongOf
 /// </remarks>
 /// <example>
 /// <code>
+/// public sealed class UserId(Guid value) : StrongGuid&lt;UserId&gt;(value), IStrongOf&lt;Guid, UserId&gt;
+/// {
+///     public static UserId Create(Guid value) => new(value);
+/// }
+///
 /// public static TSelf CreateDefault&lt;TTarget, TSelf&gt;(TTarget value)
 ///     where TSelf : IStrongOf&lt;TTarget, TSelf&gt;
 /// {

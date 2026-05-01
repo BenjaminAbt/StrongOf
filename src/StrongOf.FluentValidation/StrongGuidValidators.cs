@@ -21,7 +21,7 @@ public static class StrongGuidValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongGuid<TStrong>
+        where TStrong : StrongGuid<TStrong>, IStrongOf<Guid, TStrong>
         => rule.Must(strong => strong is not null && strong.Value != Guid.Empty);
 
     /// <summary>
@@ -32,7 +32,7 @@ public static class StrongGuidValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotEmpty<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongGuid<TStrong>
+        where TStrong : StrongGuid<TStrong>, IStrongOf<Guid, TStrong>
         => rule.Must(strong => strong is not null && strong.Value != Guid.Empty);
 
     /// <summary>
@@ -44,10 +44,10 @@ public static class StrongGuidValidators
     /// <param name="expression">The expression that specifies the other strong Guid.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongGuid<TStrong>
+        where TStrong : StrongGuid<TStrong>, IStrongOf<Guid, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
     }
@@ -61,10 +61,10 @@ public static class StrongGuidValidators
     /// <param name="expression">The expression that specifies the other strong Guid.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongGuid<TStrong>
+        where TStrong : StrongGuid<TStrong>, IStrongOf<Guid, TStrong>
     {
         MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
+        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
         string name = InternalValidation.GetDisplayName(member, expression);
         return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
     }

@@ -30,7 +30,7 @@ namespace StrongOf.EntityFrameworkCore;
 /// </example>
 public sealed class StrongOfValueConverter<TStrong, TTarget>
     : ValueConverter<TStrong, TTarget>
-    where TStrong : StrongOf<TTarget, TStrong>
+    where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
     where TTarget : notnull
 {
     /// <summary>

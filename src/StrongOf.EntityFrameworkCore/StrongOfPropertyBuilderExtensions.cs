@@ -32,7 +32,7 @@ public static class StrongOfPropertyBuilderExtensions
     /// </code>
     /// </example>
     public static PropertyBuilder<TStrong> HasStrongOfConversion<TStrong, TTarget>(this PropertyBuilder<TStrong> builder)
-        where TStrong : StrongOf<TTarget, TStrong>
+        where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
         where TTarget : notnull
     {
         return builder.HasConversion(new StrongOfValueConverter<TStrong, TTarget>());

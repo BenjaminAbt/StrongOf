@@ -22,6 +22,14 @@ Added
   `StrongDecimal`, `StrongDouble`, `StrongGuid`, `StrongInt32`, `StrongInt64`, `StrongString`,
   `StrongTimeSpan`.
 
+Changed
+- Hand-written strong types now require the explicit `IStrongOf<TTarget, TSelf>.Create` contract.
+  `StrongOf<TTarget, TStrong>.From(...)` no longer falls back to any runtime Expression-based factory.
+- FluentValidation comparison validators no longer rely on FluentValidation's cached expression accessor
+  generation and now use reflection-based member access to stay AOT-friendly.
+- `RegisterStrongOfFromAssembly(...)` now scans exported public types and uses trim annotations instead of
+  a blanket unreferenced-code requirement.
+
 Diagnostics
 - `STRONG001` (error): the marker attribute requires a `partial` class.
 - `STRONG002` (error): nested types are not supported.

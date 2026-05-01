@@ -11,7 +11,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong TimeSpan type.</typeparam>
 public sealed class StrongTimeSpanTypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongTimeSpan<TStrong>
+    where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)
