@@ -691,29 +691,11 @@ AMD Ryzen 9 9950X 4.30GHz, 1 CPU, 32 logical and 16 physical cores
 | String_From | .NET 9.0  | 2.764 ns | 0.0416 ns | 0.0369 ns |  1.00 |    0.02 | 0.0014 |      24 B |
 ```
 
-For certain scenarios, this library also has an `Expression.New` implementation (through a static From method); but not for general instantiation.
-
 ## FAQ
 
 __Why no records?__
 
 Records (currently) have a few disadvantages, which is why they are not suitable for this type of class. For example, it is currently not possible to validly inherit `GetHashCode`. `sealed` on `GetHashCode` is only available if the record itself is `sealed`, which does not make sense here.
-
-__Why a Code Generator now?__
-
-For years the answer was: code generators add Roslyn coupling and tend to fight generic extensions
-or implementations. The hand-written form (`public sealed class UserId(Guid value) : StrongGuid<UserId>(value);`)
-remained intentionally tiny on purpose.
-
-The decisive change is **Native AOT / trimming**: the generic `From(...)` path historically relied
-on an `Expression`-compiled factory delegate, which is incompatible with AOT and aggressive trimming.
-Implementing the `IStrongOf<TTarget, TSelf>.Create` member by hand on every type is mechanical
-boilerplate - the perfect candidate for a tiny, opt-in, focused source generator.
-
-The generator only emits the constructor, the base type and the `Create` method. It never
-generates business logic, never generates JSON converters, EF converters or model binders, and it
-never replaces the existing hand-written form - which still works exactly as before. See the
-"Native AOT / trimming" section above for the full surface.
 
 __Why no structs?__
 
