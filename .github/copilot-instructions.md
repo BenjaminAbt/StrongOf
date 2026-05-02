@@ -275,28 +275,59 @@ Available converters:
 
 ## ASP.NET Core Integration
 
-Implement a custom `IModelBinderProvider` using the `StrongOf.AspNetCore.Mvc` namespace:
+### MVC Model Binders
+
+Register the built-in StrongOf model binder provider via `AddStrongOfModelBinderProvider()`.
+Pass types explicitly (simplest for most apps):
 
 ```csharp
 using StrongOf.AspNetCore.Mvc;
 
-public class StrongOfBinderProvider : IModelBinderProvider
-{
-    private static readonly Dictionary<Type, Type> s_binders = new()
-    {
-        { typeof(UserId), typeof(StrongGuidBinder<UserId>) },
-        { typeof(Email), typeof(StrongStringBinder<Email>) }
-    };
+// Program.cs
+builder.Services.AddControllers(options =>
+    options.AddStrongOfModelBinderProvider(
+        typeof(UserId),
+        typeof(EmailAddress)));
+```
 
-    public IModelBinder? GetBinder(ModelBinderProviderContext context)
-    {
-        if (s_binders.TryGetValue(context.Metadata.ModelType, out var binderType))
-        {
-            return new BinderTypeModelBinder(binderType);
-        }
-        return null;
-    }
-}
+Or scan an entire assembly automatically:
+
+```csharp
+using StrongOf.AspNetCore.Mvc;
+
+builder.Services.AddControllers(options =>
+    options.AddStrongOfModelBinderProviderFromAssemblies(typeof(UserId).Assembly));
+```
+
+Available binders in `StrongOf.AspNetCore.Mvc`: `StrongGuidBinder<T>`, `StrongStringBinder<T>`, `StrongInt32Binder<T>`, `StrongInt64Binder<T>`, `StrongDecimalBinder<T>`, `StrongDoubleBinder<T>`, `StrongCharBinder<T>`, `StrongBooleanBinder<T>`, `StrongDateTimeBinder<T>`, `StrongDateTimeOffsetBinder<T>`, `StrongTimeSpanBinder<T>`.
+
+### Minimal APIs
+
+All strong types implement `IParsable<TSelf>` and work as route/query parameters out of the box:
+
+```csharp
+using StrongOf.AspNetCore.MinimalApis;
+
+app.MapGet("/users/{id}", (UserId id) => Results.Ok(id));
+
+// Automatic validation of IValidatable parameters
+app.MapPost("/users", (EmailAddress email) => Results.Ok(email))
+   .WithStrongOfValidation();
+```
+
+### OpenAPI Schema Transformer
+
+> Requires .NET 9.0 or later
+
+Maps strong types to their underlying primitive types in OpenAPI docs:
+
+```csharp
+using StrongOf.AspNetCore.OpenApi;
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddSchemaTransformer<StrongOfSchemaTransformer>();
+});
 ```
 
 ## FluentValidation
@@ -356,7 +387,6 @@ just ci        # Full CI pipeline
 ```
 
 ### Target Frameworks
-- .NET 8.0
 - .NET 9.0
 - .NET 10.0
 - .NET 11.0
