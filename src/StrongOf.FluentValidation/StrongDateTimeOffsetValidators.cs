@@ -1,9 +1,6 @@
 ﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-using System.Linq.Expressions;
-using System.Reflection;
 using FluentValidation;
-using FluentValidation.Internal;
 using FluentValidation.Validators;
 
 namespace StrongOf.FluentValidation;
@@ -67,15 +64,18 @@ public static class StrongDateTimeOffsetValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other StrongDateTimeOffset.</param>
+    /// <param name="accessor">A delegate that returns the other strong DateTimeOffset to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
+    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
         where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
     /// <summary>
@@ -84,14 +84,17 @@ public static class StrongDateTimeOffsetValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other StrongDateTimeOffset.</param>
+    /// <param name="accessor">A delegate that returns the other strong DateTimeOffset to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
+    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
         where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = InternalValidation.CreateAccessor<T, TStrong>(member);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

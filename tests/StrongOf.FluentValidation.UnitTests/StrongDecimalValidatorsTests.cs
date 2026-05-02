@@ -186,7 +186,7 @@ public class StrongDecimalValidatorsTests
     [Fact]
     public void IsEqualTo_ShouldPass_WhenEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestDecimalOf(99.99m), Other = new TestDecimalOf(99.99m) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Strong);
@@ -195,7 +195,7 @@ public class StrongDecimalValidatorsTests
     [Fact]
     public void IsEqualTo_ShouldFail_WhenNotEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestDecimalOf(99.99m), Other = new TestDecimalOf(50m) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
@@ -206,7 +206,7 @@ public class StrongDecimalValidatorsTests
     [Fact]
     public void IsNotEqualTo_ShouldPass_WhenNotEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestDecimalOf(99.99m), Other = new TestDecimalOf(50m) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Strong);
@@ -215,7 +215,7 @@ public class StrongDecimalValidatorsTests
     [Fact]
     public void IsNotEqualTo_ShouldFail_WhenEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestDecimalOf(99.99m), Other = new TestDecimalOf(99.99m) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);

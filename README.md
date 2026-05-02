@@ -317,7 +317,25 @@ The namespace names are deliberately chosen to **not conflict** with common doma
 
 ## Usage with Json
 
-You can just use [StrongOf.Json](https://NuBrowse.com/packages/StrongOf.Json) and use one of the pre-defined converters
+You can just use [StrongOf.Json](https://NuBrowse.com/packages/StrongOf.Json) and use one of the pre-defined converters.
+
+**Recommended: Options-based (explicit registration):**
+
+```csharp
+JsonSerializerOptions serializeOptions = new()
+{
+    WriteIndented = true,
+    Converters =
+    {
+        new StrongGuidJsonConverter<UserId>(),
+        new StrongStringJsonConverter<EmailAddress>(),
+    }
+};
+
+string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
+```
+
+**Attribute-based:**
 
 ```csharp
 public class MyClass
@@ -325,34 +343,6 @@ public class MyClass
     [JsonConverter(typeof(StrongGuidJsonConverter<UserId>))]
     public UserId Id { get; set; }
 }
-```
-
-For most applications, register all StrongOf converters once:
-
-```csharp
-using StrongOf.Json;
-
-JsonSerializerOptions serializeOptions = new JsonSerializerOptions()
-    .AddStrongOfConverters();
-
-string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
-```
-
-`AddStrongOfConverters()` registers the built-in `StrongOfJsonConverterFactory`, so all built-in StrongOf base types are covered without per-type registration.
-
-If you want explicit control, you can still register individual converters in `JsonSerializerOptions`:
-
-```csharp
-JsonSerializerOptions serializeOptions = new JsonSerializerOptions
-{
-    WriteIndented = true,
-    Converters =
-    {
-        new StrongGuidJsonConverter<UserId>()
-    }
-};
-
-string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
 ```
 
 ## Usage with ASP.NET Core
@@ -461,17 +451,6 @@ public class AppDbContext : DbContext
 
 `ConfigureConventions` uses EF Core's pre-convention activation path. `StrongOfValueConverter<TStrong, TTarget>` supports this by exposing the public parameterless constructor EF Core expects for `HaveConversion<TConversion>()`.
 
-If your strong types live in one or more assemblies, you can also register them by assembly scan:
-
-```csharp
-protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-{
-    configurationBuilder.RegisterStrongOfFromAssembly(typeof(UserId).Assembly);
-}
-```
-
-This is convenient for larger codebases with many strong types. For trim-sensitive applications, the explicit per-type registration remains the safest option.
-
 ### Configure Strong Types in `OnModelCreating`
 
 If you want explicit control over individual properties or want the conversion right next to length, precision, or column-type settings, configure it in `OnModelCreating`:
@@ -511,7 +490,7 @@ See the [StrongOf.EntityFrameworkCore readme](src/StrongOf.EntityFrameworkCore/r
 
 ### Why No Source Generator for EF Core?
 
-The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type, while `OnModelCreating` remains available when you want more explicit per-property control. A source generator would add Roslyn coupling complexity and contradicts the project's design philosophy (see FAQ below) - for zero practical benefit.
+The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type, while `OnModelCreating` remains available when you want more explicit per-property control.
 
 ## Usage with FluentValidation
 

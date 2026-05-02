@@ -1,7 +1,6 @@
 // Copyright (c) BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata;
 using StrongOf.EntityFrameworkCore;
 using Xunit;
 
@@ -48,20 +47,6 @@ public sealed class StrongOfEntityFrameworkCoreIntegrationTests
             Assert.Equal(tenantId.Value, loaded.TenantId.Value);
             Assert.Equal(42L, loaded.Version.Value);
         }
-    }
-
-    [Fact]
-    public async Task ConfigureConventions_RegisterStrongOfFromAssembly_ConfiguresConverters()
-    {
-        DbContextOptions<AssemblyConventionDbContext> options = CreateOptions<AssemblyConventionDbContext>();
-
-        await using AssemblyConventionDbContext dbContext = new(options);
-
-        IProperty idProperty = dbContext.Model.FindEntityType(typeof(EfEntity))!.FindProperty(nameof(EfEntity.Id))!;
-        IProperty tenantProperty = dbContext.Model.FindEntityType(typeof(EfEntity))!.FindProperty(nameof(EfEntity.TenantId))!;
-
-        Assert.NotNull(idProperty.GetValueConverter());
-        Assert.NotNull(tenantProperty.GetValueConverter());
     }
 
     [Fact]
@@ -121,17 +106,6 @@ public sealed class StrongOfEntityFrameworkCoreIntegrationTests
             configurationBuilder.RegisterStrongOf<EfUserId, Guid>();
             configurationBuilder.RegisterStrongOf<EfTenantId, string>();
             configurationBuilder.RegisterStrongOf<EfVersion, long>();
-        }
-    }
-
-    private sealed class AssemblyConventionDbContext(DbContextOptions<AssemblyConventionDbContext> options)
-        : DbContext(options)
-    {
-        public DbSet<EfEntity> Entities => Set<EfEntity>();
-
-        protected override void ConfigureConventions(ModelConfigurationBuilder configurationBuilder)
-        {
-            configurationBuilder.RegisterStrongOfFromAssembly(typeof(EfUserId).Assembly);
         }
     }
 

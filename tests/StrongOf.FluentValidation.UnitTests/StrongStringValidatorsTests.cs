@@ -76,7 +76,7 @@ public class StrongStringValidatorsTests
     [Fact]
     public void IsEqualTo_ShouldFail_WhenValuesAreNotEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
 
         TestModel model = new() { Strong = new("test"), Other = new("other") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
