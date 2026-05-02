@@ -33,6 +33,15 @@ public static class StrongOfModelConfigurationBuilderAssemblyExtensions
     /// <param name="builder">The model configuration builder.</param>
     /// <param name="assembly">The assembly to scan.</param>
     /// <returns>The same <paramref name="builder"/> for chaining.</returns>
+    /// <remarks>
+    /// <b>AOT / trimming:</b> This method scans assemblies via reflection and uses
+    /// <see cref="System.Reflection.MethodInfo.MakeGenericMethod"/> at runtime. It is not trim-safe
+    /// or Native AOT compatible. In AOT scenarios call
+    /// <c>builder.Properties&lt;UserId&gt;().HaveConversion&lt;StrongOfValueConverter&lt;UserId, Guid&gt;&gt;()</c>
+    /// for each type explicitly.
+    /// </remarks>
+    [RequiresDynamicCode("RegisterStrongOfFromAssembly uses runtime reflection and MakeGenericMethod; it is not AOT compatible. Register converters explicitly instead.")]
+    [RequiresUnreferencedCode("RegisterStrongOfFromAssembly scans assembly types via reflection and is not trim-safe. Register converters explicitly instead.")]
     public static ModelConfigurationBuilder RegisterStrongOfFromAssembly(
         this ModelConfigurationBuilder builder,
         Assembly assembly)

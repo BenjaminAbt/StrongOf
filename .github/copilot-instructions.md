@@ -22,7 +22,8 @@
 
 | Package | Purpose |
 |---------|---------|
-| `StrongOf` | Core library with all strong type base classes |
+| `StrongOf` | Core library with all strong type base classes (ships the source generator inside the NuGet) |
+| `StrongOf.SourceGenerators` | Roslyn incremental source generator – emits constructor, base-type, and AOT-safe `Create` member |
 | `StrongOf.Domains` | Ready-to-use concrete domain types (EmailAddress, Url, EntityId, etc.) |
 | `StrongOf.Json` | System.Text.Json converters for serialization |
 | `StrongOf.AspNetCore` | Model binders for ASP.NET Core |
@@ -36,13 +37,37 @@
 
 ### Creating Strong Types
 
-Always use the curiously recurring template pattern (CRTP):
+**Preferred: Source Generator (AOT safe, zero boilerplate)**
+
+Add the attribute and declare the class as `partial`. The Roslyn generator emits the primary constructor, base-type inheritance, and `Create()` automatically:
 
 ```csharp
-// Correct: sealed class with primary constructor
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
-public sealed class Email(string value) : StrongString<Email>(value) { }
-public sealed class Amount(decimal value) : StrongDecimal<Amount>(value) { }
+using StrongOf.SourceGeneration;
+
+[StrongGuid]   public partial class UserId;
+[StrongString] public partial class Email;
+[StrongDecimal] public partial class Amount;
+
+// Generic syntax (equivalent):
+[Strong<Guid>]    public partial class OrderId;
+[Strong<string>]  public partial class Slug;
+```
+
+**Manual: Hand-written types**
+
+When you need custom logic in the class body, implement the CRTP pattern manually. The class **must** also implement `IStrongOf<TTarget, TSelf>` and provide `Create()` – required by the base-class constraint so `From()` dispatches without reflection:
+
+```csharp
+// Correct: sealed class with primary constructor + IStrongOf<,> + Create
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
+{
+    public static UserId Create(Guid value) => new(value);
+}
+
+public sealed class Email(string value) : StrongString<Email>(value), IStrongOf<string, Email>
+{
+    public static Email Create(string value) => new(value);
+}
 ```
 
 **CRITICAL: No implicit conversion.** Never add `implicit operator` from the underlying type to a strong type. All conversions must remain explicit to prevent parameter-order bugs at runtime:
@@ -62,7 +87,7 @@ public static implicit operator Email(string value) => new(value);
 // Prefer: Direct instantiation with new (most performant)
 UserId userId = new UserId(Guid.NewGuid());
 
-// Alternative: Static From method (uses cached factory delegate)
+// Alternative: Static From method (uses static abstract IStrongOf<,>.Create - AOT safe)
 UserId userId = UserId.From(Guid.NewGuid());
 
 // From nullable values
@@ -104,7 +129,7 @@ List<UserId>? nullResult = UserId.From((IEnumerable<Guid>?)null); // null
 
 ## Performance Guidelines
 
-1. **Prefer `new()` over `From()`** - Direct instantiation is faster as it avoids delegate invocation
+1. **Prefer `new()` over `From()`** - Direct instantiation is faster as it avoids static-abstract interface dispatch overhead
 2. **Use `From()` for generic scenarios** - When you need to create instances in generic code
 3. **Avoid boxing** - Strong types are reference types; use generics to avoid boxing operations
 4. **Pre-size collections** - When converting lists, the library automatically pre-sizes based on source collection
@@ -144,7 +169,10 @@ Example test structure:
 ```csharp
 public class StrongGuidTests
 {
-    private sealed class TestId(Guid value) : StrongGuid<TestId>(value) { }
+    private sealed class TestId(Guid value) : StrongGuid<TestId>(value), IStrongOf<Guid, TestId>
+    {
+        public static TestId Create(Guid value) => new(value);
+    }
 
     [Fact]
     public void From_WithValidGuid_ReturnsStrongType()
@@ -180,8 +208,10 @@ When creating concrete domain types in `StrongOf.Domains`, follow this pattern:
 ```csharp
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(UserIdTypeConverter))]
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value)
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
 {
+    public static UserId Create(Guid value) => new(value);
+
     // Domain-specific methods only - no redundant overrides
     public bool HasValue() => Value != Guid.Empty;
 }
@@ -324,8 +354,8 @@ just ci        # Full CI pipeline
 
 1. **Classes over Records** - Records cannot properly inherit `GetHashCode` in unsealed scenarios
 2. **Classes over Structs** - Structs require a default constructor, which breaks ASP.NET Core model binding (action parameters) and EF Core value converters. Always use sealed classes.
-3. **No Code Generator** - Generators complicate generic extensions and implementations
-4. **Factory Delegate Caching** - `StrongOf<T>` caches a factory delegate for efficient `From()` calls
+3. **Roslyn Source Generator** - Shipped inside the `StrongOf` NuGet; emits constructor, base-type, and `Create()` for zero-boilerplate AOT-safe types via `[StrongGuid] public partial class UserId;`
+4. **Static Abstract Interface Dispatch** - `From()` calls `TStrong.Create(value)` via `IStrongOf<TTarget,TSelf>.Create` (C# 11 static abstract members) – no reflection, no delegate caching, fully AOT safe
 5. **No Implicit Conversion** - Never add `implicit operator` from primitive to strong type; this is the core safety guarantee
 6. **Nullable Annotations** - Full nullable reference type support with `[NotNullIfNotNull]` attributes
 7. **Aggressive Optimization** - All methods use `[MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]`

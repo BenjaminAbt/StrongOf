@@ -17,7 +17,15 @@ namespace StrongOf.Json;
 /// automatic serialization and deserialization for all supported StrongOf types without
 /// adding per-type converters.
 /// </para>
+/// <para>
+/// <b>AOT / trimming:</b> This factory uses <see cref="Type.MakeGenericType"/> and
+    /// <c>Activator.CreateInstance</c> at runtime and is therefore not trim-safe or
+/// Native AOT compatible. In AOT scenarios register each converter explicitly, for example
+/// <c>new StrongGuidJsonConverter&lt;UserId&gt;()</c>.
+/// </para>
 /// </remarks>
+[RequiresDynamicCode("StrongOfJsonConverterFactory uses MakeGenericType and is not AOT compatible. Use per-type converters (e.g. StrongGuidJsonConverter<UserId>) instead.")]
+[RequiresUnreferencedCode("StrongOfJsonConverterFactory reflects over StrongOf base types and is not trim-safe. Use per-type converters (e.g. StrongGuidJsonConverter<UserId>) instead.")]
 public sealed class StrongOfJsonConverterFactory : JsonConverterFactory
 {
     private static readonly ConcurrentDictionary<Type, JsonConverter> s_converterCache = new();
@@ -101,12 +109,18 @@ public static class StrongOfJsonSerializerOptionsExtensions
     /// </summary>
     /// <param name="options">The serializer options to configure.</param>
     /// <returns>The same <see cref="JsonSerializerOptions"/> instance for chaining.</returns>
+    /// <remarks>
+    /// <b>AOT / trimming:</b> This method registers <see cref="StrongOfJsonConverterFactory"/> which
+    /// is not trim-safe or Native AOT compatible. In AOT scenarios add each converter explicitly.
+    /// </remarks>
     /// <example>
     /// <code>
     /// JsonSerializerOptions options = new JsonSerializerOptions()
     ///     .AddStrongOfConverters();
     /// </code>
     /// </example>
+    [RequiresDynamicCode("AddStrongOfConverters registers StrongOfJsonConverterFactory which is not AOT compatible. Add per-type converters explicitly instead.")]
+    [RequiresUnreferencedCode("AddStrongOfConverters registers StrongOfJsonConverterFactory which is not trim-safe. Add per-type converters explicitly instead.")]
     public static JsonSerializerOptions AddStrongOfConverters(this JsonSerializerOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
