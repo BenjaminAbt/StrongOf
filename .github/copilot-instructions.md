@@ -44,13 +44,21 @@ Add the attribute and declare the class as `partial`. The Roslyn generator emits
 ```csharp
 using StrongOf.SourceGeneration;
 
-[StrongGuid]   public partial class UserId;
-[StrongString] public partial class Email;
-[StrongDecimal] public partial class Amount;
+[StrongGuid]   
+public partial class UserId;
+
+[StrongString]
+public partial class Email;
+
+[StrongDecimal]
+public partial class Amount;
 
 // Generic syntax (equivalent):
-[Strong<Guid>]    public partial class OrderId;
-[Strong<string>]  public partial class Slug;
+[Strong<Guid>]
+public partial class OrderId;
+
+[Strong<string>]
+public partial class Slug;
 ```
 
 **Manual: Hand-written types**
@@ -59,12 +67,14 @@ When you need custom logic in the class body, implement the CRTP pattern manuall
 
 ```csharp
 // Correct: sealed class with primary constructor + IStrongOf<,> + Create
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
+public sealed class UserId(Guid value) 
+    : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
 {
     public static UserId Create(Guid value) => new(value);
 }
 
-public sealed class Email(string value) : StrongString<Email>(value), IStrongOf<string, Email>
+public sealed class Email(string value) 
+    : StrongString<Email>(value), IStrongOf<string, Email>
 {
     public static Email Create(string value) => new(value);
 }
@@ -320,7 +330,7 @@ public class UserIdValueConverter : ValueConverter<UserId, Guid>
 ## Build & Development
 
 ### Prerequisites
-- .NET SDK 8.0, 9.0, or 10.0
+- .NET SDK 9.0, 10.0, NET 11.0 (for source generators)
 - Just command runner (optional, for convenience commands)
 
 ### Common Commands
@@ -349,6 +359,7 @@ just ci        # Full CI pipeline
 - .NET 8.0
 - .NET 9.0
 - .NET 10.0
+- .NET 11.0
 
 ## Important Design Decisions
 
