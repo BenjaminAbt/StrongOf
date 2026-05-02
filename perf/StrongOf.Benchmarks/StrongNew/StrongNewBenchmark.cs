@@ -12,6 +12,7 @@ namespace StrongOf.Benchmarks.StrongNew;
 [SimpleJob(RuntimeMoniker.Net80)]
 [SimpleJob(RuntimeMoniker.Net90)]
 [SimpleJob(RuntimeMoniker.Net10_0, baseline: true)]
+[SimpleJob(RuntimeMoniker.Net11_0)]
 [CategoriesColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class StrongNewBenchmark

@@ -78,8 +78,6 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
 
         foreach (Type strongType in strongTypes)
         {
-            ArgumentNullException.ThrowIfNull(strongType);
-
             if (binderMap.ContainsKey(strongType))
             {
                 continue;
@@ -109,8 +107,6 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
 
         foreach (Assembly assembly in assemblies)
         {
-            ArgumentNullException.ThrowIfNull(assembly);
-
             foreach (Type type in assembly.GetTypes())
             {
                 if (type.IsClass && !type.IsAbstract && !type.IsGenericTypeDefinition && TryResolveBinderType(type, out _))

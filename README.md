@@ -652,48 +652,58 @@ The generator does exactly this for you.
 Since the strong types created here can still be instantiated with `new()`, this also means an enormous performance advantage over libraries that have to work with `Activator.CreateInstance` or `Expression.New`.
 
 ```shell
-BenchmarkDotNet v0.15.8, Windows 10 (10.0.19045.7184/22H2/2022Update)
+BenchmarkDotNet v0.16.0-nightly.20260501.510, Windows 10 (10.0.19045.7184/22H2/2022Update)
 AMD Ryzen 9 9950X 4.30GHz, 1 CPU, 32 logical and 16 physical cores
-.NET SDK 11.0.100-preview.2.26159.112
-  [Host]    : .NET 10.0.7 (10.0.7, 10.0.726.21808), X64 RyuJIT x86-64-v4
-  .NET 10.0 : .NET 10.0.7 (10.0.7, 10.0.726.21808), X64 RyuJIT x86-64-v4
-  .NET 8.0  : .NET 8.0.26 (8.0.26, 8.0.2626.16921), X64 RyuJIT x86-64-v4
-  .NET 9.0  : .NET 9.0.15 (9.0.15, 9.0.1526.17522), X64 RyuJIT x86-64-v4
+Memory: 61,64 GB Total, 37,06 GB Available
+.NET SDK 11.0.100-preview.3.26207.106
+  [Host]     : .NET 11.0.0 (11.0.0-preview.3.26207.106, 11.0.26.20806), X64 RyuJIT x86-64-v4
+  Job-AZESIF : .NET 8.0.26 (8.0.26, 8.0.2626.16921), X64 RyuJIT x86-64-v4
+  Job-YNJDZW : .NET 9.0.15 (9.0.15, 9.0.1526.17522), X64 RyuJIT x86-64-v4
+  Job-GVKUBM : .NET 10.0.7 (10.0.7, 10.0.726.21808), X64 RyuJIT x86-64-v4
+  Job-IHFIKV : .NET 11.0.0 (11.0.0-preview.3.26207.106, 11.0.26.20806), X64 RyuJIT x86-64-v4
 
 
-| Method      | Runtime   | Mean     | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated |
-|------------ |---------- |---------:|----------:|----------:|------:|--------:|-------:|----------:|
-| Guid_New    | .NET 10.0 | 1.714 ns | 0.0301 ns | 0.0281 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-| Guid_New    | .NET 8.0  | 1.764 ns | 0.0344 ns | 0.0287 ns |  1.03 |    0.02 | 0.0019 |      32 B |
-| Guid_New    | .NET 9.0  | 1.714 ns | 0.0221 ns | 0.0207 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-|             |           |          |           |           |       |         |        |           |
-| Guid_From   | .NET 10.0 | 2.534 ns | 0.0322 ns | 0.0285 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-| Guid_From   | .NET 8.0  | 3.411 ns | 0.0985 ns | 0.0922 ns |  1.35 |    0.04 | 0.0019 |      32 B |
-| Guid_From   | .NET 9.0  | 2.462 ns | 0.0267 ns | 0.0237 ns |  0.97 |    0.01 | 0.0019 |      32 B |
-|             |           |          |           |           |       |         |        |           |
-| Int32_New   | .NET 10.0 | 1.688 ns | 0.0301 ns | 0.0267 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-| Int32_New   | .NET 8.0  | 1.687 ns | 0.0214 ns | 0.0190 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-| Int32_New   | .NET 9.0  | 1.648 ns | 0.0363 ns | 0.0339 ns |  0.98 |    0.02 | 0.0014 |      24 B |
-|             |           |          |           |           |       |         |        |           |
-| Int32_From  | .NET 10.0 | 2.079 ns | 0.0274 ns | 0.0243 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-| Int32_From  | .NET 8.0  | 2.876 ns | 0.0865 ns | 0.1093 ns |  1.38 |    0.05 | 0.0014 |      24 B |
-| Int32_From  | .NET 9.0  | 1.966 ns | 0.0527 ns | 0.0493 ns |  0.95 |    0.03 | 0.0014 |      24 B |
-|             |           |          |           |           |       |         |        |           |
-| Int64_New   | .NET 10.0 | 1.598 ns | 0.0229 ns | 0.0191 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-| Int64_New   | .NET 8.0  | 1.599 ns | 0.0170 ns | 0.0159 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-| Int64_New   | .NET 9.0  | 1.630 ns | 0.0180 ns | 0.0151 ns |  1.02 |    0.01 | 0.0014 |      24 B |
-|             |           |          |           |           |       |         |        |           |
-| Int64_From  | .NET 10.0 | 1.883 ns | 0.0248 ns | 0.0207 ns |  1.00 |    0.01 | 0.0014 |      24 B |
-| Int64_From  | .NET 8.0  | 2.634 ns | 0.0414 ns | 0.0387 ns |  1.40 |    0.02 | 0.0014 |      24 B |
-| Int64_From  | .NET 9.0  | 1.922 ns | 0.0266 ns | 0.0223 ns |  1.02 |    0.02 | 0.0014 |      24 B |
-|             |           |          |           |           |       |         |        |           |
-| String_New  | .NET 10.0 | 1.617 ns | 0.0136 ns | 0.0128 ns |  1.00 |    0.01 | 0.0014 |      24 B |
-| String_New  | .NET 8.0  | 1.726 ns | 0.0626 ns | 0.0586 ns |  1.07 |    0.04 | 0.0014 |      24 B |
-| String_New  | .NET 9.0  | 1.614 ns | 0.0317 ns | 0.0281 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-|             |           |          |           |           |       |         |        |           |
-| String_From | .NET 10.0 | 2.759 ns | 0.0330 ns | 0.0309 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-| String_From | .NET 8.0  | 3.530 ns | 0.0540 ns | 0.0505 ns |  1.28 |    0.02 | 0.0014 |      24 B |
-| String_From | .NET 9.0  | 2.764 ns | 0.0416 ns | 0.0369 ns |  1.00 |    0.02 | 0.0014 |      24 B |
+| Method      | Runtime   | Mean     | Error     | StdDev    | Ratio | Gen0   | Allocated |
+|------------ |---------- |---------:|----------:|----------:|------:|-------:|----------:|
+| Guid_New    | .NET 8.0  | 2.171 ns | 0.0414 ns | 0.0425 ns |  1.09 | 0.0019 |      32 B |
+| Guid_New    | .NET 9.0  | 2.015 ns | 0.0222 ns | 0.0197 ns |  1.01 | 0.0019 |      32 B |
+| Guid_New    | .NET 10.0 | 1.996 ns | 0.0222 ns | 0.0174 ns |  1.00 | 0.0019 |      32 B |
+| Guid_New    | .NET 11.0 | 2.028 ns | 0.0379 ns | 0.0405 ns |  1.02 | 0.0019 |      32 B |
+|             |           |          |           |           |       |        |           |
+| Guid_From   | .NET 8.0  | 2.320 ns | 0.0462 ns | 0.0759 ns |  1.09 | 0.0019 |      32 B |
+| Guid_From   | .NET 9.0  | 2.130 ns | 0.0360 ns | 0.0337 ns |  1.00 | 0.0019 |      32 B |
+| Guid_From   | .NET 10.0 | 2.121 ns | 0.0166 ns | 0.0139 ns |  1.00 | 0.0019 |      32 B |
+| Guid_From   | .NET 11.0 | 2.103 ns | 0.0250 ns | 0.0233 ns |  0.99 | 0.0019 |      32 B |
+|             |           |          |           |           |       |        |           |
+| Int32_New   | .NET 8.0  | 1.930 ns | 0.0382 ns | 0.0408 ns |  1.01 | 0.0014 |      24 B |
+| Int32_New   | .NET 9.0  | 1.901 ns | 0.0277 ns | 0.0246 ns |  1.00 | 0.0014 |      24 B |
+| Int32_New   | .NET 10.0 | 1.906 ns | 0.0236 ns | 0.0209 ns |  1.00 | 0.0014 |      24 B |
+| Int32_New   | .NET 11.0 | 1.884 ns | 0.0121 ns | 0.0101 ns |  0.99 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| Int32_From  | .NET 8.0  | 1.938 ns | 0.0379 ns | 0.0556 ns |  0.96 | 0.0014 |      24 B |
+| Int32_From  | .NET 9.0  | 1.897 ns | 0.0337 ns | 0.0316 ns |  0.94 | 0.0014 |      24 B |
+| Int32_From  | .NET 10.0 | 2.017 ns | 0.0275 ns | 0.0257 ns |  1.00 | 0.0014 |      24 B |
+| Int32_From  | .NET 11.0 | 1.881 ns | 0.0150 ns | 0.0133 ns |  0.93 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| Int64_New   | .NET 8.0  | 1.938 ns | 0.0357 ns | 0.0334 ns |  1.03 | 0.0014 |      24 B |
+| Int64_New   | .NET 9.0  | 1.880 ns | 0.0141 ns | 0.0125 ns |  1.00 | 0.0014 |      24 B |
+| Int64_New   | .NET 10.0 | 1.888 ns | 0.0312 ns | 0.0291 ns |  1.00 | 0.0014 |      24 B |
+| Int64_New   | .NET 11.0 | 1.889 ns | 0.0371 ns | 0.0397 ns |  1.00 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| Int64_From  | .NET 8.0  | 1.917 ns | 0.0316 ns | 0.0296 ns |  1.01 | 0.0014 |      24 B |
+| Int64_From  | .NET 9.0  | 1.886 ns | 0.0300 ns | 0.0266 ns |  0.99 | 0.0014 |      24 B |
+| Int64_From  | .NET 10.0 | 1.903 ns | 0.0346 ns | 0.0323 ns |  1.00 | 0.0014 |      24 B |
+| Int64_From  | .NET 11.0 | 1.888 ns | 0.0293 ns | 0.0259 ns |  0.99 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| String_New  | .NET 8.0  | 1.930 ns | 0.0368 ns | 0.0394 ns |  1.02 | 0.0014 |      24 B |
+| String_New  | .NET 9.0  | 1.911 ns | 0.0270 ns | 0.0225 ns |  1.01 | 0.0014 |      24 B |
+| String_New  | .NET 10.0 | 1.890 ns | 0.0192 ns | 0.0180 ns |  1.00 | 0.0014 |      24 B |
+| String_New  | .NET 11.0 | 1.892 ns | 0.0257 ns | 0.0240 ns |  1.00 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| String_From | .NET 8.0  | 1.934 ns | 0.0377 ns | 0.0370 ns |  1.03 | 0.0014 |      24 B |
+| String_From | .NET 9.0  | 1.893 ns | 0.0267 ns | 0.0223 ns |  1.01 | 0.0014 |      24 B |
+| String_From | .NET 10.0 | 1.878 ns | 0.0212 ns | 0.0188 ns |  1.00 | 0.0014 |      24 B |
+| String_From | .NET 11.0 | 1.876 ns | 0.0322 ns | 0.0251 ns |  1.00 | 0.0014 |      24 B |
 ```
 
 ## FAQ
