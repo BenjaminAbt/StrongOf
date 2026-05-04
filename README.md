@@ -151,6 +151,7 @@ public partial class LegacyUserId;
 
 [StrongString]
 public partial class Email;
+
 [Strong<string>]
 public partial class Alias;
 
