@@ -93,11 +93,21 @@ public User AddUser(Guid tenantId, Guid userId, string firstName, string lastNam
 The idea is to use a domain-driven design approach to give specific values a meaning through their own types.
 
 ```csharp
-private sealed class TenantId(Guid value)    : StrongGuid<TenantId>(value);
-private sealed class UserId(Guid value)      : StrongGuid<UserId>(value);
-private sealed class FirstName(string value) : StrongString<FirstName>(value);
-private sealed class LastName(string value)  : StrongString<LastName>(value);
-private sealed class Email(string value)     : StrongString<Email>(value);
+
+[Strong<Guid>]
+public partial class TenantId;
+
+[StrongGuid]
+public partial class UserId;
+
+[StrongString]
+public partial class FirstName;
+
+[Strong<String>]
+public partial class LastName;
+
+[Strong<String>]
+public partial class Email;
 
 public class User
 {    
