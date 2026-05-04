@@ -136,8 +136,8 @@ The shipped Roslyn source generator turns a single attribute-marked partial clas
 
 Recommended style is the generic form `Strong<TTarget>`:
 
-- Preferred: `[Strong<Guid>]`
-- Also supported: `[StrongGuid]` and `[Strong(typeof(Guid))]`
+- Preferred: `[StrongGuid]` and `[Strong<Guid>]`
+- Also supported: `[Strong(typeof(Guid))]`
 - Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
 
 ```csharp
