@@ -15,6 +15,9 @@ namespace StrongOf.Domains.Networking;
 /// <para>
 /// This type wraps a string value representing a network host name (DNS name).
 /// </para>
+/// <para>
+/// Equality is case-insensitive because DNS host labels are case-insensitive by specification.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code>
@@ -40,12 +43,18 @@ public sealed partial class HostName : IValidatable
     /// <summary>
     /// Regular expression pattern for validating hostnames.
     /// </summary>
+    /// <remarks>
+    /// Enforces per-label constraints: 1-63 characters and no leading/trailing hyphen.
+    /// </remarks>
     [GeneratedRegex(@"^(?!-)[A-Za-z0-9-]{1,63}(?<!-)(\.[A-Za-z0-9-]{1,63})*$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex HostNameRegex();
 
     /// <summary>
     /// Validates whether the hostname has a valid format according to RFC 1123.
     /// </summary>
+    /// <remarks>
+    /// This method validates syntax only and does not perform DNS resolution.
+    /// </remarks>
     /// <returns><c>true</c> if the hostname format is valid; otherwise, <c>false</c>.</returns>
     /// <example>
     /// <code>
@@ -81,6 +90,7 @@ public sealed partial class HostName : IValidatable
     public string GetTopLevelDomain()
     {
         int lastDot = Value.LastIndexOf(".", StringComparison.Ordinal);
+        // Single-label hosts have no explicit TLD in this representation.
         return lastDot >= 0 ? Value[(lastDot + 1)..] : string.Empty;
     }
 

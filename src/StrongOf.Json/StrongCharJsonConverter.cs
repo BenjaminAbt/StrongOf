@@ -6,19 +6,23 @@ using System.Text.Json.Serialization;
 namespace StrongOf.Json;
 
 /// <summary>
-/// A JSON converter for StrongChar.
+/// System.Text.Json converter for <see cref="StrongChar{TStrong}"/> values.
+/// Serializes and deserializes single-character values using string tokens.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongChar.</typeparam>
+/// <typeparam name="TStrong">Concrete strong character type.</typeparam>
 public class StrongCharJsonConverter<TStrong> : JsonConverter<TStrong>
     where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
 {
     /// <summary>
-    /// Reads and converts the JSON to type TStrong.
+    /// Reads JSON and converts it to <typeparamref name="TStrong"/>.
     /// </summary>
     /// <param name="reader">The Utf8JsonReader to read from.</param>
     /// <param name="typeToConvert">The type of object to convert.</param>
     /// <param name="options">Options to control the serializer behavior during reading.</param>
-    /// <returns>A value of type TStrong.</returns>
+    /// <returns>
+    /// Parsed <typeparamref name="TStrong"/> instance, or <see langword="null"/>
+    /// when the token is empty or cannot be parsed.
+    /// </returns>
     public override TStrong? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
@@ -31,7 +35,7 @@ public class StrongCharJsonConverter<TStrong> : JsonConverter<TStrong>
     }
 
     /// <summary>
-    /// Writes a TStrong value to a Utf8JsonWriter.
+    /// Writes <typeparamref name="TStrong"/> as a JSON string token.
     /// </summary>
     /// <param name="writer">The Utf8JsonWriter to write to.</param>
     /// <param name="strong">The value to write.</param>

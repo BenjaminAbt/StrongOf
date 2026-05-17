@@ -46,6 +46,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
     /// <inheritdoc />
     public void Initialize(IncrementalGeneratorInitializationContext context)
     {
+        // Build one dedicated incremental pipeline per marker attribute. We copy tuple values
+        // into locals to avoid closure-capture pitfalls across loop iterations.
         foreach ((string attributeName, string baseTypeName, string primitiveType) in s_kinds)
         {
             string fullyQualifiedAttribute = AttributeNamespace + "." + attributeName;
@@ -65,6 +67,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             context.RegisterSourceOutput(validTargets, static (spc, target) => Emit(spc, target));
         }
 
+        // Generic syntax: [Strong<TTarget>]
         IncrementalValuesProvider<TargetType?> genericTargets = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 AttributeNamespace + "." + GenericStrongAttributeName,
@@ -77,6 +80,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
         context.RegisterSourceOutput(validGenericTargets, static (spc, target) => Emit(spc, target));
 
+        // Runtime-type syntax: [Strong(typeof(TTarget))]
         IncrementalValuesProvider<TargetType?> typeofTargets = context.SyntaxProvider
             .ForAttributeWithMetadataName(
                 AttributeNamespace + "." + TypeofStrongAttributeName,
@@ -90,6 +94,15 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         context.RegisterSourceOutput(validTypeofTargets, static (spc, target) => Emit(spc, target));
     }
 
+    /// <summary>
+    /// Creates a generation target for primitive-specific marker attributes such as
+    /// <c>[StrongGuid]</c> or <c>[StrongString]</c>.
+    /// </summary>
+    /// <param name="context">Current generator attribute context.</param>
+    /// <param name="baseTypeName">StrongOf base type to inherit from.</param>
+    /// <param name="primitiveType">Fully-qualified primitive CLR type name.</param>
+    /// <param name="cancellationToken">Cancellation token for cooperative cancellation.</param>
+    /// <returns>A populated <see cref="TargetType"/> when the declaration is valid; otherwise <see langword="null"/>.</returns>
     private static TargetType? ToTarget(
         GeneratorAttributeSyntaxContext context,
         string baseTypeName,
@@ -113,7 +126,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             return multipleMarkerTarget;
         }
 
-        // The user must declare the type as partial.
+        // Manual token scan keeps this hot path allocation free.
+        // We intentionally avoid LINQ here because generators run frequently while typing.
         bool isPartial = false;
         foreach (SyntaxToken modifier in classDecl.Modifiers)
         {
@@ -141,6 +155,15 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             DiagnosticLocation: classDecl.Identifier.GetLocation());
     }
 
+    /// <summary>
+    /// Creates a generation target for the generic marker syntax <c>[Strong&lt;TTarget&gt;]</c>.
+    /// </summary>
+    /// <param name="context">Current generator attribute context.</param>
+    /// <param name="cancellationToken">Cancellation token for cooperative cancellation.</param>
+    /// <returns>
+    /// A populated <see cref="TargetType"/>, a diagnostic target for unsupported targets,
+    /// or <see langword="null"/> when the declaration cannot be processed by this pipeline.
+    /// </returns>
     private static TargetType? ToGenericTarget(
         GeneratorAttributeSyntaxContext context,
         CancellationToken cancellationToken)
@@ -176,6 +199,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         ITypeSymbol targetType = attribute.AttributeClass.TypeArguments[0];
         if (!TryMapTargetType(targetType, out string baseTypeName, out string primitiveType))
         {
+            // Returning a diagnostic target keeps reporting centralized in Emit(), so every
+            // pipeline follows the same diagnostic ordering and formatting behavior.
             return new TargetType(
                 TypeName: typeSymbol.Name,
                 Namespace: typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
@@ -212,6 +237,15 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             DiagnosticLocation: classDecl.Identifier.GetLocation());
     }
 
+    /// <summary>
+    /// Creates a generation target for runtime-type marker syntax <c>[Strong(typeof(TTarget))]</c>.
+    /// </summary>
+    /// <param name="context">Current generator attribute context.</param>
+    /// <param name="cancellationToken">Cancellation token for cooperative cancellation.</param>
+    /// <returns>
+    /// A populated <see cref="TargetType"/>, a diagnostic target for unsupported targets,
+    /// or <see langword="null"/> when the declaration cannot be processed.
+    /// </returns>
     private static TargetType? ToTypeofTarget(
         GeneratorAttributeSyntaxContext context,
         CancellationToken cancellationToken)
@@ -252,6 +286,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
         if (!TryMapTargetType(targetType, out string baseTypeName, out string primitiveType))
         {
+            // Keep unsupported-type handling deferred to Emit() for deterministic diagnostics.
             return new TargetType(
                 TypeName: typeSymbol.Name,
                 Namespace: typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
@@ -288,8 +323,16 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             DiagnosticLocation: classDecl.Identifier.GetLocation());
     }
 
+    /// <summary>
+    /// Maps a target CLR type symbol to the corresponding StrongOf base type metadata.
+    /// </summary>
+    /// <param name="type">Type symbol declared by the marker attribute.</param>
+    /// <param name="baseTypeName">Resolved StrongOf base type name.</param>
+    /// <param name="primitiveType">Fully-qualified primitive CLR type name.</param>
+    /// <returns><see langword="true"/> when mapping is supported; otherwise <see langword="false"/>.</returns>
     private static bool TryMapTargetType(ITypeSymbol type, out string baseTypeName, out string primitiveType)
     {
+        // SpecialType checks are the cheapest branch for CLR primitives.
         if (type.SpecialType == SpecialType.System_Boolean)
         {
             baseTypeName = "StrongBoolean";
@@ -341,6 +384,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
         if (type is INamedTypeSymbol named)
         {
+            // Guid/DateTime/DateTimeOffset/TimeSpan are not represented by SpecialType,
+            // so we match the fully-qualified metadata name here.
             string metadataName = named.ToDisplayString(SymbolDisplayFormat.FullyQualifiedFormat);
             if (metadataName == "global::System.Guid")
             {
@@ -376,6 +421,14 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         return false;
     }
 
+    /// <summary>
+    /// Resolves a synthetic target that reports <c>STRONG004</c> when a class has multiple Strong markers.
+    /// </summary>
+    /// <param name="context">Current generator attribute context.</param>
+    /// <param name="typeSymbol">Target class symbol.</param>
+    /// <param name="classDecl">Target class declaration syntax.</param>
+    /// <param name="diagnosticTarget">Resulting synthetic diagnostic target.</param>
+    /// <returns><see langword="true"/> when processing should stop for the current pipeline.</returns>
     private static bool TryResolveMultipleMarkerDiagnosticTarget(
         GeneratorAttributeSyntaxContext context,
         INamedTypeSymbol typeSymbol,
@@ -416,6 +469,14 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         return true;
     }
 
+    /// <summary>
+    /// Checks whether a class declaration uses more than one Strong marker attribute.
+    /// </summary>
+    /// <param name="typeSymbol">Class symbol to inspect.</param>
+    /// <param name="canonicalMarkerName">
+    /// Lexicographically smallest marker name used as deterministic diagnostic owner.
+    /// </param>
+    /// <returns><see langword="true"/> when multiple Strong markers were found.</returns>
     private static bool HasMultipleStrongMarkers(INamedTypeSymbol typeSymbol, out string canonicalMarkerName)
     {
         canonicalMarkerName = string.Empty;
@@ -429,6 +490,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             }
 
             markerCount++;
+            // Pick one canonical reporter to avoid duplicate STRONG004 diagnostics from
+            // concurrently running pipelines.
             if (canonicalMarkerName.Length == 0 || string.CompareOrdinal(markerName, canonicalMarkerName) < 0)
             {
                 canonicalMarkerName = markerName;
@@ -438,6 +501,12 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         return markerCount > 1;
     }
 
+    /// <summary>
+    /// Tries to normalize any Strong marker attribute to its metadata name.
+    /// </summary>
+    /// <param name="attributeClass">Attribute symbol to inspect.</param>
+    /// <param name="markerName">Resolved metadata name when successful.</param>
+    /// <returns><see langword="true"/> when the attribute belongs to StrongOf markers.</returns>
     private static bool TryGetStrongMarkerMetadataName(INamedTypeSymbol? attributeClass, out string markerName)
     {
         markerName = string.Empty;
@@ -466,8 +535,15 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         return false;
     }
 
+    /// <summary>
+    /// Emits generated source for a validated target or reports diagnostics for invalid declarations.
+    /// </summary>
+    /// <param name="spc">Source production context used for diagnostics and output.</param>
+    /// <param name="target">Resolved generation target.</param>
     private static void Emit(SourceProductionContext spc, TargetType target)
     {
+        // Diagnostics are emitted before source generation so invalid declarations never
+        // produce partial output that could hide the real user-facing error.
         if (target.HasMultipleMarkers)
         {
             spc.ReportDiagnostic(Diagnostic.Create(Diagnostics.MultipleStrongMarkersNotAllowed, target.DiagnosticLocation, target.TypeName));
@@ -492,6 +568,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             return;
         }
 
+        // The generated shape is very small and fixed; pre-sizing avoids intermediate
+        // reallocations while still keeping the code simple.
         StringBuilder sb = new(capacity: 512);
 
         sb.AppendLine("// <auto-generated/>");
@@ -525,6 +603,13 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         spc.AddSource(hint, SourceText.From(sb.ToString(), Encoding.UTF8));
     }
 
+    /// <summary>
+    /// Immutable intermediate representation of a class candidate discovered by the syntax provider.
+    /// </summary>
+    /// <remarks>
+    /// This record carries both generation metadata and deferred diagnostic metadata so all
+    /// source-output pipelines can share the same <see cref="Emit"/> implementation.
+    /// </remarks>
     private readonly record struct TargetType(
         string TypeName,
         string? Namespace,
@@ -536,6 +621,9 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         string? UnsupportedTypeName = null,
         bool HasMultipleMarkers = false);
 
+    /// <summary>
+    /// Centralized diagnostic descriptors emitted by the StrongOf source generator.
+    /// </summary>
     private static class Diagnostics
     {
         public static readonly DiagnosticDescriptor MustBePartial = new(

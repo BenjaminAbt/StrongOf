@@ -6,7 +6,7 @@ using FluentValidation.Validators;
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongGuid.
+/// Provides FluentValidation rules for <see cref="StrongGuid{TStrong}"/> values.
 /// </summary>
 public static class StrongGuidValidators
 {
@@ -49,6 +49,8 @@ public static class StrongGuidValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Use FluentValidation's built-in EqualValidator to preserve standard
+        // cross-property comparison messages.
         return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -69,6 +71,7 @@ public static class StrongGuidValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo behavior with FluentValidation's native NotEqualValidator.
         return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

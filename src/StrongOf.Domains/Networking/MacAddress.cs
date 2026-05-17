@@ -16,6 +16,9 @@ namespace StrongOf.Domains.Networking;
 /// This type wraps a string value representing a MAC (Media Access Control) address.
 /// Supports formats: 00:11:22:33:44:55, 00-11-22-33-44-55, 001122334455
 /// </para>
+/// <para>
+/// Validation is syntactic and does not enforce vendor/OUI-specific rules.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code>
@@ -68,7 +71,7 @@ public sealed partial class MacAddress : IValidatable
             return string.Empty;
         }
 
-        // Remove separators and convert to uppercase
+        // Remove accepted separators and canonicalize casing before reformatting.
         string clean = Value.Replace(":", string.Empty, StringComparison.Ordinal)
                            .Replace("-", string.Empty, StringComparison.Ordinal)
                            .ToUpperInvariant();
@@ -78,7 +81,8 @@ public sealed partial class MacAddress : IValidatable
             return Value;
         }
 
-        // Format as XX:XX:XX:XX:XX:XX
+        // string.Create avoids intermediate allocations compared to repeated concatenation
+        // and keeps normalization efficient on bulk-processing paths.
         return string.Create(17, clean, (span, str) =>
         {
             int strIndex = 0;

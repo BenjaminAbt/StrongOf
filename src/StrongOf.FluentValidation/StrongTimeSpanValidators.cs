@@ -5,12 +5,12 @@ using FluentValidation;
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for <see cref="StrongTimeSpan{TStrong}"/>.
+/// Provides FluentValidation rules for <see cref="StrongTimeSpan{TStrong}"/> values.
 /// </summary>
 public static class StrongTimeSpanValidators
 {
     /// <summary>
-    /// Checks if the StrongTimeSpan has a value (is not null).
+    /// Checks whether the strong time span has a value (is not <see langword="null"/>).
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong TimeSpan.</typeparam>
@@ -21,7 +21,7 @@ public static class StrongTimeSpanValidators
         => rule.Must(strong => strong is not null);
 
     /// <summary>
-    /// Checks if the StrongTimeSpan is positive (greater than <see cref="TimeSpan.Zero"/>).
+    /// Validates that the strong time span is positive (greater than <see cref="TimeSpan.Zero"/>).
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong TimeSpan.</typeparam>
@@ -32,7 +32,7 @@ public static class StrongTimeSpanValidators
         => rule.Must(strong => strong is not null && strong.Value > TimeSpan.Zero);
 
     /// <summary>
-    /// Checks if the StrongTimeSpan has a minimum duration.
+    /// Validates that the strong time span is greater than or equal to the specified minimum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong TimeSpan.</typeparam>
@@ -44,7 +44,7 @@ public static class StrongTimeSpanValidators
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
-    /// Checks if the StrongTimeSpan has a maximum duration.
+    /// Validates that the strong time span is less than or equal to the specified maximum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong TimeSpan.</typeparam>

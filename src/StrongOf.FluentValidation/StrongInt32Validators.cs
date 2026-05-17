@@ -6,12 +6,12 @@ using FluentValidation.Validators;
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongInt32.
+/// Provides FluentValidation rules for <see cref="StrongInt32{TStrong}"/> values.
 /// </summary>
 public static class StrongInt32Validators
 {
     /// <summary>
-    /// Checks if the StrongInt32 has a value.
+    /// Validates that the strong 32-bit integer has a value (is not <see langword="null"/>).
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
@@ -22,7 +22,7 @@ public static class StrongInt32Validators
         => rule.Must(strong => strong is not null);
 
     /// <summary>
-    /// Checks if the StrongInt32 has a minimum value.
+    /// Validates that the strong 32-bit integer is greater than or equal to the specified minimum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
@@ -34,7 +34,7 @@ public static class StrongInt32Validators
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
-    /// Checks if the StrongInt32 has a maximum value.
+    /// Validates that the strong 32-bit integer is less than or equal to the specified maximum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
@@ -46,7 +46,7 @@ public static class StrongInt32Validators
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
-    /// Checks if the StrongInt32 is within a specified range.
+    /// Validates that the strong 32-bit integer is within the specified inclusive range.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong Int32.</typeparam>
@@ -75,6 +75,8 @@ public static class StrongInt32Validators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Use FluentValidation's built-in EqualValidator to preserve standard
+        // cross-property comparison messages.
         return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -95,6 +97,7 @@ public static class StrongInt32Validators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo behavior with FluentValidation's native NotEqualValidator.
         return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

@@ -32,6 +32,10 @@ public sealed partial class FullName : IValidatable
     /// <param name="firstName">The first name.</param>
     /// <param name="lastName">The last name.</param>
     /// <returns>A new <see cref="FullName"/> instance.</returns>
+    /// <remarks>
+    /// This factory enforces a canonical "First Last" representation with exactly one
+    /// separator space between both name components.
+    /// </remarks>
     /// <example>
     /// <code>
     /// var firstName = new FirstName("John");
@@ -92,6 +96,7 @@ public sealed partial class FullName : IValidatable
         }
 
         string[] parts = Value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        // Pre-size the output to parts.Length to avoid growth reallocations while collecting initials.
         char[] initials = new char[parts.Length];
         for (int i = 0; i < parts.Length; i++)
         {

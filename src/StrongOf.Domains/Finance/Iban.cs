@@ -16,6 +16,10 @@ namespace StrongOf.Domains.Finance;
 /// The IBAN format consists of a 2-letter country code, 2 check digits, and a BBAN (Basic Bank Account Number).
 /// Maximum length is 34 characters.
 /// </para>
+/// <para>
+/// This type validates structural format only. Financial correctness checks like mod-97
+/// checksum validation are intentionally left to domain/application policies.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code>
@@ -40,7 +44,8 @@ public sealed partial class Iban : IValidatable
     /// </summary>
     /// <remarks>
     /// This checks the basic structure only (country code + digits + alphanumeric BBAN).
-    /// For full mod-97 checksum validation, additional logic is required.
+    /// Full mod-97 checksum validation is intentionally not enforced here so callers can
+    /// decide when deeper financial validation is required.
     /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public bool IsValidFormat()
@@ -50,6 +55,7 @@ public sealed partial class Iban : IValidatable
             return false;
         }
 
+        // Normalize to canonical matching form before applying structural regex.
         string normalized = Value.Replace(" ", "").ToUpperInvariant();
         return IbanRegex().IsMatch(normalized);
     }
@@ -65,13 +71,19 @@ public sealed partial class Iban : IValidatable
     /// <summary>
     /// Returns the IBAN with spaces every 4 characters for readability.
     /// </summary>
+    /// <remarks>
+    /// The grouping algorithm emits 4-character chunks and trims the last chunk length via
+    /// <see cref="Math.Min(int, int)"/> to avoid overrun when the input length is not divisible by 4.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string ToFormattedString()
     {
         string normalized = Value.Replace(" ", "");
+        // Build chunk indexes first, then slice each chunk deterministically.
         return string.Join(" ", Enumerable.Range(0, ((normalized.Length + 3) / 4))
             .Select(i => normalized.Substring(i * 4, Math.Min(4, normalized.Length - (i * 4)))));
     }
+
     /// <summary>
     /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
     /// </summary>

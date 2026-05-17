@@ -35,7 +35,7 @@ public static class StrongOfModelConfigurationBuilderExtensions
     /// </summary>
     /// <remarks>
     /// Use this as the recommended setup when the same conversion should apply model-wide for every
-    /// property of the strong type.
+    /// property of the strong type and you want to avoid repetitive per-property mapping.
     /// </remarks>
     /// <typeparam name="TStrong">The concrete strong type.</typeparam>
     /// <typeparam name="TTarget">The underlying primitive type.</typeparam>
@@ -45,6 +45,8 @@ public static class StrongOfModelConfigurationBuilderExtensions
         where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
         where TTarget : notnull
     {
+        // Convention registration centralizes mapping and keeps entity configurations focused
+        // on domain concerns instead of repeating identical converter definitions.
         builder.Properties<TStrong>()
                .HaveConversion<StrongOfValueConverter<TStrong, TTarget>>();
 

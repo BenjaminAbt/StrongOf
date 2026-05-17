@@ -9,6 +9,10 @@ namespace StrongOf.FluentValidation;
 /// <summary>
 /// Provides extension methods for FluentValidation's IRuleBuilder for strong string validation.
 /// </summary>
+/// <remarks>
+/// These helpers intentionally validate on <see cref="StrongString{TStrong}.Value"/> to keep
+/// rule definitions concise while preserving StrongOf semantics.
+/// </remarks>
 public static class StrongStringValidators
 {
     /// <summary>
@@ -56,6 +60,7 @@ public static class StrongStringValidators
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsRegexMatch<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Regex regex)
         where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
+        // Delegate regex timeout and culture behavior to the caller-provided Regex instance.
         => rule.Must(content => content?.Value is not null && regex.IsMatch(content.Value));
 
     /// <summary>
@@ -80,6 +85,8 @@ public static class StrongStringValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Reuse FluentValidation's built-in EqualValidator so placeholders/message templates
+        // behave consistently with native RuleFor(...).Equal(...).
         return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -105,6 +112,7 @@ public static class StrongStringValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo semantics with FluentValidation's native NotEqualValidator.
         return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -129,6 +137,8 @@ public static class StrongStringValidators
         {
             if (topic is TStrong strong && strong.IsEmpty() is false)
             {
+                // Use Custom(...) instead of Must(...) so we can emit a detailed message
+                // containing the actual invalid character set.
                 if (strong.ContainsInvalidChars(chars, out ICollection<char>? invalidChars))
                 {
                     context.AddFailure(string.Format(formatProvider, messagePattern, string.Concat(invalidChars)));

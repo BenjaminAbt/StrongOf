@@ -6,12 +6,16 @@ using FluentValidation.Validators;
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongDateTime.
+/// Provides FluentValidation rules for <see cref="StrongDateTime{TStrong}"/> values.
 /// </summary>
+/// <remarks>
+/// Comparisons are performed using raw <see cref="DateTime"/> ordering. Ensure that compared
+/// values use compatible <see cref="DateTime.Kind"/> semantics in your domain.
+/// </remarks>
 public static class StrongDateTimeValidators
 {
     /// <summary>
-    /// Checks if the StrongDateTime has a value.
+    /// Validates that the strong date-time has a value (is not <see langword="null"/>).
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
@@ -22,8 +26,12 @@ public static class StrongDateTimeValidators
         => rule.Must(strong => strong is not null);
 
     /// <summary>
-    /// Checks if the StrongDateTime has a minimum value.
+    /// Validates that the strong date-time is greater than or equal to the specified minimum.
     /// </summary>
+    /// <remarks>
+    /// No kind normalization is applied. Pass values in the same temporal convention
+    /// (for example all UTC or all local) to avoid ambiguous comparisons.
+    /// </remarks>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
@@ -34,8 +42,12 @@ public static class StrongDateTimeValidators
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
-    /// Checks if the StrongDateTime has a maximum value.
+    /// Validates that the strong date-time is less than or equal to the specified maximum.
     /// </summary>
+    /// <remarks>
+    /// No kind normalization is applied. Pass values in the same temporal convention
+    /// (for example all UTC or all local) to avoid ambiguous comparisons.
+    /// </remarks>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
@@ -46,8 +58,11 @@ public static class StrongDateTimeValidators
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
-    /// Checks if the StrongDateTime is within a specified range.
+    /// Validates that the strong date-time is within the specified inclusive range.
     /// </summary>
+    /// <remarks>
+    /// Range bounds are inclusive and compared directly against the wrapped <see cref="DateTime"/>.
+    /// </remarks>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
@@ -75,6 +90,8 @@ public static class StrongDateTimeValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Reuse FluentValidation's native validator to preserve placeholder formatting and
+        // message behavior for cross-property comparisons.
         return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -95,6 +112,7 @@ public static class StrongDateTimeValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo behavior with FluentValidation's native NotEqual validator.
         return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

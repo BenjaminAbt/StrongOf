@@ -14,7 +14,10 @@ namespace StrongOf.Domains.Networking;
 /// <remarks>
 /// <para>
 /// This type wraps a string value representing an email address.
-/// It provides validation methods to check if the email format is valid.
+/// It provides lightweight format validation and extraction helpers.
+/// </para>
+/// <para>
+/// Validation uses a pragmatic regex and does not aim for full RFC 5322 compliance.
 /// </para>
 /// </remarks>
 /// <example>
@@ -32,6 +35,10 @@ public sealed partial class EmailAddress : IValidatable
     /// <summary>
     /// Regular expression pattern for validating email addresses.
     /// </summary>
+    /// <remarks>
+    /// Designed for common real-world addresses. Extremely rare RFC edge cases are intentionally
+    /// excluded to keep validation predictable and fast.
+    /// </remarks>
     [GeneratedRegex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex EmailRegex();
 
@@ -55,7 +62,7 @@ public sealed partial class EmailAddress : IValidatable
     /// <summary>
     /// Gets the domain part of the email address.
     /// </summary>
-    /// <returns>The domain part after the @ symbol, or an empty string if invalid.</returns>
+    /// <returns>The domain part after the @ symbol, or an empty string if no separator exists.</returns>
     /// <example>
     /// <code>
     /// var email = new EmailAddress("user@example.com");
@@ -65,6 +72,7 @@ public sealed partial class EmailAddress : IValidatable
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string GetDomain()
     {
+        // Use first '@' split semantics; malformed values with multiple '@' are treated as-is.
         int atIndex = Value.IndexOf('@');
         return atIndex >= 0 ? Value[(atIndex + 1)..] : string.Empty;
     }
@@ -72,7 +80,7 @@ public sealed partial class EmailAddress : IValidatable
     /// <summary>
     /// Gets the local part (username) of the email address.
     /// </summary>
-    /// <returns>The local part before the @ symbol, or the entire value if no @ found.</returns>
+    /// <returns>The local part before the @ symbol, or the entire value if no separator exists.</returns>
     /// <example>
     /// <code>
     /// var email = new EmailAddress("user@example.com");
@@ -82,9 +90,11 @@ public sealed partial class EmailAddress : IValidatable
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public string GetLocalPart()
     {
+        // Mirrors GetDomain() split behavior so both methods stay consistent on malformed input.
         int atIndex = Value.IndexOf('@');
         return atIndex >= 0 ? Value[..atIndex] : Value;
     }
+
     /// <summary>
     /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
     /// </summary>

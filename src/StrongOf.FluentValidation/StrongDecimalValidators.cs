@@ -6,7 +6,7 @@ using FluentValidation.Validators;
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongDecimal.
+/// Provides FluentValidation rules for <see cref="StrongDecimal{TStrong}"/> values.
 /// </summary>
 public static class StrongDecimalValidators
 {
@@ -97,6 +97,8 @@ public static class StrongDecimalValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Use FluentValidation's native EqualValidator to keep cross-property comparison
+        // error messages consistent with standard Equal(...) rules.
         return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -117,6 +119,7 @@ public static class StrongDecimalValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo semantics with FluentValidation's built-in NotEqualValidator.
         return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

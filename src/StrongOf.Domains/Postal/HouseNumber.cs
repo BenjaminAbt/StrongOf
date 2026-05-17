@@ -46,17 +46,25 @@ public sealed partial class HouseNumber : IValidatable
     /// Gets the numeric part of the house number.
     /// </summary>
     /// <returns>The leading integer portion of the house number, or 0 if the value does not start with a digit.</returns>
+    /// <remarks>
+    /// Only the leading numeric token is interpreted as the canonical house number. Suffixes
+    /// like letters or sub-number separators are ignored on purpose.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public int GetNumericPart()
     {
         int i = 0;
+        // Consume the initial contiguous digit block only (for example "12A" -> "12").
         while (i < Value.Length && char.IsDigit(Value[i]))
         {
             i++;
         }
 
+        // Returning 0 for non-numeric prefixes gives a stable fallback for callers that do
+        // not pre-check format validity.
         return i == 0 ? 0 : int.Parse(Value[..i], System.Globalization.CultureInfo.InvariantCulture);
     }
+
     /// <summary>
     /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
     /// </summary>

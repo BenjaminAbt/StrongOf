@@ -26,6 +26,13 @@ namespace StrongOf.AspNetCore.OpenApi;
 /// </remarks>
 public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
 {
+    /// <summary>
+    /// Canonical mapping from StrongOf marker interfaces to OpenAPI primitive schema metadata.
+    /// </summary>
+    /// <remarks>
+    /// We map by interface (instead of concrete type) so all user-defined StrongOf classes
+    /// are automatically covered without additional registration.
+    /// </remarks>
     private static readonly Dictionary<Type, (string Type, string? Format, string Description)> s_typeMap = new()
     {
         [typeof(IStrongGuid)] = ("string", "uuid", "A strongly-typed GUID value."),
@@ -50,6 +57,8 @@ public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
         {
             if (entry.Key.IsAssignableFrom(type))
             {
+                // Replace the default object schema with the primitive wire representation,
+                // otherwise OpenAPI would describe StrongOf types as nested JSON objects.
                 schema.Type = entry.Value.Type;
                 schema.Format = entry.Value.Format;
                 schema.Description ??= entry.Value.Description;

@@ -6,12 +6,16 @@ using FluentValidation.Validators;
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongDateTimeOffset.
+/// Provides FluentValidation rules for <see cref="StrongDateTimeOffset{TStrong}"/> values.
 /// </summary>
+/// <remarks>
+/// Comparisons use native <see cref="DateTimeOffset"/> ordering and therefore preserve
+/// offset-aware instant semantics.
+/// </remarks>
 public static class StrongDateTimeOffsetValidators
 {
     /// <summary>
-    /// Checks if the StrongDateTimeOffset has a value.
+    /// Validates that the strong date-time-offset has a value (is not <see langword="null"/>).
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
@@ -22,7 +26,7 @@ public static class StrongDateTimeOffsetValidators
         => rule.Must(strong => strong is not null);
 
     /// <summary>
-    /// Checks if the StrongDateTimeOffset has a minimum value.
+    /// Validates that the strong date-time-offset is greater than or equal to the specified minimum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
@@ -34,7 +38,7 @@ public static class StrongDateTimeOffsetValidators
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
-    /// Checks if the StrongDateTimeOffset has a maximum value.
+    /// Validates that the strong date-time-offset is less than or equal to the specified maximum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
@@ -46,7 +50,7 @@ public static class StrongDateTimeOffsetValidators
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
-    /// Checks if the StrongDateTimeOffset is within a specified range.
+    /// Validates that the strong date-time-offset is within the specified inclusive range.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
@@ -75,6 +79,8 @@ public static class StrongDateTimeOffsetValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Use FluentValidation's native EqualValidator to preserve standard cross-property
+        // message formatting and placeholders.
         return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -95,6 +101,7 @@ public static class StrongDateTimeOffsetValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo behavior with FluentValidation's built-in NotEqualValidator.
         return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

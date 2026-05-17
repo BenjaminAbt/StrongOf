@@ -6,13 +6,13 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 namespace StrongOf.EntityFrameworkCore;
 
 /// <summary>
-/// Extension methods for configuring EF Core properties to use strong type value converters.
+/// Extension methods for configuring EF Core properties that use StrongOf value objects.
 /// </summary>
 public static class StrongOfPropertyBuilderExtensions
 {
     /// <summary>
-    /// Configures the property to use a <see cref="StrongOfValueConverter{TStrong,TTarget}"/>
-    /// for converting between the strong type and its underlying primitive.
+    /// Configures the property to use <see cref="StrongOfValueConverter{TStrong,TTarget}"/>
+    /// for conversion between the strong type and its primitive store type.
     /// </summary>
     /// <remarks>
     /// Use this method in <c>OnModelCreating</c> when you want explicit, per-property EF Core mapping
@@ -35,6 +35,8 @@ public static class StrongOfPropertyBuilderExtensions
         where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
         where TTarget : notnull
     {
+        // Keep the converter explicit on this property when the model should not use
+        // a global convention for all properties of the same strong type.
         return builder.HasConversion(new StrongOfValueConverter<TStrong, TTarget>());
     }
 }

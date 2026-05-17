@@ -26,6 +26,7 @@ public static class StrongOfValidators
     /// <returns>The rule builder options for chaining.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsNotNull<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
         where TStrong : class, IStrongOf
+        // Keep this rule explicit for callers that prefer StrongOf semantics over direct NotNull().
         => rule.Must(strong => strong is not null);
 
     /// <summary>
@@ -39,6 +40,8 @@ public static class StrongOfValidators
     /// <returns>The rule builder options for chaining.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasNonDefaultValue<T, TStrong, TTarget>(this IRuleBuilder<T, TStrong?> rule)
         where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
+        // Delegate default-value semantics to Strong.HasNonDefaultValue so behavior remains
+        // consistent with the core StrongOf utility surface.
         => rule.Must(strong => Strong.HasNonDefaultValue<TStrong, TTarget>(strong));
 
     /// <summary>
@@ -56,6 +59,8 @@ public static class StrongOfValidators
         where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
     {
         ArgumentNullException.ThrowIfNull(predicate);
+        // Evaluate the predicate against the unwrapped primitive value so domain predicates
+        // can stay independent of StrongOf wrapper types.
         return rule.Must(strong => strong is not null && predicate(strong.Value));
     }
 }

@@ -6,7 +6,7 @@ using FluentValidation.Validators;
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongChar.
+/// Provides FluentValidation rules for <see cref="StrongChar{TStrong}"/> values.
 /// </summary>
 public static class StrongCharValidators
 {
@@ -71,6 +71,8 @@ public static class StrongCharValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Use FluentValidation's built-in EqualValidator to keep cross-property messages
+        // and placeholders aligned with native Equal(...) rules.
         return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
@@ -91,6 +93,7 @@ public static class StrongCharValidators
     {
         ArgumentNullException.ThrowIfNull(accessor);
         ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo semantics with FluentValidation's native NotEqualValidator.
         return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }
