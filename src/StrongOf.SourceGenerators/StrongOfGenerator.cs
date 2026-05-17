@@ -21,6 +21,8 @@ namespace StrongOf.SourceGenerators;
 public sealed class StrongOfGenerator : IIncrementalGenerator
 {
     private const string AttributeNamespace = "StrongOf.SourceGeneration";
+    private const string GenericStrongAttributeName = "StrongAttribute`1";
+    private const string TypeofStrongAttributeName = "StrongAttribute";
     private const string GeneratedFileSuffix = ".g.cs";
 
     /// <summary>
@@ -65,7 +67,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
         IncrementalValuesProvider<TargetType?> genericTargets = context.SyntaxProvider
             .ForAttributeWithMetadataName(
-                AttributeNamespace + ".StrongAttribute`1",
+                AttributeNamespace + "." + GenericStrongAttributeName,
                 static (node, _) => node is ClassDeclarationSyntax,
                 static (ctx, ct) => ToGenericTarget(ctx, ct));
 
@@ -77,7 +79,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
         IncrementalValuesProvider<TargetType?> typeofTargets = context.SyntaxProvider
             .ForAttributeWithMetadataName(
-                AttributeNamespace + ".StrongAttribute",
+                AttributeNamespace + "." + TypeofStrongAttributeName,
                 static (node, _) => node is ClassDeclarationSyntax,
                 static (ctx, ct) => ToTypeofTarget(ctx, ct));
 
@@ -104,6 +106,11 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         if (context.TargetNode is not ClassDeclarationSyntax classDecl)
         {
             return null;
+        }
+
+        if (TryResolveMultipleMarkerDiagnosticTarget(context, typeSymbol, classDecl, out TargetType? multipleMarkerTarget))
+        {
+            return multipleMarkerTarget;
         }
 
         // The user must declare the type as partial.
@@ -148,6 +155,11 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         if (context.TargetNode is not ClassDeclarationSyntax classDecl)
         {
             return null;
+        }
+
+        if (TryResolveMultipleMarkerDiagnosticTarget(context, typeSymbol, classDecl, out TargetType? multipleMarkerTarget))
+        {
+            return multipleMarkerTarget;
         }
 
         if (context.Attributes.Length == 0)
@@ -214,6 +226,11 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         if (context.TargetNode is not ClassDeclarationSyntax classDecl)
         {
             return null;
+        }
+
+        if (TryResolveMultipleMarkerDiagnosticTarget(context, typeSymbol, classDecl, out TargetType? multipleMarkerTarget))
+        {
+            return multipleMarkerTarget;
         }
 
         if (context.Attributes.Length == 0)
@@ -359,8 +376,104 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         return false;
     }
 
+    private static bool TryResolveMultipleMarkerDiagnosticTarget(
+        GeneratorAttributeSyntaxContext context,
+        INamedTypeSymbol typeSymbol,
+        ClassDeclarationSyntax classDecl,
+        out TargetType? diagnosticTarget)
+    {
+        diagnosticTarget = null;
+
+        if (!HasMultipleStrongMarkers(typeSymbol, out string canonicalMarkerName))
+        {
+            return false;
+        }
+
+        string? currentMarkerName = context.Attributes.Length > 0
+            ? context.Attributes[0].AttributeClass?.MetadataName
+            : null;
+
+        if (currentMarkerName is null || string.CompareOrdinal(currentMarkerName, canonicalMarkerName) != 0)
+        {
+            // Another marker pipeline reports STRONG004 for this type.
+            return true;
+        }
+
+        string? namespaceName = typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns
+            ? ns.ToDisplayString()
+            : null;
+
+        diagnosticTarget = new TargetType(
+            TypeName: typeSymbol.Name,
+            Namespace: namespaceName,
+            BaseTypeName: string.Empty,
+            PrimitiveType: string.Empty,
+            IsPartial: false,
+            IsNested: false,
+            DiagnosticLocation: classDecl.Identifier.GetLocation(),
+            HasMultipleMarkers: true);
+
+        return true;
+    }
+
+    private static bool HasMultipleStrongMarkers(INamedTypeSymbol typeSymbol, out string canonicalMarkerName)
+    {
+        canonicalMarkerName = string.Empty;
+        int markerCount = 0;
+
+        foreach (AttributeData attribute in typeSymbol.GetAttributes())
+        {
+            if (!TryGetStrongMarkerMetadataName(attribute.AttributeClass, out string markerName))
+            {
+                continue;
+            }
+
+            markerCount++;
+            if (canonicalMarkerName.Length == 0 || string.CompareOrdinal(markerName, canonicalMarkerName) < 0)
+            {
+                canonicalMarkerName = markerName;
+            }
+        }
+
+        return markerCount > 1;
+    }
+
+    private static bool TryGetStrongMarkerMetadataName(INamedTypeSymbol? attributeClass, out string markerName)
+    {
+        markerName = string.Empty;
+
+        if (attributeClass?.ContainingNamespace.ToDisplayString() != AttributeNamespace)
+        {
+            return false;
+        }
+
+        string metadataName = attributeClass.MetadataName;
+        if (metadataName == GenericStrongAttributeName || metadataName == TypeofStrongAttributeName)
+        {
+            markerName = metadataName;
+            return true;
+        }
+
+        foreach ((string attributeName, _, _) in s_kinds)
+        {
+            if (metadataName == attributeName)
+            {
+                markerName = metadataName;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private static void Emit(SourceProductionContext spc, TargetType target)
     {
+        if (target.HasMultipleMarkers)
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(Diagnostics.MultipleStrongMarkersNotAllowed, target.DiagnosticLocation, target.TypeName));
+            return;
+        }
+
         if (target.UnsupportedTypeName is not null)
         {
             spc.ReportDiagnostic(Diagnostic.Create(Diagnostics.UnsupportedStrongTargetType, target.DiagnosticLocation, target.UnsupportedTypeName));
@@ -420,7 +533,8 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         bool IsPartial,
         bool IsNested,
         Location DiagnosticLocation,
-        string? UnsupportedTypeName = null);
+        string? UnsupportedTypeName = null,
+        bool HasMultipleMarkers = false);
 
     private static class Diagnostics
     {
@@ -444,6 +558,14 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             id: "STRONG003",
             title: "Unsupported Strong target type",
             messageFormat: "Type '{0}' is not supported by [Strong<TTarget>] or [Strong(typeof(TTarget))]. Use one of: bool, char, DateTime, DateTimeOffset, decimal, double, Guid, int, long, string, TimeSpan.",
+            category: "StrongOf",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
+        public static readonly DiagnosticDescriptor MultipleStrongMarkersNotAllowed = new(
+            id: "STRONG004",
+            title: "Multiple Strong markers are not allowed",
+            messageFormat: "'{0}' has multiple Strong markers. Apply exactly one marker attribute per class declaration.",
             category: "StrongOf",
             defaultSeverity: DiagnosticSeverity.Error,
             isEnabledByDefault: true);

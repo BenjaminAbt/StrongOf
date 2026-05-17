@@ -21,10 +21,11 @@ public sealed class StrongAttribute<TTarget> : Attribute { }
 /// Metadata marker for interoperability with other source generators.
 /// StrongOf itself can consume this attribute, and external tooling can
 /// discover the wrapped primitive type in a stable way.
+/// Use exactly one marker per type declaration (for example <c>[Strong&lt;Guid&gt;]</c>
+/// or <c>[Strong(typeof(Guid))]</c>, but not both together).
 /// </summary>
 /// <example>
 /// <code>
-/// [Strong&lt;Guid&gt;]
 /// [Strong(typeof(Guid))]
 /// public partial class UserId;
 /// </code>
