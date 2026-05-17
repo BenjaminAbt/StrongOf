@@ -58,8 +58,21 @@ jobs:
         run: |
           echo "Calculated version: ${{ steps.nbgv.outputs.SemVer2 }}"
 
-      - name: Build and Test
-        run: dotnet test --configuration ${{ inputs.configuration }} --verbosity normal --logger "trx;LogFileName=test-results.trx" /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
+      - name: Build
+        run: dotnet build --configuration ${{ inputs.configuration }} --verbosity minimal /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
+
+      - name: Unit Tests
+        # Run only *.UnitTests projects. Integration test projects use Microsoft.Testing.Platform
+        # (MTP) and require a separate runner invocation; they must not be mixed into this step.
+        run: |
+          for proj in tests/*.UnitTests/*.csproj; do
+            dotnet test "$proj" \
+              --configuration ${{ inputs.configuration }} \
+              --no-build \
+              --verbosity normal \
+              --logger trx \
+              /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
+          done
 
       - name: Upload test results
         if: always() && inputs.upload-test-results
