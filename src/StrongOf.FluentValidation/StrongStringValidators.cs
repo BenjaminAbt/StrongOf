@@ -9,10 +9,6 @@ namespace StrongOf.FluentValidation;
 /// <summary>
 /// Provides extension methods for FluentValidation's IRuleBuilder for strong string validation.
 /// </summary>
-/// <remarks>
-/// These helpers intentionally validate on <see cref="StrongString{TStrong}.Value"/> to keep
-/// rule definitions concise while preserving StrongOf semantics.
-/// </remarks>
 public static class StrongStringValidators
 {
     /// <summary>
