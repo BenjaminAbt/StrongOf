@@ -110,7 +110,11 @@ public sealed partial class MacAddress : IValidatable
                 .Replace("-", string.Empty, StringComparison.Ordinal)
                 .ToUpperInvariant();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because MacAddress is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(MacAddress? other)

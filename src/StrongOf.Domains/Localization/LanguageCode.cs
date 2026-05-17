@@ -33,7 +33,11 @@ public sealed partial class LanguageCode : IValidatable
     public string ToLowerCase()
         => Value.ToLowerInvariant();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because LanguageCode is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(LanguageCode? other)
