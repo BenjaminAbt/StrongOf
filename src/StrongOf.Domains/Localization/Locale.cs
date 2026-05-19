@@ -25,7 +25,8 @@ namespace StrongOf.Domains.Localization;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Locale>))]
-public sealed partial class Locale(string value) : StrongString<Locale>(value), IValidatable
+[StrongString]
+public sealed partial class Locale : IValidatable
 {
     /// <summary>
     /// Regular expression pattern validating BCP 47 locale format.
@@ -57,7 +58,11 @@ public sealed partial class Locale(string value) : StrongString<Locale>(value), 
         }
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because Locale is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(Locale? other)

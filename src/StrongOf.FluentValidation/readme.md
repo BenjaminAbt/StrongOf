@@ -29,8 +29,8 @@ public sealed class UserValidator : AbstractValidator<User>
 | Method | Applies To | Description |
 |--------|-----------|-------------|
 | `HasValue()` | All strong types | Not null and, for string types, not empty/whitespace |
-| `IsEqualTo(expr)` | All strong types | Must equal another property of the same type |
-| `IsNotEqualTo(expr)` | All strong types | Must not equal another property of the same type |
+| `IsEqualTo(Func<T,TStrong?>, string)` | Type-specific validators that support comparisons | Must equal another property; pass accessor and member name |
+| `IsNotEqualTo(Func<T,TStrong?>, string)` | Type-specific validators that support comparisons | Must not equal another property; pass accessor and member name |
 
 ### StrongString
 

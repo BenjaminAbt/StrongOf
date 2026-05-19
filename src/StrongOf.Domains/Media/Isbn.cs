@@ -27,7 +27,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Isbn>))]
-public sealed partial class Isbn(string value) : StrongString<Isbn>(value), IValidatable
+[StrongString]
+public sealed partial class Isbn : IValidatable
 {
     /// <summary>
     /// Regular expression for ISBN-10.

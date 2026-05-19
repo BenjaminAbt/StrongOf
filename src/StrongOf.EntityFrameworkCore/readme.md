@@ -13,9 +13,9 @@ dotnet add package StrongOf.EntityFrameworkCore
 
 ```csharp
 // Your domain types
-public sealed class UserId(Guid value) : StrongGuid<UserId>(value);
-public sealed class Email(string value) : StrongString<Email>(value);
-public sealed class Amount(decimal value) : StrongDecimal<Amount>(value);
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId> { public static UserId Create(Guid value) => new(value); }
+public sealed class Email(string value) : StrongString<Email>(value), IStrongOf<string, Email> { public static Email Create(string value) => new(value); }
+public sealed class Amount(decimal value) : StrongDecimal<Amount>(value), IStrongOf<decimal, Amount> { public static Amount Create(decimal value) => new(value); }
 
 // Your entity
 public class Order

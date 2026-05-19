@@ -13,7 +13,8 @@ namespace StrongOf.Domains.Localization;
 /// </summary>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<LanguageCode>))]
-public sealed partial class LanguageCode(string value) : StrongString<LanguageCode>(value), IValidatable
+[StrongString]
+public sealed partial class LanguageCode : IValidatable
 {
     [GeneratedRegex(@"^[A-Za-z]{2,3}(?:-[A-Za-z]{2})?$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex LanguageCodeRegex();
@@ -32,7 +33,11 @@ public sealed partial class LanguageCode(string value) : StrongString<LanguageCo
     public string ToLowerCase()
         => Value.ToLowerInvariant();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because LanguageCode is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(LanguageCode? other)

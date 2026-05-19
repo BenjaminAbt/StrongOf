@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Postal;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<CountryName>))]
-public sealed partial class CountryName(string value) : StrongString<CountryName>(value), IValidatable
+[StrongString]
+public sealed partial class CountryName : IValidatable
 {
     /// <summary>
     /// Minimum length for a country name.

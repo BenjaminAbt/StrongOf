@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -23,8 +23,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed identifiers
-/// public sealed class UserId(Guid value) : StrongGuid&lt;UserId&gt;(value) { }
-/// public sealed class TenantId(Guid value) : StrongGuid&lt;TenantId&gt;(value) { }
+/// public sealed class UserId(Guid value) : StrongGuid&lt;UserId&gt;(value), IStrongOf&lt;Guid, UserId&gt; { public static UserId Create(Guid value) =&gt; new(value); }
+/// public sealed class TenantId(Guid value) : StrongGuid&lt;TenantId&gt;(value), IStrongOf&lt;Guid, TenantId&gt; { public static TenantId Create(Guid value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up identifiers
 /// public User GetUser(UserId userId, TenantId tenantId)
@@ -44,7 +44,7 @@ public abstract partial class StrongGuid<TStrong>(Guid Value)
         : StrongOf<Guid, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongGuid,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable
-    where TStrong : StrongGuid<TStrong>
+    where TStrong : StrongGuid<TStrong>, IStrongOf<Guid, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="Guid"/> value.

@@ -8,7 +8,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongDoubleJsonConverterTests
 {
-    private sealed class TestDoubleOf(double value) : StrongDouble<TestDoubleOf>(value) { }
+    private sealed class TestDoubleOf(double value) : StrongDouble<TestDoubleOf>(value), IStrongOf<double, TestDoubleOf>
+    {
+        public static TestDoubleOf Create(double value) => new(value);
+    }
 
     private readonly StrongDoubleJsonConverter<TestDoubleOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();

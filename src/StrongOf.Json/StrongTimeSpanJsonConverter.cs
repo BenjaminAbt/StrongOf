@@ -6,23 +6,28 @@ using System.Text.Json.Serialization;
 namespace StrongOf.Json;
 
 /// <summary>
-/// A JSON converter for <see cref="StrongTimeSpan{TStrong}"/> types.
-/// Reads and writes TimeSpan values as ISO 8601 duration strings.
+/// System.Text.Json converter for <see cref="StrongTimeSpan{TStrong}"/> values.
+/// Reads and writes <see cref="TimeSpan"/> values as string tokens.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongTimeSpan.</typeparam>
+/// <typeparam name="TStrong">Concrete strong time-span type.</typeparam>
 public class StrongTimeSpanJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongTimeSpan<TStrong>
+    where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
 {
     /// <summary>
-    /// Reads and converts the JSON to type TStrong.
+    /// Reads JSON and converts it to <typeparamref name="TStrong"/>.
     /// </summary>
     /// <param name="reader">The Utf8JsonReader to read from.</param>
     /// <param name="typeToConvert">The type of object to convert.</param>
     /// <param name="options">Options to control the serializer behavior during reading.</param>
-    /// <returns>A value of type TStrong.</returns>
+    /// <returns>
+    /// Parsed <typeparamref name="TStrong"/> instance, or <see langword="null"/>
+    /// when the token is empty or cannot be parsed.
+    /// </returns>
     public override TStrong? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
+        // TryParse intentionally accepts both canonical "c" payloads and common legacy
+        // formats so existing integrations keep working.
         if (string.IsNullOrEmpty(value) is false && TimeSpan.TryParse(value, out TimeSpan ts))
         {
             return StrongOf<TimeSpan, TStrong>.From(ts);
@@ -32,7 +37,7 @@ public class StrongTimeSpanJsonConverter<TStrong> : JsonConverter<TStrong>
     }
 
     /// <summary>
-    /// Writes a TStrong value to a Utf8JsonWriter.
+    /// Writes <typeparamref name="TStrong"/> using the round-trippable "c" format.
     /// </summary>
     /// <param name="writer">The Utf8JsonWriter to write to.</param>
     /// <param name="strong">The value to write.</param>

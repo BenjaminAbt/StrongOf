@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Measurement;
 /// </example>
 [DebuggerDisplay("{Value} cm")]
 [TypeConverter(typeof(StrongDecimalTypeConverter<HeightCm>))]
-public sealed class HeightCm(decimal value) : StrongDecimal<HeightCm>(value)
+[StrongDecimal]
+public sealed partial class HeightCm
 {
     /// <summary>
     /// Minimum valid height in centimeters.

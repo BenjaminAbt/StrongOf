@@ -27,7 +27,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<MimeType>))]
-public sealed partial class MimeType(string value) : StrongString<MimeType>(value), IValidatable
+[StrongString]
+public sealed partial class MimeType : IValidatable
 {
     [GeneratedRegex(@"^[A-Za-z0-9!#$&^_.+-]+\/[A-Za-z0-9!#$&^_.+-]+$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex MimeTypeRegex();
@@ -62,7 +63,11 @@ public sealed partial class MimeType(string value) : StrongString<MimeType>(valu
         return slashIndex >= 0 ? Value[(slashIndex + 1)..] : string.Empty;
     }
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because MimeType is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(MimeType? other)

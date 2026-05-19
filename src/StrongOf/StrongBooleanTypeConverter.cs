@@ -11,7 +11,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong-boolean type.</typeparam>
 public class StrongBooleanTypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongBoolean<TStrong>
+    where TStrong : StrongBoolean<TStrong>, IStrongOf<bool, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)

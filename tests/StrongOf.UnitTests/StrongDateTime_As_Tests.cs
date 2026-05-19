@@ -7,7 +7,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongDateTime_As_Tests
 {
-    private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value) { }
+    private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value), IStrongOf<DateTime, TestDateTimeOf>
+    {
+        public static TestDateTimeOf Create(DateTime value) => new(value);
+    }
 
     [Fact]
     public void FromNullable_WithValue_ReturnsNonNull()

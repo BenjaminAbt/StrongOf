@@ -24,7 +24,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Url>))]
-public sealed class Url(string value) : StrongString<Url>(value), IValidatable
+[StrongString]
+public sealed partial class Url : IValidatable
 {
     /// <summary>
     /// Validates whether the URL has a valid format.

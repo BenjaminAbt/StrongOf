@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongDecimal_Operators_Tests
 {
-    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value) { }
+    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value), IStrongOf<decimal, TestDecimalOf>
+    {
+        public static TestDecimalOf Create(decimal value) => new(value);
+    }
 
     [Fact]
     public void LessThanOperator_WithNonNullStrongDecimalAndNonNullDecimalOther_ReturnsCorrectResult()

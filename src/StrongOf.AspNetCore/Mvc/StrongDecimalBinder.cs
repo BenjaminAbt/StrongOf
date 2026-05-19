@@ -6,20 +6,21 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongDecimal type.
+/// Binds incoming MVC values to <see cref="StrongDecimal{TStrong}"/> instances.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongDecimal.</typeparam>
+/// <typeparam name="TStrong">Concrete StrongOf decimal type to materialize.</typeparam>
 public class StrongDecimalBinder<TStrong> : StrongOfBinder
-    where TStrong : StrongDecimal<TStrong>
+    where TStrong : StrongDecimal<TStrong>, IStrongOf<decimal, TStrong>
 {
     /// <summary>
-    /// Tries to handle the model binding result.
+    /// Attempts to parse the raw request value as the configured decimal StrongOf type.
     /// </summary>
-    /// <param name="value">The value to be handled.</param>
-    /// <param name="result">The result of the model binding.</param>
-    /// <returns>Returns a boolean indicating the success of the operation.</returns>
+    /// <param name="value">Raw non-empty value from route, query or form binding.</param>
+    /// <param name="result">Model binding result populated with success or failure.</param>
+    /// <returns><see langword="true"/> when parsing succeeded; otherwise <see langword="false"/>.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
+        // API payloads should parse consistently regardless of server culture.
         if (StrongDecimal<TStrong>.TryParse(value,
             CultureInfo.InvariantCulture.NumberFormat, out TStrong? strong))
         {

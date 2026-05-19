@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Postal;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<ZipCode>))]
-public sealed class ZipCode(string value) : StrongString<ZipCode>(value), IValidatable
+[StrongString]
+public sealed partial class ZipCode : IValidatable
 {
     /// <summary>
     /// Validates whether the ZIP code has a valid format (non-empty alphanumeric with optional spaces/hyphens).
@@ -50,6 +51,10 @@ public sealed class ZipCode(string value) : StrongString<ZipCode>(value), IValid
     /// <summary>
     /// Validates whether the ZIP code has a valid US format (5 digits or 5+4 format).
     /// </summary>
+    /// <remarks>
+    /// This method is intentionally US-specific. For general postal validation,
+    /// use <see cref="IsValidFormat"/>.
+    /// </remarks>
     /// <returns><c>true</c> if the ZIP code is a valid US format; otherwise, <c>false</c>.</returns>
     /// <example>
     /// <code>
@@ -74,7 +79,7 @@ public sealed class ZipCode(string value) : StrongString<ZipCode>(value), IValid
             return true;
         }
 
-        // 5+4 format (12345-6789)
+        // 5+4 format (12345-6789): position 5 must be '-' and both slices must be digits.
         if (Value.Length == 10 && Value[5] == '-')
         {
             return Value[..5].All(char.IsDigit) && Value[6..].All(char.IsDigit);

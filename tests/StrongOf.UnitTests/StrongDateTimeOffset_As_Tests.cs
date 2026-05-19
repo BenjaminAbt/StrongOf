@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongDateTimeOffset_As_Tests
 {
-    private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value) { }
+    private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value), IStrongOf<DateTimeOffset, TestDateTimeOffsetOf>
+    {
+        public static TestDateTimeOffsetOf Create(DateTimeOffset value) => new(value);
+    }
 
     [Fact]
     public void AsDateTime_ReturnsCorrectResult()

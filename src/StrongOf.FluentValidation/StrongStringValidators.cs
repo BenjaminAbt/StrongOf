@@ -1,10 +1,7 @@
 ﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-using System.Linq.Expressions;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using FluentValidation;
-using FluentValidation.Internal;
 using FluentValidation.Validators;
 
 namespace StrongOf.FluentValidation;
@@ -22,7 +19,7 @@ public static class StrongStringValidators
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
         => rule.Must(strong => strong?.IsEmpty() is false);
 
     /// <summary>
@@ -34,7 +31,7 @@ public static class StrongStringValidators
     /// <param name="minLength">The minimum length.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimumLength<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int minLength)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
         => rule.Must(content => content?.Value is not null && content.Value.Length >= minLength);
 
     /// <summary>
@@ -46,7 +43,7 @@ public static class StrongStringValidators
     /// <param name="maxLength">The maximum length.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximumLength<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, int maxLength)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
         => rule.Must(content => content?.Value is null || content.Value.Length <= maxLength);
 
     /// <summary>
@@ -58,40 +55,61 @@ public static class StrongStringValidators
     /// <param name="regex">The regular expression.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> IsRegexMatch<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Regex regex)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
+        // Delegate regex timeout and culture behavior to the caller-provided Regex instance.
         => rule.Must(content => content?.Value is not null && regex.IsMatch(content.Value));
 
     /// <summary>
-    /// Validates that the strong string is equal to another strong string.
+    /// Validates that the strong string is equal to another strong string specified by an accessor.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong string.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other strong string.</param>
+    /// <param name="accessor">A delegate that returns the other strong string to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongString<TStrong>
+    /// <example>
+    /// <code>
+    /// RuleFor(x => x.Password).IsEqualTo(x => x.PasswordConfirm, nameof(Model.PasswordConfirm));
+    /// </code>
+    /// </example>
+    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        // Reuse FluentValidation's built-in EqualValidator so placeholders/message templates
+        // behave consistently with native RuleFor(...).Equal(...).
+        return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
+
     /// <summary>
-    /// Validates that the strong string is equal to another strong string.
+    /// Validates that the strong string is not equal to another strong string specified by an accessor.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong string.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other strong string.</param>
+    /// <param name="accessor">A delegate that returns the other strong string to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongString<TStrong>
+    /// <example>
+    /// <code>
+    /// RuleFor(x => x.NewPassword).IsNotEqualTo(x => x.OldPassword, nameof(Model.OldPassword));
+    /// </code>
+    /// </example>
+    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo semantics with FluentValidation's native NotEqualValidator.
+        return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
     /// <summary>
@@ -109,12 +127,14 @@ public static class StrongStringValidators
     /// If the validation fails, an error message is added to the validation context using the provided message pattern.
     /// </remarks>
     public static IRuleBuilderOptionsConditions<T, TStrong?> AllowedChars<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, ICollection<char> chars, string messagePattern, IFormatProvider? formatProvider = null)
-        where TStrong : StrongString<TStrong>
+        where TStrong : StrongString<TStrong>, IStrongOf<string, TStrong>
     {
         return rule.Custom((topic, context) =>
         {
             if (topic is TStrong strong && strong.IsEmpty() is false)
             {
+                // Use Custom(...) instead of Must(...) so we can emit a detailed message
+                // containing the actual invalid character set.
                 if (strong.ContainsInvalidChars(chars, out ICollection<char>? invalidChars))
                 {
                     context.AddFailure(string.Format(formatProvider, messagePattern, string.Concat(invalidChars)));

@@ -13,9 +13,20 @@ namespace StrongOf.AspNetCore.UnitTests.Mvc;
 
 public class StrongOfModelBinderProviderTests
 {
-    private sealed class TestUserId(Guid value) : StrongGuid<TestUserId>(value) { }
-    private sealed class TestEmail(string value) : StrongString<TestEmail>(value) { }
-    private sealed class TestTimeout(TimeSpan value) : StrongTimeSpan<TestTimeout>(value) { }
+    private sealed class TestUserId(Guid value) : StrongGuid<TestUserId>(value), IStrongOf<Guid, TestUserId>
+    {
+        public static TestUserId Create(Guid value) => new(value);
+    }
+
+    private sealed class TestEmail(string value) : StrongString<TestEmail>(value), IStrongOf<string, TestEmail>
+    {
+        public static TestEmail Create(string value) => new(value);
+    }
+
+    private sealed class TestTimeout(TimeSpan value) : StrongTimeSpan<TestTimeout>(value), IStrongOf<TimeSpan, TestTimeout>
+    {
+        public static TestTimeout Create(TimeSpan value) => new(value);
+    }
 
     [Fact]
     public void AddStrongOfModelBinderProvider_WithStrongTypes_RegistersProviderThatResolvesBinders()

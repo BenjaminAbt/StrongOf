@@ -13,8 +13,12 @@ namespace StrongOf.Domains.People;
 /// </summary>
 /// <remarks>
 /// <para>
-/// This type wraps a string value representing a phone number.
-/// It supports various international formats including country codes.
+/// This type wraps a string value representing a phone number and validates common
+/// international formatting variants.
+/// </para>
+/// <para>
+/// Validation is format-focused (structure and allowed characters), not telephony-aware
+/// (for example country-specific numbering plans).
 /// </para>
 /// </remarks>
 /// <example>
@@ -25,7 +29,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<PhoneNumber>))]
-public sealed partial class PhoneNumber(string value) : StrongString<PhoneNumber>(value), IValidatable
+[StrongString]
+public sealed partial class PhoneNumber : IValidatable
 {
     /// <summary>
     /// Regular expression pattern for validating phone numbers.
@@ -37,6 +42,10 @@ public sealed partial class PhoneNumber(string value) : StrongString<PhoneNumber
     /// <summary>
     /// Validates whether the phone number has a valid format.
     /// </summary>
+    /// <remarks>
+    /// This check intentionally validates syntactic shape only. It does not verify regional
+    /// numbering rules or whether the number is actually assigned.
+    /// </remarks>
     /// <returns><c>true</c> if the phone number format is valid; otherwise, <c>false</c>.</returns>
     /// <example>
     /// <code>
@@ -51,6 +60,10 @@ public sealed partial class PhoneNumber(string value) : StrongString<PhoneNumber
     /// <summary>
     /// Gets a normalized version of the phone number containing only digits and optional leading +.
     /// </summary>
+    /// <remarks>
+    /// Leading <c>+</c> is preserved to keep international intent explicit, while all visual
+    /// separators are removed for storage and comparison.
+    /// </remarks>
     /// <returns>A normalized phone number string.</returns>
     /// <example>
     /// <code>
@@ -66,13 +79,21 @@ public sealed partial class PhoneNumber(string value) : StrongString<PhoneNumber
             return string.Empty;
         }
 
+        // Keep the international marker if present and normalize everything else to digits.
         bool hasPlus = Value.StartsWith('+');
         string digitsOnly = DigitsOnlyRegex().Replace(Value, string.Empty);
         return hasPlus ? "+" + digitsOnly : digitsOnly;
     }
 
+    /// <summary>
+    /// Removes every non-digit character from a phone number string.
+    /// </summary>
+    /// <remarks>
+    /// Kept as a generated regex to reuse compiled matching logic on hot normalization paths.
+    /// </remarks>
     [GeneratedRegex(@"[^\d]", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex DigitsOnlyRegex();
+
     /// <summary>
     /// Tries to create a new instance if <paramref name="value"/> satisfies the format constraint.
     /// </summary>

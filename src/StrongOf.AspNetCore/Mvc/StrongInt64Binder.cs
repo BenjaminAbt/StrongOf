@@ -5,18 +5,18 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 namespace StrongOf.AspNetCore.Mvc;
 
 /// <summary>
-/// Represents a binder for StrongInt64 type.
+/// Binds incoming MVC values to <see cref="StrongInt64{TStrong}"/> instances.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongInt64.</typeparam>
+/// <typeparam name="TStrong">Concrete StrongOf 64-bit integer type to materialize.</typeparam>
 public class StrongInt64Binder<TStrong> : StrongOfBinder
-    where TStrong : StrongInt64<TStrong>
+    where TStrong : StrongInt64<TStrong>, IStrongOf<long, TStrong>
 {
     /// <summary>
-    /// Tries to handle the model binding result.
+    /// Attempts to parse the raw request value as the configured 64-bit integer StrongOf type.
     /// </summary>
-    /// <param name="value">The value to be handled.</param>
-    /// <param name="result">The result of the model binding.</param>
-    /// <returns>Returns a boolean indicating the success of the operation.</returns>
+    /// <param name="value">Raw non-empty value from route, query or form binding.</param>
+    /// <param name="result">Model binding result populated with success or failure.</param>
+    /// <returns><see langword="true"/> when parsing succeeded; otherwise <see langword="false"/>.</returns>
     public override bool TryHandle(string value, out ModelBindingResult result)
     {
         if (StrongInt64<TStrong>.TryParse(value, out TStrong? strong))

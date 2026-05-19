@@ -8,7 +8,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongTimeSpanJsonConverterTests
 {
-    private sealed class TestTimeSpanOf(TimeSpan value) : StrongTimeSpan<TestTimeSpanOf>(value) { }
+    private sealed class TestTimeSpanOf(TimeSpan value) : StrongTimeSpan<TestTimeSpanOf>(value), IStrongOf<TimeSpan, TestTimeSpanOf>
+    {
+        public static TestTimeSpanOf Create(TimeSpan value) => new(value);
+    }
 
     private readonly StrongTimeSpanJsonConverter<TestTimeSpanOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();

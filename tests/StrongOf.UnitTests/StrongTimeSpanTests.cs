@@ -7,8 +7,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongTimeSpanTests
 {
-    private sealed class TestTimeSpanOf(TimeSpan value) : StrongTimeSpan<TestTimeSpanOf>(value) { }
-    private sealed class OtherTestTimeSpanOf(TimeSpan value) : StrongTimeSpan<OtherTestTimeSpanOf>(value) { }
+    private sealed class TestTimeSpanOf(TimeSpan value) : StrongTimeSpan<TestTimeSpanOf>(value), IStrongOf<TimeSpan, TestTimeSpanOf>
+    {
+        public static TestTimeSpanOf Create(TimeSpan value) => new(value);
+    }
+
+    private sealed class OtherTestTimeSpanOf(TimeSpan value) : StrongTimeSpan<OtherTestTimeSpanOf>(value), IStrongOf<TimeSpan, OtherTestTimeSpanOf>
+    {
+        public static OtherTestTimeSpanOf Create(TimeSpan value) => new(value);
+    }
 
     [Fact]
     public void Equals_WithSameValue_ReturnsTrue()

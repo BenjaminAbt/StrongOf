@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongGuid_Operators_Tests
 {
-    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value) { }
+    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value), IStrongOf<Guid, TestGuidOf>
+    {
+        public static TestGuidOf Create(Guid value) => new(value);
+    }
 
     private static readonly Guid s_guidA = Guid.Parse("00000000-0000-0000-0000-000000000001");
     private static readonly Guid s_guidB = Guid.Parse("ffffffff-ffff-ffff-ffff-ffffffffffff");

@@ -9,7 +9,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongDateTimeJsonConverterTests
 {
-    private sealed class TestDateTimeOffsetOf(DateTime value) : StrongDateTime<TestDateTimeOffsetOf>(value) { }
+    private sealed class TestDateTimeOffsetOf(DateTime value) : StrongDateTime<TestDateTimeOffsetOf>(value), IStrongOf<DateTime, TestDateTimeOffsetOf>
+    {
+        public static TestDateTimeOffsetOf Create(DateTime value) => new(value);
+    }
 
     private readonly StrongDateTimeJsonConverter<TestDateTimeOffsetOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();

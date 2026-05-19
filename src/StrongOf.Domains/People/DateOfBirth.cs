@@ -22,7 +22,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongDateTimeTypeConverter<DateOfBirth>))]
-public sealed class DateOfBirth(DateTime value) : StrongDateTime<DateOfBirth>(value)
+[StrongDateTime]
+public sealed partial class DateOfBirth
 {
     /// <summary>
     /// Determines whether the date of birth is in the past (UTC).

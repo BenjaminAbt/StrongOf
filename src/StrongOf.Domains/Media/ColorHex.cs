@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<ColorHex>))]
-public sealed partial class ColorHex(string value) : StrongString<ColorHex>(value), IValidatable
+[StrongString]
+public sealed partial class ColorHex : IValidatable
 {
     [GeneratedRegex(@"^#?[0-9A-Fa-f]{6}([0-9A-Fa-f]{2})?$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex ColorHexRegex();

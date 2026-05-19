@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Postal;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<Street>))]
-public sealed class Street(string value) : StrongString<Street>(value), IValidatable
+[StrongString]
+public sealed partial class Street : IValidatable
 {
     /// <summary>
     /// Validates whether the street address has a valid format (non-empty).

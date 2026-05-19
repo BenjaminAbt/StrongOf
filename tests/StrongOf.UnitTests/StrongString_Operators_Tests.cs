@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongString_Operators_Tests
 {
-    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
+    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value), IStrongOf<string, TestStringOf>
+    {
+        public static TestStringOf Create(string value) => new(value);
+    }
 
     [Fact]
     public void EqualityOperator_WithNonNullStrongStringAndNonNullStringOther_ReturnsCorrectResult()

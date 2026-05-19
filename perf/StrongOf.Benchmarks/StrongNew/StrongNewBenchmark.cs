@@ -12,6 +12,7 @@ namespace StrongOf.Benchmarks.StrongNew;
 [SimpleJob(RuntimeMoniker.Net80)]
 [SimpleJob(RuntimeMoniker.Net90)]
 [SimpleJob(RuntimeMoniker.Net10_0, baseline: true)]
+[SimpleJob(RuntimeMoniker.Net11_0)]
 [CategoriesColumn]
 [GroupBenchmarksBy(BenchmarkLogicalGroupRule.ByCategory)]
 public class StrongNewBenchmark
@@ -61,14 +62,14 @@ public class StrongNewBenchmark
 
 // Test Classes
 
-public sealed class TestStrongInt32(int Value)
-    : StrongInt32<TestStrongInt32>(Value);
+[StrongInt32]
+public sealed partial class TestStrongInt32;
 
-public sealed class TestStrongInt64(long Value)
-    : StrongInt64<TestStrongInt64>(Value);
+[StrongInt64]
+public sealed partial class TestStrongInt64;
 
-public sealed class TestStrongString(string Value)
-    : StrongString<TestStrongString>(Value);
+[StrongString]
+public sealed partial class TestStrongString;
 
-public sealed class TestStrongGuid(Guid Value)
-    : StrongGuid<TestStrongGuid>(Value);
+[StrongGuid]
+public sealed partial class TestStrongGuid;

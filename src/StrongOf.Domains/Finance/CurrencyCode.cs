@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Finance;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<CurrencyCode>))]
-public sealed class CurrencyCode(string value) : StrongString<CurrencyCode>(value), IValidatable
+[StrongString]
+public sealed partial class CurrencyCode : IValidatable
 {
     /// <summary>
     /// The required length for a valid ISO 4217 currency code.
@@ -62,7 +63,11 @@ public sealed class CurrencyCode(string value) : StrongString<CurrencyCode>(valu
     public string ToUpperCase()
         => Value.ToUpperInvariant();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because CurrencyCode is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(CurrencyCode? other)

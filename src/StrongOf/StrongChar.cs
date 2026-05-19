@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
@@ -23,8 +23,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed char types
-/// public sealed class GradeLevel(char value) : StrongChar&lt;GradeLevel&gt;(value) { }
-/// public sealed class TypeIndicator(char value) : StrongChar&lt;TypeIndicator&gt;(value) { }
+/// public sealed class GradeLevel(char value) : StrongChar&lt;GradeLevel&gt;(value), IStrongOf&lt;char, GradeLevel&gt; { public static GradeLevel Create(char value) =&gt; new(value); }
+/// public sealed class TypeIndicator(char value) : StrongChar&lt;TypeIndicator&gt;(value), IStrongOf&lt;char, TypeIndicator&gt; { public static TypeIndicator Create(char value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public string FormatEntry(GradeLevel grade, TypeIndicator type)
@@ -42,7 +42,7 @@ namespace StrongOf;
 public abstract partial class StrongChar<TStrong>(char Value)
         : StrongOf<char, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongChar,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
-    where TStrong : StrongChar<TStrong>
+    where TStrong : StrongChar<TStrong>, IStrongOf<char, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="char"/> value.

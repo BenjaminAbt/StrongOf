@@ -6,8 +6,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongCharTests
 {
-    private sealed class TestCharOf(char Value) : StrongChar<TestCharOf>(Value) { }
-    private sealed class OtherTestCharOf(char Value) : StrongChar<OtherTestCharOf>(Value) { }
+    private sealed class TestCharOf(char Value) : StrongChar<TestCharOf>(Value), IStrongOf<char, TestCharOf>
+    {
+        public static TestCharOf Create(char value) => new(value);
+    }
+
+    private sealed class OtherTestCharOf(char Value) : StrongChar<OtherTestCharOf>(Value), IStrongOf<char, OtherTestCharOf>
+    {
+        public static OtherTestCharOf Create(char value) => new(value);
+    }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()

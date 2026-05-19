@@ -24,8 +24,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed TimeSpan types
-/// public sealed class Duration(TimeSpan value) : StrongTimeSpan&lt;Duration&gt;(value) { }
-/// public sealed class Timeout(TimeSpan value) : StrongTimeSpan&lt;Timeout&gt;(value) { }
+/// public sealed class Duration(TimeSpan value) : StrongTimeSpan&lt;Duration&gt;(value), IStrongOf&lt;TimeSpan, Duration&gt; { public static Duration Create(TimeSpan value) =&gt; new(value); }
+/// public sealed class Timeout(TimeSpan value) : StrongTimeSpan&lt;Timeout&gt;(value), IStrongOf&lt;TimeSpan, Timeout&gt; { public static Timeout Create(TimeSpan value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public void Configure(Duration maxDuration, Timeout requestTimeout)
@@ -42,7 +42,7 @@ namespace StrongOf;
 public abstract partial class StrongTimeSpan<TStrong>(TimeSpan Value)
         : StrongOf<TimeSpan, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongTimeSpan,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable
-    where TStrong : StrongTimeSpan<TStrong>
+    where TStrong : StrongTimeSpan<TStrong>, IStrongOf<TimeSpan, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="TimeSpan"/> value.

@@ -76,7 +76,14 @@ public class StrongParseBenchmark
 
 // Test Classes
 
-public sealed class TestStrongGuid(Guid Value) : StrongGuid<TestStrongGuid>(Value);
-public sealed class TestStrongInt32(int Value) : StrongInt32<TestStrongInt32>(Value);
-public sealed class TestStrongDecimal(decimal Value) : StrongDecimal<TestStrongDecimal>(Value);
-public sealed class TestStrongDateTime(DateTime Value) : StrongDateTime<TestStrongDateTime>(Value);
+[StrongGuid]
+public sealed partial class TestStrongGuid;
+
+[StrongInt32]
+public sealed partial class TestStrongInt32;
+
+[StrongDecimal]
+public sealed partial class TestStrongDecimal;
+
+[StrongDateTime]
+public sealed partial class TestStrongDateTime;

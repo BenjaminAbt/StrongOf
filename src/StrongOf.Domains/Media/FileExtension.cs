@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Media;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<FileExtension>))]
-public sealed partial class FileExtension(string value) : StrongString<FileExtension>(value), IValidatable
+[StrongString]
+public sealed partial class FileExtension : IValidatable
 {
     [GeneratedRegex(@"^\.[A-Za-z0-9]{1,10}$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex FileExtensionRegex();
@@ -47,7 +48,11 @@ public sealed partial class FileExtension(string value) : StrongString<FileExten
     public string WithoutDot()
         => Value.StartsWith(".", StringComparison.Ordinal) ? Value[1..] : Value;
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because FileExtension is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(FileExtension? other)

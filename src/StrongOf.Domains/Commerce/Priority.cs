@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Commerce;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongInt32TypeConverter<Priority>))]
-public sealed class Priority(int value) : StrongInt32<Priority>(value)
+[StrongInt32]
+public sealed partial class Priority
 {
     /// <summary>
     /// Determines whether this priority is higher than another (lower numeric value = higher priority).

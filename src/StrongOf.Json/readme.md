@@ -2,21 +2,42 @@
 
 System.Text.Json converters for [StrongOf](https://NuBrowse.com/packages/StrongOf) types.
 
-## Recommended Usage - Register Once
+All converters are fully **Native AOT** and **trim-safe** — no reflection, no `Expression.Compile`, no factory auto-discovery.
 
-For most applications, register the factory once and let StrongOf resolve the correct converter automatically for every supported strong type:
+
+
+## Recommended Usage — JsonSerializerOptions
+
+Register converters explicitly when you prefer a central setup:
 
 ```csharp
-using StrongOf.Json;
-
-JsonSerializerOptions options = new JsonSerializerOptions()
-    .AddStrongOfConverters();
+JsonSerializerOptions options = new()
+{
+    WriteIndented = true,
+    Converters =
+    {
+        new StrongGuidJsonConverter<UserId>(),
+        new StrongStringJsonConverter<EmailAddress>(),
+    }
+};
 
 string json = JsonSerializer.Serialize(user, options);
 UserDto dto = JsonSerializer.Deserialize<UserDto>(json, options)!;
 ```
+## Usage — Attribute
 
-This adds `StrongOfJsonConverterFactory`, which supports all built-in StrongOf base types without per-type converter registration.
+Decorate each property directly. This is AOT-safe and requires zero setup:
+
+```csharp
+public sealed class UserDto
+{
+    [JsonConverter(typeof(StrongGuidJsonConverter<UserId>))]
+    public UserId Id { get; set; }
+
+    [JsonConverter(typeof(StrongStringJsonConverter<EmailAddress>))]
+    public EmailAddress Email { get; set; }
+}
+```
 
 ## Available Converters
 
@@ -34,39 +55,6 @@ This adds `StrongOfJsonConverterFactory`, which supports all built-in StrongOf b
 | `StrongDateTimeOffsetJsonConverter<T>` | `StrongDateTimeOffset<T>` types |
 | `StrongTimeSpanJsonConverter<T>` | `StrongTimeSpan<T>` types |
 
-## Usage - Attribute
-
-Decorate properties directly:
-
-```csharp
-public sealed class UserDto
-{
-    [JsonConverter(typeof(StrongGuidJsonConverter<UserId>))]
-    public UserId Id { get; set; }
-
-    [JsonConverter(typeof(StrongStringJsonConverter<EmailAddress>))]
-    public EmailAddress Email { get; set; }
-}
-```
-
-## Usage - JsonSerializerOptions
-
-If you want explicit control, you can still register converters individually:
-
-```csharp
-JsonSerializerOptions options = new()
-{
-    WriteIndented = true,
-    Converters =
-    {
-        new StrongGuidJsonConverter<UserId>(),
-        new StrongStringJsonConverter<EmailAddress>(),
-    }
-};
-
-string json = JsonSerializer.Serialize(user, options);
-UserDto dto = JsonSerializer.Deserialize<UserDto>(json, options)!;
-```
 
 ## Installation
 

@@ -64,12 +64,21 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
 
         if (_binderMap.TryGetValue(context.Metadata.ModelType, out Type? binderType))
         {
+            // BinderTypeModelBinder defers instance creation to DI, so custom constructor
+            // dependencies on binders remain fully supported.
             return new BinderTypeModelBinder(binderType);
         }
 
         return null;
     }
 
+    /// <summary>
+    /// Builds a concrete model-binder map for explicitly provided StrongOf types.
+    /// </summary>
+    /// <param name="strongTypes">Concrete StrongOf types to register.</param>
+    /// <returns>A dictionary mapping model type to closed generic binder type.</returns>
+    /// <exception cref="ArgumentException">Thrown when no supported StrongOf type is provided.</exception>
+    /// <exception cref="NotSupportedException">Thrown when at least one type has no matching binder.</exception>
     internal static Dictionary<Type, Type> CreateBinderMap(IEnumerable<Type> strongTypes)
     {
         ArgumentNullException.ThrowIfNull(strongTypes);
@@ -78,13 +87,13 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
 
         foreach (Type strongType in strongTypes)
         {
-            ArgumentNullException.ThrowIfNull(strongType);
-
             if (binderMap.ContainsKey(strongType))
             {
                 continue;
             }
 
+            // We validate binder support up-front so startup fails fast and predictably
+            // instead of producing runtime binding failures for individual requests.
             if (!TryResolveBinderType(strongType, out Type? binderType))
             {
                 throw new NotSupportedException($"No StrongOf ASP.NET Core binder is available for type '{strongType}'.");
@@ -101,6 +110,11 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
         return binderMap;
     }
 
+    /// <summary>
+    /// Scans assemblies for concrete StrongOf types and builds a binder map for all discovered matches.
+    /// </summary>
+    /// <param name="assemblies">Assemblies to scan.</param>
+    /// <returns>A dictionary mapping discovered model types to closed generic binder types.</returns>
     internal static Dictionary<Type, Type> CreateBinderMapFromAssemblies(IEnumerable<Assembly> assemblies)
     {
         ArgumentNullException.ThrowIfNull(assemblies);
@@ -109,10 +123,10 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
 
         foreach (Assembly assembly in assemblies)
         {
-            ArgumentNullException.ThrowIfNull(assembly);
-
             foreach (Type type in assembly.GetTypes())
             {
+                // We only register concrete model types. Generic type definitions and abstract
+                // classes cannot be materialized by MVC and therefore cannot be bound.
                 if (type.IsClass && !type.IsAbstract && !type.IsGenericTypeDefinition && TryResolveBinderType(type, out _))
                 {
                     discoveredStrongTypes.Add(type);
@@ -123,6 +137,12 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
         return CreateBinderMap(discoveredStrongTypes);
     }
 
+    /// <summary>
+    /// Attempts to resolve the concrete binder type for a StrongOf model type.
+    /// </summary>
+    /// <param name="strongType">Concrete StrongOf model type.</param>
+    /// <param name="binderType">Resolved closed binder type when successful.</param>
+    /// <returns><see langword="true"/> when a supported binder was found.</returns>
     internal static bool TryResolveBinderType(Type strongType, [NotNullWhen(true)] out Type? binderType)
     {
         ArgumentNullException.ThrowIfNull(strongType);
@@ -137,6 +157,9 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
 
         while (currentType is not null && currentType != typeof(object))
         {
+            // StrongOf model types usually inherit from intermediate generic base classes
+            // (for example StrongGuid<TStrong>). Walking the base chain lets us discover
+            // the matching binder even when the concrete type does not expose generics itself.
             if (currentType.IsGenericType && s_binderDefinitions.TryGetValue(currentType.GetGenericTypeDefinition(), out Type? binderDefinition))
             {
                 binderType = binderDefinition.MakeGenericType(strongType);

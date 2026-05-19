@@ -7,8 +7,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongDoubleTests
 {
-    private sealed class TestDoubleOf(double value) : StrongDouble<TestDoubleOf>(value) { }
-    private sealed class OtherTestDoubleOf(double value) : StrongDouble<OtherTestDoubleOf>(value) { }
+    private sealed class TestDoubleOf(double value) : StrongDouble<TestDoubleOf>(value), IStrongOf<double, TestDoubleOf>
+    {
+        public static TestDoubleOf Create(double value) => new(value);
+    }
+
+    private sealed class OtherTestDoubleOf(double value) : StrongDouble<OtherTestDoubleOf>(value), IStrongOf<double, OtherTestDoubleOf>
+    {
+        public static OtherTestDoubleOf Create(double value) => new(value);
+    }
 
     [Fact]
     public void Equals_WithSameValue_ReturnsTrue()

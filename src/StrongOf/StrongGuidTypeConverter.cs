@@ -11,7 +11,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong-guid type.</typeparam>
 public class StrongGuidTypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongGuid<TStrong>
+    where TStrong : StrongGuid<TStrong>, IStrongOf<Guid, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)

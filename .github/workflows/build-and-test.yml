@@ -58,8 +58,15 @@ jobs:
         run: |
           echo "Calculated version: ${{ steps.nbgv.outputs.SemVer2 }}"
 
-      - name: Build and Test
-        run: dotnet test --configuration ${{ inputs.configuration }} --verbosity normal --logger "trx;LogFileName=test-results.trx" /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
+      - name: Build
+        run: dotnet build --configuration ${{ inputs.configuration }} --verbosity minimal /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
+
+      - name: Test
+        # --no-build reuses artifacts from the Build step above.
+        # Arguments after '--' are passed directly to the xunit.v3 MTP runner.
+        # '--report-xunit-trx' is the xUnit.net TRX reporter (not the VSTest '--logger' flag,
+        # which MTP does not support).
+        run: dotnet test --configuration ${{ inputs.configuration }} --no-build --verbosity normal /p:Version=${{ steps.nbgv.outputs.SemVer2 }} -- --report-xunit-trx
 
       - name: Upload test results
         if: always() && inputs.upload-test-results

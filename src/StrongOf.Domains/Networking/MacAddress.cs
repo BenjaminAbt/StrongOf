@@ -16,6 +16,9 @@ namespace StrongOf.Domains.Networking;
 /// This type wraps a string value representing a MAC (Media Access Control) address.
 /// Supports formats: 00:11:22:33:44:55, 00-11-22-33-44-55, 001122334455
 /// </para>
+/// <para>
+/// Validation is syntactic and does not enforce vendor/OUI-specific rules.
+/// </para>
 /// </remarks>
 /// <example>
 /// <code>
@@ -26,7 +29,8 @@ namespace StrongOf.Domains.Networking;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<MacAddress>))]
-public sealed partial class MacAddress(string value) : StrongString<MacAddress>(value), IValidatable
+[StrongString]
+public sealed partial class MacAddress : IValidatable
 {
     /// <summary>
     /// Regular expression pattern for validating MAC addresses.
@@ -67,7 +71,7 @@ public sealed partial class MacAddress(string value) : StrongString<MacAddress>(
             return string.Empty;
         }
 
-        // Remove separators and convert to uppercase
+        // Remove accepted separators and canonicalize casing before reformatting.
         string clean = Value.Replace(":", string.Empty, StringComparison.Ordinal)
                            .Replace("-", string.Empty, StringComparison.Ordinal)
                            .ToUpperInvariant();
@@ -77,7 +81,8 @@ public sealed partial class MacAddress(string value) : StrongString<MacAddress>(
             return Value;
         }
 
-        // Format as XX:XX:XX:XX:XX:XX
+        // string.Create avoids intermediate allocations compared to repeated concatenation
+        // and keeps normalization efficient on bulk-processing paths.
         return string.Create(17, clean, (span, str) =>
         {
             int strIndex = 0;
@@ -105,7 +110,11 @@ public sealed partial class MacAddress(string value) : StrongString<MacAddress>(
                 .Replace("-", string.Empty, StringComparison.Ordinal)
                 .ToUpperInvariant();
 
-    /// <inheritdoc />
+    /// <summary>
+    /// Determines whether this instance equals the specified <paramref name="other"/> value.
+    /// </summary>
+    /// <param name="other">The value to compare with this instance.</param>
+    /// <returns><see langword="true"/> if the values are equal; otherwise, <see langword="false"/>.</returns>
     /// <remarks>Comparison is case-insensitive because MacAddress is defined as case-insensitive by its specification.</remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public new bool Equals(MacAddress? other)

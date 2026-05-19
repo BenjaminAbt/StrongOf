@@ -6,9 +6,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongGuidTests
 {
-    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value);
+    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value), IStrongOf<Guid, TestGuidOf>
+    {
+        public static TestGuidOf Create(Guid value) => new(value);
+    }
 
-    private sealed class OtherTestGuidOf(Guid Value) : StrongGuid<OtherTestGuidOf>(Value) { }
+    private sealed class OtherTestGuidOf(Guid Value) : StrongGuid<OtherTestGuidOf>(Value), IStrongOf<Guid, OtherTestGuidOf>
+    {
+        public static OtherTestGuidOf Create(Guid value) => new(value);
+    }
 
     [Fact]
     public void FromGuid_NullValue_ReturnsNull()

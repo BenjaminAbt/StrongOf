@@ -7,8 +7,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongDateTime_Operators_Tests
 {
-    private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value) { }
-    private sealed class OtherTestDateTimeOf(DateTime Value) : StrongDateTime<OtherTestDateTimeOf>(Value) { }
+    private sealed class TestDateTimeOf(DateTime Value) : StrongDateTime<TestDateTimeOf>(Value), IStrongOf<DateTime, TestDateTimeOf>
+    {
+        public static TestDateTimeOf Create(DateTime value) => new(value);
+    }
+
+    private sealed class OtherTestDateTimeOf(DateTime Value) : StrongDateTime<OtherTestDateTimeOf>(Value), IStrongOf<DateTime, OtherTestDateTimeOf>
+    {
+        public static OtherTestDateTimeOf Create(DateTime value) => new(value);
+    }
 
     [Fact]
     public void OperatorEquals_ShouldReturnTrueForEqualValues()

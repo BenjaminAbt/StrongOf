@@ -15,7 +15,10 @@ public class StrongStringValidatorsTests
     private readonly TestValidator _validator = new();
 
     // Model
-    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value) { }
+    private sealed class TestStringOf(string Value) : StrongString<TestStringOf>(Value), IStrongOf<string, TestStringOf>
+    {
+        public static TestStringOf Create(string value) => new(value);
+    }
 
     private class TestModel
     {
@@ -73,7 +76,7 @@ public class StrongStringValidatorsTests
     [Fact]
     public void IsEqualTo_ShouldFail_WhenValuesAreNotEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
 
         TestModel model = new() { Strong = new("test"), Other = new("other") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);

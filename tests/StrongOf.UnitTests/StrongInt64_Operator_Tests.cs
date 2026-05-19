@@ -6,8 +6,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongInt64_Operator_Tests
 {
-    private sealed class TestInt64Of(long Value) : StrongInt64<TestInt64Of>(Value) { }
-    private sealed class OtherTestInt64Of(long Value) : StrongInt64<OtherTestInt64Of>(Value) { }
+    private sealed class TestInt64Of(long Value) : StrongInt64<TestInt64Of>(Value), IStrongOf<long, TestInt64Of>
+    {
+        public static TestInt64Of Create(long value) => new(value);
+    }
+
+    private sealed class OtherTestInt64Of(long Value) : StrongInt64<OtherTestInt64Of>(Value), IStrongOf<long, OtherTestInt64Of>
+    {
+        public static OtherTestInt64Of Create(long value) => new(value);
+    }
 
     [Fact]
     public void OperatorEquals_ShouldReturnTrueForEqualValues()

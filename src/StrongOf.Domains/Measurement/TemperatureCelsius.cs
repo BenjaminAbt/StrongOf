@@ -24,7 +24,8 @@ namespace StrongOf.Domains.Measurement;
 /// </example>
 [DebuggerDisplay("{Value} °C")]
 [TypeConverter(typeof(StrongDecimalTypeConverter<TemperatureCelsius>))]
-public sealed class TemperatureCelsius(decimal value) : StrongDecimal<TemperatureCelsius>(value)
+[StrongDecimal]
+public sealed partial class TemperatureCelsius
 {
     /// <summary>
     /// Minimum valid temperature in Celsius.

@@ -6,8 +6,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongInt32Tests
 {
-    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value) { }
-    private sealed class OtherTestInt32Of(int Value) : StrongInt32<OtherTestInt32Of>(Value) { }
+    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value), IStrongOf<int, TestInt32Of>
+    {
+        public static TestInt32Of Create(int value) => new(value);
+    }
+
+    private sealed class OtherTestInt32Of(int Value) : StrongInt32<OtherTestInt32Of>(Value), IStrongOf<int, OtherTestInt32Of>
+    {
+        public static OtherTestInt32Of Create(int value) => new(value);
+    }
 
     [Fact]
     public void NewFrom_ShouldBeTheSame()

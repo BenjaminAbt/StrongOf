@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -24,8 +24,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed decimal types
-/// public sealed class Price(decimal value) : StrongDecimal&lt;Price&gt;(value) { }
-/// public sealed class Discount(decimal value) : StrongDecimal&lt;Discount&gt;(value) { }
+/// public sealed class Price(decimal value) : StrongDecimal&lt;Price&gt;(value), IStrongOf&lt;decimal, Price&gt; { public static Price Create(decimal value) =&gt; new(value); }
+/// public sealed class Discount(decimal value) : StrongDecimal&lt;Discount&gt;(value), IStrongOf&lt;decimal, Discount&gt; { public static Discount Create(decimal value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public decimal CalculateTotal(Price price, Discount discount)
@@ -44,7 +44,7 @@ public abstract partial class StrongDecimal<TStrong>(decimal Value)
         : StrongOf<decimal, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDecimal,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable, IUtf8SpanParsable<TStrong>
-    where TStrong : StrongDecimal<TStrong>
+    where TStrong : StrongDecimal<TStrong>, IStrongOf<decimal, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="decimal"/> value.

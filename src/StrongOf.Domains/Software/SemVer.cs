@@ -29,7 +29,8 @@ namespace StrongOf.Domains.Software;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<SemVer>))]
-public sealed partial class SemVer(string value) : StrongString<SemVer>(value), IValidatable
+[StrongString]
+public sealed partial class SemVer : IValidatable
 {
     [GeneratedRegex(@"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$", RegexOptions.CultureInvariant | RegexOptions.ExplicitCapture, matchTimeoutMilliseconds: 1000)]
     private static partial Regex SemVerRegex();

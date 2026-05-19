@@ -9,13 +9,17 @@ namespace StrongOf.AspNetCore.UnitTests.MinimalApis;
 
 public class StrongOfValidationFilterTests
 {
-    private sealed class ValidEmail(string value) : StrongString<ValidEmail>(value), IValidatable
+    private sealed class ValidEmail(string value) : StrongString<ValidEmail>(value), IStrongOf<string, ValidEmail>, IValidatable
     {
+        public static ValidEmail Create(string value) => new(value);
+
         public bool IsValidFormat() => Value.Contains('@');
     }
 
-    private sealed class InvalidEmail(string value) : StrongString<InvalidEmail>(value), IValidatable
+    private sealed class InvalidEmail(string value) : StrongString<InvalidEmail>(value), IStrongOf<string, InvalidEmail>, IValidatable
     {
+        public static InvalidEmail Create(string value) => new(value);
+
         public bool IsValidFormat() => false;
     }
 

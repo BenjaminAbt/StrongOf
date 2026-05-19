@@ -1,0 +1,43 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/.github/">
+    <File Path=".github/workflows/ci.yml" />
+  </Folder>
+  <Folder Name="/perf/">
+    <Project Path="perf/StrongOf.Benchmarks/StrongOf.Benchmarks.csproj" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/StrongOf.AspNetCore/StrongOf.AspNetCore.csproj" />
+    <Project Path="src/StrongOf.Domains/StrongOf.Domains.csproj" />
+    <Project Path="src/StrongOf.EntityFrameworkCore/StrongOf.EntityFrameworkCore.csproj" />
+    <Project Path="src/StrongOf.FluentValidation/StrongOf.FluentValidation.csproj" />
+    <Project Path="src/StrongOf.Json/StrongOf.Json.csproj" />
+    <Project Path="src/StrongOf.SourceGenerators/StrongOf.SourceGenerators.csproj" />
+    <Project Path="src/StrongOf/StrongOf.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/StrongOf.AspNetCore.IntegrationTests/StrongOf.AspNetCore.IntegrationTests.csproj" />
+    <Project Path="tests/StrongOf.AspNetCore.UnitTests/StrongOf.AspNetCore.UnitTests.csproj" />
+    <Project Path="tests/StrongOf.Domains.UnitTests/StrongOf.Domains.UnitTests.csproj" />
+    <Project Path="tests/StrongOf.EntityFrameworkCore.IntegrationTests/StrongOf.EntityFrameworkCore.IntegrationTests.csproj" />
+    <Project Path="tests/StrongOf.EntityFrameworkCore.UnitTests/StrongOf.EntityFrameworkCore.UnitTests.csproj" />
+    <Project Path="tests/StrongOf.FluentValidation.UnitTests/StrongOf.FluentValidation.UnitTests.csproj" />
+    <Project Path="tests/StrongOf.Json.UnitTests/StrongOf.Json.UnitTests.csproj" />
+    <Project Path="tests/StrongOf.UnitTests/StrongOf.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/_/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="global.json" />
+    <File Path="LICENSE" />
+    <File Path="NuGet.config" />
+    <File Path="README.md" />
+    <File Path="version.json" />
+  </Folder>
+</Solution>

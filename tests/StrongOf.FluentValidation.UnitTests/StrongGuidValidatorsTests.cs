@@ -14,7 +14,10 @@ public class StrongGuidValidatorsTests
     private class TestValidator : AbstractValidator<TestModel> { }
     private readonly TestValidator _validator = new();
 
-    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value);
+    private sealed class TestGuidOf(Guid Value) : StrongGuid<TestGuidOf>(Value), IStrongOf<Guid, TestGuidOf>
+    {
+        public static TestGuidOf Create(Guid value) => new(value);
+    }
 
     private class TestModel
     {
@@ -77,7 +80,7 @@ public class StrongGuidValidatorsTests
     public void IsEqualTo_ShouldPass_WhenEqual()
     {
         Guid guid = Guid.NewGuid();
-        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestGuidOf(guid), Other = new TestGuidOf(guid) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Strong);
@@ -86,7 +89,7 @@ public class StrongGuidValidatorsTests
     [Fact]
     public void IsEqualTo_ShouldFail_WhenNotEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestGuidOf(Guid.NewGuid()), Other = new TestGuidOf(Guid.NewGuid()) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
@@ -97,7 +100,7 @@ public class StrongGuidValidatorsTests
     [Fact]
     public void IsNotEqualTo_ShouldPass_WhenNotEqual()
     {
-        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestGuidOf(Guid.NewGuid()), Other = new TestGuidOf(Guid.NewGuid()) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldNotHaveValidationErrorFor(x => x.Strong);
@@ -107,7 +110,7 @@ public class StrongGuidValidatorsTests
     public void IsNotEqualTo_ShouldFail_WhenEqual()
     {
         Guid guid = Guid.NewGuid();
-        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other!);
+        _validator.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other, nameof(TestModel.Other));
         TestModel model = new() { Strong = new TestGuidOf(guid), Other = new TestGuidOf(guid) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);

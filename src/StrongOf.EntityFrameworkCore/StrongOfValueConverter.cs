@@ -5,17 +5,21 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace StrongOf.EntityFrameworkCore;
 
 /// <summary>
-/// A generic EF Core value converter for any <see cref="StrongOf{TTarget,TStrong}"/> type.
-/// Converts between the strong type and its underlying primitive for database storage.
+/// Generic EF Core value converter for <see cref="StrongOf{TTarget,TStrong}"/> model properties.
+/// Converts strong types to their primitive database representation and back.
 /// </summary>
 /// <remarks>
 /// <para>
-/// This converter supports both explicit property mapping in <c>OnModelCreating</c>
-/// and global registration in <c>ConfigureConventions</c>.
+/// The converter is usable in both explicit property mapping (<c>OnModelCreating</c>)
+/// and convention-based registration (<c>ConfigureConventions</c>).
 /// </para>
 /// <para>
 /// When used from <c>ConfigureConventions</c> with <c>HaveConversion&lt;TConversion&gt;()</c>,
 /// EF Core expects a public parameterless constructor. This converter provides one.
+/// </para>
+/// <para>
+/// Conversion uses expression trees so EF Core can inline the mapping into query translation,
+/// change tracking and materialization pipelines.
 /// </para>
 /// </remarks>
 /// <typeparam name="TStrong">The concrete strong type.</typeparam>
@@ -30,12 +34,16 @@ namespace StrongOf.EntityFrameworkCore;
 /// </example>
 public sealed class StrongOfValueConverter<TStrong, TTarget>
     : ValueConverter<TStrong, TTarget>
-    where TStrong : StrongOf<TTarget, TStrong>
+    where TStrong : StrongOf<TTarget, TStrong>, IStrongOf<TTarget, TStrong>
     where TTarget : notnull
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="StrongOfValueConverter{TStrong,TTarget}"/> class.
     /// </summary>
+    /// <remarks>
+    /// This constructor is intentionally parameterless for compatibility with
+    /// <c>HaveConversion&lt;TConversion&gt;()</c> convention registration.
+    /// </remarks>
     public StrongOfValueConverter()
         : this(null)
     {
@@ -48,7 +56,9 @@ public sealed class StrongOfValueConverter<TStrong, TTarget>
     /// <param name="mappingHints">Optional EF Core mapping hints.</param>
     public StrongOfValueConverter(ConverterMappingHints? mappingHints)
         : base(
+            // Persist only the primitive value so schema types remain native EF primitives.
             strong => strong.Value,
+            // Rehydrate through StrongOf.From to support both source-generated and manual types.
             value => StrongOf<TTarget, TStrong>.From(value),
             mappingHints)
     {

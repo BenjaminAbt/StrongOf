@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
@@ -28,8 +28,8 @@ namespace StrongOf;
 /// <example>
 /// <code>
 /// // Define strongly-typed DateTime types
-/// public sealed class CreatedAt(DateTime value) : StrongDateTime&lt;CreatedAt&gt;(value) { }
-/// public sealed class ExpiresAt(DateTime value) : StrongDateTime&lt;ExpiresAt&gt;(value) { }
+/// public sealed class CreatedAt(DateTime value) : StrongDateTime&lt;CreatedAt&gt;(value), IStrongOf&lt;DateTime, CreatedAt&gt; { public static CreatedAt Create(DateTime value) =&gt; new(value); }
+/// public sealed class ExpiresAt(DateTime value) : StrongDateTime&lt;ExpiresAt&gt;(value), IStrongOf&lt;DateTime, ExpiresAt&gt; { public static ExpiresAt Create(DateTime value) =&gt; new(value); }
 ///
 /// // Usage - compiler prevents mixing up parameters
 /// public bool IsExpired(CreatedAt createdAt, ExpiresAt expiresAt)
@@ -49,7 +49,7 @@ public abstract partial class StrongDateTime<TStrong>(DateTime Value)
         : StrongOf<DateTime, TStrong>(Value), IComparable, IComparable<TStrong>, IEquatable<TStrong>, IStrongDateTime,
           IParsable<TStrong>, ISpanParsable<TStrong>, IFormattable,
           IUtf8SpanFormattable
-    where TStrong : StrongDateTime<TStrong>
+    where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
 {
     /// <summary>
     /// Gets the underlying <see cref="DateTime"/> value.

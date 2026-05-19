@@ -12,15 +12,50 @@ namespace StrongOf.AspNetCore.UnitTests.OpenApi;
 
 public class StrongOfSchemaTransformerTests
 {
-    private sealed class TestId(Guid value) : StrongGuid<TestId>(value) { }
-    private sealed class TestName(string value) : StrongString<TestName>(value) { }
-    private sealed class TestCount(int value) : StrongInt32<TestCount>(value) { }
-    private sealed class TestAmount(long value) : StrongInt64<TestAmount>(value) { }
-    private sealed class TestPrice(decimal value) : StrongDecimal<TestPrice>(value) { }
-    private sealed class TestFlag(bool value) : StrongBoolean<TestFlag>(value) { }
-    private sealed class TestInitial(char value) : StrongChar<TestInitial>(value) { }
-    private sealed class TestDate(DateTime value) : StrongDateTime<TestDate>(value) { }
-    private sealed class TestTimestamp(DateTimeOffset value) : StrongDateTimeOffset<TestTimestamp>(value) { }
+    private sealed class TestId(Guid value) : StrongGuid<TestId>(value), IStrongOf<Guid, TestId>
+    {
+        public static TestId Create(Guid value) => new(value);
+    }
+
+    private sealed class TestName(string value) : StrongString<TestName>(value), IStrongOf<string, TestName>
+    {
+        public static TestName Create(string value) => new(value);
+    }
+
+    private sealed class TestCount(int value) : StrongInt32<TestCount>(value), IStrongOf<int, TestCount>
+    {
+        public static TestCount Create(int value) => new(value);
+    }
+
+    private sealed class TestAmount(long value) : StrongInt64<TestAmount>(value), IStrongOf<long, TestAmount>
+    {
+        public static TestAmount Create(long value) => new(value);
+    }
+
+    private sealed class TestPrice(decimal value) : StrongDecimal<TestPrice>(value), IStrongOf<decimal, TestPrice>
+    {
+        public static TestPrice Create(decimal value) => new(value);
+    }
+
+    private sealed class TestFlag(bool value) : StrongBoolean<TestFlag>(value), IStrongOf<bool, TestFlag>
+    {
+        public static TestFlag Create(bool value) => new(value);
+    }
+
+    private sealed class TestInitial(char value) : StrongChar<TestInitial>(value), IStrongOf<char, TestInitial>
+    {
+        public static TestInitial Create(char value) => new(value);
+    }
+
+    private sealed class TestDate(DateTime value) : StrongDateTime<TestDate>(value), IStrongOf<DateTime, TestDate>
+    {
+        public static TestDate Create(DateTime value) => new(value);
+    }
+
+    private sealed class TestTimestamp(DateTimeOffset value) : StrongDateTimeOffset<TestTimestamp>(value), IStrongOf<DateTimeOffset, TestTimestamp>
+    {
+        public static TestTimestamp Create(DateTimeOffset value) => new(value);
+    }
 
     [Fact]
     public async Task TransformAsync_StrongGuid_MapsToStringUuid()

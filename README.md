@@ -39,6 +39,35 @@ This library was created because C# still does not support [type abbreviations](
 It is currently unclear whether this feature will ever become part of the language:  
 [Proposal: Type aliases / abbreviations / newtype](https://github.com/dotnet/csharplang/issues/410)
 
+## Table of Contents
+
+- [The idea](#the-idea)
+- [Usage](#usage)
+    - [Usage with source generators](#usage-with-source-generators)
+    - [Usage without source generators](#usage-without-source-generators)
+    - [Bulk conversion helpers](#bulk-conversion-helpers)
+    - [Validation helpers for custom domain types](#validation-helpers-for-custom-domain-types)
+    - [Available marker attributes](#available-marker-attributes)
+- [StrongOf.Domains](#usage-with-strongofdomains)
+    - [Global Usings - avoid repetitive `using` directives](#global-usings---avoid-repetitive-using-directives)
+    - [Namespace naming rationale](#namespace-naming-rationale)
+- [Json](#usage-with-json)
+- [ASP.NET Core](#usage-with-aspnet-core)
+    - [Usage with Minimal APIs](#usage-with-minimal-apis)
+    - [Usage with OpenApi (.NET 9+)](#usage-with-openapi-net-9)
+- [Entity Framework Core](#usage-with-entity-framework-core)
+    - [Register Converters Once with `ConfigureConventions` (Recommended)](#register-converters-once-with-configureconventions-recommended)
+    - [Configure Strong Types in `OnModelCreating`](#configure-strong-types-in-onmodelcreating)
+    - [LINQ Limitations](#linq-limitations)
+    - [Why No Source Generator for EF Core?](#why-no-source-generator-for-ef-core)
+- [FluentValidation](#usage-with-fluentvalidation)
+- [Migrations](#migrations)
+    - [Migration guide: StrongOf v2 -> v3 (Source Generators)](#migration-guide-strongof-v2---v3-source-generators)
+    - [Interop metadata for other source generators](#interop-metadata-for-other-source-generators)
+- [Performance matters](#performance-matters)
+- [FAQ](#faq)
+
+
 ## The idea
 
 The frequent problem in code implementation is that values are not given any meaning and many methods are simply a technical string of values or data classes are just a list of types.
@@ -64,11 +93,21 @@ public User AddUser(Guid tenantId, Guid userId, string firstName, string lastNam
 The idea is to use a domain-driven design approach to give specific values a meaning through their own types.
 
 ```csharp
-private sealed class TenantId(Guid value)    : StrongGuid<TenantId>(value) { }
-private sealed class UserId(Guid value)      : StrongGuid<UserId>(value) { }
-private sealed class FirstName(string value) : StrongString<FirstName>(value) { }
-private sealed class LastName(string value)  : StrongString<LastName>(value) { }
-private sealed class Email(string value)     : StrongString<Email>(value) { }
+
+[Strong<Guid>]
+public partial class TenantId;
+
+[StrongGuid]
+public partial class UserId;
+
+[StrongString]
+public partial class FirstName;
+
+[Strong<String>]
+public partial class LastName;
+
+[Strong<String>]
+public partial class Email;
 
 public class User
 {    
@@ -87,11 +126,145 @@ Now you are safe!
 
 ## Usage
 
-The clearest distinction to other approaches is that all `StrongOf` types inherit from `StrongOf<T>` in order to be able to implement generic approaches. Furthermore, it is possible to extend the class, e.g. to implement validations.
+The recommended approach is to define strong types with the built-in source generator. If you prefer the classic hand-written form, that is still fully supported and shown afterwards.
+
+### Usage with source generators
+
+> For v2 users: see migration guide to v3 at the end of this readme.
+
+The shipped Roslyn source generator turns a single attribute-marked partial class into a fully implemented strong type, with **zero** Expression-based factory dependency. The result is fully Native AOT and trim safe.
+
+Recommended style is the generic form `Strong<TTarget>`:
+
+- Preferred: `[StrongGuid]` and `[Strong<Guid>]`
+- Also supported: `[Strong(typeof(Guid))]`
+- Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
 
 ```csharp
-private sealed class UserId(Guid value) : StrongGuid<UserId>(value) { }
+using StrongOf.SourceGeneration;
+
+[Strong<Guid>]
+public partial class UserId;
+
+[StrongGuid] 
+public partial class LegacyUserId;
+
+[StrongString]
+public partial class Email;
+
+[Strong<string>]
+public partial class Alias;
+
+[StrongInt32] 
+public partial class Quantity;
+
+[StrongDecimal]
+public partial class Amount;
 ```
+
+The generator emits the primary constructor, the base type (`StrongGuid<UserId>`,
+`StrongString<Email>`, ...) and an AOT-friendly static `Create` method that the generic `From(...)`
+dispatch resolves directly to `new TStrong(value)`. No reflection, no `Expression.Compile`.
+
+You can still extend the type with your own partial - the generator only contributes the
+constructor / base type / `Create` member, never the body:
+
+```csharp
+[StrongString]
+public partial class Email
+{
+    public bool LooksLikeEmail() => Value.Contains('@');
+}
+```
+
+
+### Usage without source generators
+
+The classic hand-written form keeps the implementation explicit. All strong types inherit from `StrongOf<TTarget, TStrong>`, and hand-written types must implement `IStrongOf<TTarget, TStrong>` so generic `From(...)` calls can dispatch through a trim-safe static `Create` method.
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
+{
+    public static UserId Create(Guid value) => new(value);
+}
+```
+
+Prefer direct instantiation with `new` in hot paths:
+
+```csharp
+UserId userId1 = new(Guid.NewGuid());
+UserId userId2 = UserId.From(Guid.NewGuid());
+```
+
+`From(...)` is intended for generic scenarios where the concrete strong type is not known statically.
+
+### Bulk conversion helpers
+
+For collections of primitive values, StrongOf provides dedicated conversion helpers:
+
+```csharp
+Guid[] ids = [Guid.NewGuid(), Guid.NewGuid()];
+
+List<UserId>? list = UserId.From(ids);
+UserId[]? array = UserId.FromArray(ids);
+UserId[] spanArray = UserId.FromSpan(ids);
+```
+
+Use `FromArray(...)` or `FromSpan(...)` when you want a compact array result with a single allocation.
+
+### Validation helpers for custom domain types
+
+If you build your own validated domain types, prefer explicit factory methods over implicit conversions:
+
+With source generators:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[StrongString]
+public partial class Email
+{
+    public static bool TryCreate(string? value, out Email? result)
+        => StrongValidation.TryCreate(value, IsValid, Email.Create, out result);
+
+    private static bool IsValid(string value) => value.Contains('@');
+}
+```
+
+Without source generators:
+
+```csharp
+public sealed class Email(string value) : StrongString<Email>(value), IStrongOf<string, Email>
+{
+    public static Email Create(string value) => new(value);
+
+    public static bool TryCreate(string? value, out Email? result)
+        => StrongValidation.TryCreate(value, IsValid, Create, out result);
+
+    private static bool IsValid(string value) => value.Contains('@');
+}
+```
+
+This keeps construction explicit and allows validation without moving logic into the primary constructor.
+
+### Available marker attributes
+
+The following marker attributes are available in `StrongOf.SourceGeneration`:
+
+| Attribute | Wraps |
+|-----------|-------|
+| `[Strong<TTarget>]` | Generic form (same supported primitive set as below) |
+| `[StrongBoolean]` | `bool` |
+| `[StrongChar]` | `char` |
+| `[StrongDateTime]` | `DateTime` |
+| `[StrongDateTimeOffset]` | `DateTimeOffset` |
+| `[StrongDecimal]` | `decimal` |
+| `[StrongDouble]` | `double` |
+| `[StrongGuid]` | `Guid` |
+| `[StrongInt32]` | `int` |
+| `[StrongInt64]` | `long` |
+| `[StrongString]` | `string` |
+| `[StrongTimeSpan]` | `TimeSpan` |
 
 ## Usage with StrongOf.Domains
 
@@ -155,7 +328,25 @@ The namespace names are deliberately chosen to **not conflict** with common doma
 
 ## Usage with Json
 
-You can just use [StrongOf.Json](https://NuBrowse.com/packages/StrongOf.Json) and use one of the pre-defined converters
+You can just use [StrongOf.Json](https://NuBrowse.com/packages/StrongOf.Json) and use one of the pre-defined converters.
+
+**Recommended: Options-based (explicit registration):**
+
+```csharp
+JsonSerializerOptions serializeOptions = new()
+{
+    WriteIndented = true,
+    Converters =
+    {
+        new StrongGuidJsonConverter<UserId>(),
+        new StrongStringJsonConverter<EmailAddress>(),
+    }
+};
+
+string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
+```
+
+**Attribute-based:**
 
 ```csharp
 public class MyClass
@@ -163,32 +354,6 @@ public class MyClass
     [JsonConverter(typeof(StrongGuidJsonConverter<UserId>))]
     public UserId Id { get; set; }
 }
-```
-
-For most applications, register all StrongOf converters once:
-
-```csharp
-using StrongOf.Json;
-
-JsonSerializerOptions serializeOptions = new JsonSerializerOptions()
-    .AddStrongOfConverters();
-
-string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
-```
-
-If you want explicit control, you can still register individual converters in `JsonSerializerOptions`:
-
-```csharp
-JsonSerializerOptions serializeOptions = new JsonSerializerOptions
-{
-    WriteIndented = true,
-    Converters =
-    {
-        new StrongGuidJsonConverter<UserId>()
-    }
-};
-
-string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
 ```
 
 ## Usage with ASP.NET Core
@@ -336,11 +501,11 @@ See the [StrongOf.EntityFrameworkCore readme](src/StrongOf.EntityFrameworkCore/r
 
 ### Why No Source Generator for EF Core?
 
-The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type, while `OnModelCreating` remains available when you want more explicit per-property control. A source generator would add Roslyn coupling complexity and contradicts the project's design philosophy (see FAQ below) - for zero practical benefit.
+The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type, while `OnModelCreating` remains available when you want more explicit per-property control.
 
 ## Usage with FluentValidation
 
-FluentValidation is a great library for validating models; especially popular in the ASP.NET Core world.\
+FluentValidation is a great library for validating models; especially popular in the ASP.NET Core world.
 Therefore, separate validations are available for `StrongOf` models, which are constantly being expanded.
 
 In order not to forget the namespace, separate methods are available that differ from the default ValidationContext.
@@ -352,6 +517,8 @@ public class MySubmitModel
     //  marked as not null, but can still be null at 
     //  runtime if no value has been passed.
     public MyStrongString MyUserName { get; set; } = null!;
+
+    public UserId UserId { get; set; } = null!;
 }
 
 public class MySubmitModelValidator : AbstractValidator<MySubmitModel>
@@ -362,70 +529,199 @@ public class MySubmitModelValidator : AbstractValidator<MySubmitModel>
             .HasValue() // not NotNull
             .WithMessage("No user name passed.");
 
-        // more validations...
+        RuleFor(x => x.MyUserName)
+            .IsNotNull();
+
+        RuleFor(x => x.UserId)
+            .HasNonDefaultValue<MySubmitModel, UserId, Guid>();
+
+        RuleFor(x => x.UserId)
+            .ValueMust<MySubmitModel, UserId, Guid>(value => value != Guid.Empty);
+    }
+}
 ```
 
+There are also generic rules for all StrongOf types:
+
+```csharp
+RuleFor(x => x.SomeStrongValue)
+    .IsNotNull();
+
+RuleFor(x => x.SomeStrongValue)
+    .HasNonDefaultValue<MyModel, SomeStrongValue, Guid>();
+
+RuleFor(x => x.SomeStrongValue)
+    .ValueMust<MyModel, SomeStrongValue, Guid>(value => value != Guid.Empty);
+```
+
+These are useful for non-string strong types where `HasValue()` is not expressive enough.
+
+## Migrations
+
+### Migration guide: StrongOf v2 -> v3 (Source Generators)
+
+This section shows how to migrate existing hand-written strong types to the v3 generator-based style.
+
+1. Update NuGet package(s) to v3 (`StrongOf` and optional integration packages).
+2. Add `using StrongOf.SourceGeneration;` in files where you declare strong types.
+3. Replace hand-written inheritance with attribute + `partial class`.
+4. Keep domain-specific behavior in additional partial class bodies.
+
+#### 1) Basic type migration
+
+Before (v2 / hand-written):
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
+{
+    public static UserId Create(Guid value) => new(value);
+}
+```
+
+After (v3 / recommended):
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong<Guid>]
+public partial class UserId;
+```
+
+Also valid:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[StrongGuid]
+public partial class UserId;
+```
+
+#### 2) Keep custom domain methods/validation
+
+If your old type had custom members, keep them in a separate partial body:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong<string>]
+public partial class Email;
+
+public partial class Email
+{
+    public bool LooksLikeEmail() => Value.Contains('@');
+}
+```
+
+#### 3) Interop for other source generators
+
+If other generators in your solution need explicit primitive metadata, add:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong(typeof(Guid))]
+public partial class UserId;
+```
+
+`[Strong(typeof(...))]` is supported by StrongOf itself and is also useful as stable metadata for external generators.
+
+#### 4) Quick migration checklist
+
+- Replace `public sealed class X(T value) : StrongY<X>(value)` with `[Strong<T>] public partial class X;`
+- Remove hand-written static `Create` methods (generator emits them)
+- Keep only domain logic in partial class bodies
+- Build and run tests to confirm behavior parity
+
+### Interop metadata for other source generators
+
+If you use additional source generators and want to expose the primitive target type as explicit
+metadata, you can use `Strong(typeof(...))` directly as your single marker:
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong(typeof(Guid))]
+public partial class UserId;
+```
+
+`StrongAttribute` (non-generic form) is supported by StrongOf's generator and also works well as explicit primitive metadata for external generators.
+
+If you want to keep the classic hand-written form, you still can - but you must declare the explicit
+`IStrongOf<TTarget, TStrong>` contract yourself:
+
+```csharp
+public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Guid, UserId>
+{
+    public static UserId Create(Guid value) => new(value);
+}
+```
+
+The generator does exactly this for you.
 
 ## Performance matters
 
 Since the strong types created here can still be instantiated with `new()`, this also means an enormous performance advantage over libraries that have to work with `Activator.CreateInstance` or `Expression.New`.
 
 ```shell
-BenchmarkDotNet v0.15.2, Windows 10 (10.0.19045.6216/22H2/2022Update)
+BenchmarkDotNet v0.16.0-nightly.20260501.510, Windows 10 (10.0.19045.7184/22H2/2022Update)
 AMD Ryzen 9 9950X 4.30GHz, 1 CPU, 32 logical and 16 physical cores
-.NET SDK 10.0.100-preview.7.25380.108
-  [Host]    : .NET 10.0.0 (10.0.25.38108), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 10.0 : .NET 10.0.0 (10.0.25.38108), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 8.0  : .NET 8.0.19 (8.0.1925.36514), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
-  .NET 9.0  : .NET 9.0.8 (9.0.825.36511), X64 RyuJIT AVX-512F+CD+BW+DQ+VL+VBMI
+Memory: 61,64 GB Total, 37,06 GB Available
+.NET SDK 11.0.100-preview.3.26207.106
+  [Host]     : .NET 11.0.0 (11.0.0-preview.3.26207.106, 11.0.26.20806), X64 RyuJIT x86-64-v4
+  Job-AZESIF : .NET 8.0.26 (8.0.26, 8.0.2626.16921), X64 RyuJIT x86-64-v4
+  Job-YNJDZW : .NET 9.0.15 (9.0.15, 9.0.1526.17522), X64 RyuJIT x86-64-v4
+  Job-GVKUBM : .NET 10.0.7 (10.0.7, 10.0.726.21808), X64 RyuJIT x86-64-v4
+  Job-IHFIKV : .NET 11.0.0 (11.0.0-preview.3.26207.106, 11.0.26.20806), X64 RyuJIT x86-64-v4
 
 
-| Method      | Runtime   | Categories   | Mean     | Error     | StdDev    | Ratio | RatioSD | Gen0   | Allocated |
-|------------ |---------- |------------- |---------:|----------:|----------:|------:|--------:|-------:|----------:|
-| Guid_New    | .NET 8.0  | StrongGuid   | 1.738 ns | 0.0645 ns | 0.0571 ns |  1.00 |    0.03 | 0.0019 |      32 B |
-| Guid_New    | .NET 9.0  | StrongGuid   | 1.701 ns | 0.0288 ns | 0.0255 ns |  0.98 |    0.02 | 0.0019 |      32 B |
-| Guid_New    | .NET 10.0 | StrongGuid   | 1.732 ns | 0.0249 ns | 0.0208 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Guid_From   | .NET 8.0  | StrongGuid   | 3.347 ns | 0.0263 ns | 0.0246 ns |  1.33 |    0.02 | 0.0019 |      32 B |
-| Guid_From   | .NET 9.0  | StrongGuid   | 2.525 ns | 0.0243 ns | 0.0203 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-| Guid_From   | .NET 10.0 | StrongGuid   | 2.523 ns | 0.0472 ns | 0.0394 ns |  1.00 |    0.02 | 0.0019 |      32 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int32_New   | .NET 8.0  | StrongInt32  | 1.677 ns | 0.0315 ns | 0.0263 ns |  0.97 |    0.04 | 0.0014 |      24 B |
-| Int32_New   | .NET 9.0  | StrongInt32  | 1.737 ns | 0.0645 ns | 0.0690 ns |  1.01 |    0.05 | 0.0014 |      24 B |
-| Int32_New   | .NET 10.0 | StrongInt32  | 1.728 ns | 0.0663 ns | 0.0588 ns |  1.00 |    0.05 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int32_From  | .NET 8.0  | StrongInt32  | 2.895 ns | 0.0911 ns | 0.0852 ns |  1.55 |    0.05 | 0.0014 |      24 B |
-| Int32_From  | .NET 9.0  | StrongInt32  | 1.928 ns | 0.0325 ns | 0.0304 ns |  1.03 |    0.02 | 0.0014 |      24 B |
-| Int32_From  | .NET 10.0 | StrongInt32  | 1.872 ns | 0.0182 ns | 0.0161 ns |  1.00 |    0.01 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int64_New   | .NET 8.0  | StrongInt64  | 1.684 ns | 0.0255 ns | 0.0213 ns |  0.95 |    0.06 | 0.0014 |      24 B |
-| Int64_New   | .NET 9.0  | StrongInt64  | 1.746 ns | 0.0530 ns | 0.0496 ns |  0.99 |    0.06 | 0.0014 |      24 B |
-| Int64_New   | .NET 10.0 | StrongInt64  | 1.776 ns | 0.0700 ns | 0.1089 ns |  1.00 |    0.09 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| Int64_From  | .NET 8.0  | StrongInt64  | 2.764 ns | 0.0379 ns | 0.0354 ns |  1.42 |    0.03 | 0.0014 |      24 B |
-| Int64_From  | .NET 9.0  | StrongInt64  | 1.978 ns | 0.0289 ns | 0.0256 ns |  1.02 |    0.02 | 0.0014 |      24 B |
-| Int64_From  | .NET 10.0 | StrongInt64  | 1.943 ns | 0.0369 ns | 0.0345 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| String_New  | .NET 8.0  | StrongString | 1.667 ns | 0.0367 ns | 0.0326 ns |  0.97 |    0.02 | 0.0014 |      24 B |
-| String_New  | .NET 9.0  | StrongString | 1.646 ns | 0.0292 ns | 0.0273 ns |  0.96 |    0.02 | 0.0014 |      24 B |
-| String_New  | .NET 10.0 | StrongString | 1.710 ns | 0.0237 ns | 0.0198 ns |  1.00 |    0.02 | 0.0014 |      24 B |
-|             |           |              |          |           |           |       |         |        |           |
-| String_From | .NET 8.0  | StrongString | 3.638 ns | 0.0637 ns | 0.0596 ns |  1.26 |    0.03 | 0.0014 |      24 B |
-| String_From | .NET 9.0  | StrongString | 2.803 ns | 0.0401 ns | 0.0376 ns |  0.97 |    0.02 | 0.0014 |      24 B |
-| String_From | .NET 10.0 | StrongString | 2.882 ns | 0.0695 ns | 0.0650 ns |  1.00 |    0.03 | 0.0014 |      24 B |
+| Method      | Runtime   | Mean     | Error     | StdDev    | Ratio | Gen0   | Allocated |
+|------------ |---------- |---------:|----------:|----------:|------:|-------:|----------:|
+| Guid_New    | .NET 8.0  | 2.171 ns | 0.0414 ns | 0.0425 ns |  1.09 | 0.0019 |      32 B |
+| Guid_New    | .NET 9.0  | 2.015 ns | 0.0222 ns | 0.0197 ns |  1.01 | 0.0019 |      32 B |
+| Guid_New    | .NET 10.0 | 1.996 ns | 0.0222 ns | 0.0174 ns |  1.00 | 0.0019 |      32 B |
+| Guid_New    | .NET 11.0 | 2.028 ns | 0.0379 ns | 0.0405 ns |  1.02 | 0.0019 |      32 B |
+|             |           |          |           |           |       |        |           |
+| Guid_From   | .NET 8.0  | 2.320 ns | 0.0462 ns | 0.0759 ns |  1.09 | 0.0019 |      32 B |
+| Guid_From   | .NET 9.0  | 2.130 ns | 0.0360 ns | 0.0337 ns |  1.00 | 0.0019 |      32 B |
+| Guid_From   | .NET 10.0 | 2.121 ns | 0.0166 ns | 0.0139 ns |  1.00 | 0.0019 |      32 B |
+| Guid_From   | .NET 11.0 | 2.103 ns | 0.0250 ns | 0.0233 ns |  0.99 | 0.0019 |      32 B |
+|             |           |          |           |           |       |        |           |
+| Int32_New   | .NET 8.0  | 1.930 ns | 0.0382 ns | 0.0408 ns |  1.01 | 0.0014 |      24 B |
+| Int32_New   | .NET 9.0  | 1.901 ns | 0.0277 ns | 0.0246 ns |  1.00 | 0.0014 |      24 B |
+| Int32_New   | .NET 10.0 | 1.906 ns | 0.0236 ns | 0.0209 ns |  1.00 | 0.0014 |      24 B |
+| Int32_New   | .NET 11.0 | 1.884 ns | 0.0121 ns | 0.0101 ns |  0.99 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| Int32_From  | .NET 8.0  | 1.938 ns | 0.0379 ns | 0.0556 ns |  0.96 | 0.0014 |      24 B |
+| Int32_From  | .NET 9.0  | 1.897 ns | 0.0337 ns | 0.0316 ns |  0.94 | 0.0014 |      24 B |
+| Int32_From  | .NET 10.0 | 2.017 ns | 0.0275 ns | 0.0257 ns |  1.00 | 0.0014 |      24 B |
+| Int32_From  | .NET 11.0 | 1.881 ns | 0.0150 ns | 0.0133 ns |  0.93 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| Int64_New   | .NET 8.0  | 1.938 ns | 0.0357 ns | 0.0334 ns |  1.03 | 0.0014 |      24 B |
+| Int64_New   | .NET 9.0  | 1.880 ns | 0.0141 ns | 0.0125 ns |  1.00 | 0.0014 |      24 B |
+| Int64_New   | .NET 10.0 | 1.888 ns | 0.0312 ns | 0.0291 ns |  1.00 | 0.0014 |      24 B |
+| Int64_New   | .NET 11.0 | 1.889 ns | 0.0371 ns | 0.0397 ns |  1.00 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| Int64_From  | .NET 8.0  | 1.917 ns | 0.0316 ns | 0.0296 ns |  1.01 | 0.0014 |      24 B |
+| Int64_From  | .NET 9.0  | 1.886 ns | 0.0300 ns | 0.0266 ns |  0.99 | 0.0014 |      24 B |
+| Int64_From  | .NET 10.0 | 1.903 ns | 0.0346 ns | 0.0323 ns |  1.00 | 0.0014 |      24 B |
+| Int64_From  | .NET 11.0 | 1.888 ns | 0.0293 ns | 0.0259 ns |  0.99 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| String_New  | .NET 8.0  | 1.930 ns | 0.0368 ns | 0.0394 ns |  1.02 | 0.0014 |      24 B |
+| String_New  | .NET 9.0  | 1.911 ns | 0.0270 ns | 0.0225 ns |  1.01 | 0.0014 |      24 B |
+| String_New  | .NET 10.0 | 1.890 ns | 0.0192 ns | 0.0180 ns |  1.00 | 0.0014 |      24 B |
+| String_New  | .NET 11.0 | 1.892 ns | 0.0257 ns | 0.0240 ns |  1.00 | 0.0014 |      24 B |
+|             |           |          |           |           |       |        |           |
+| String_From | .NET 8.0  | 1.934 ns | 0.0377 ns | 0.0370 ns |  1.03 | 0.0014 |      24 B |
+| String_From | .NET 9.0  | 1.893 ns | 0.0267 ns | 0.0223 ns |  1.01 | 0.0014 |      24 B |
+| String_From | .NET 10.0 | 1.878 ns | 0.0212 ns | 0.0188 ns |  1.00 | 0.0014 |      24 B |
+| String_From | .NET 11.0 | 1.876 ns | 0.0322 ns | 0.0251 ns |  1.00 | 0.0014 |      24 B |
 ```
-
-For certain scenarios, this library also has an `Expression.New` implementation (through a static From method); but not for general instantiation.
 
 ## FAQ
 
 __Why no records?__
 
 Records (currently) have a few disadvantages, which is why they are not suitable for this type of class. For example, it is currently not possible to validly inherit `GetHashCode`. `sealed` on `GetHashCode` is only available if the record itself is `sealed`, which does not make sense here.
-
-__Why no Code Generator?__
-
-Code generators are great, were my first idea too, but have proven to be a disadvantage in everyday life, e.g. when implementing generic extensions / implementations. This library is based on the experience of other libraries that have tended to be too large and their disadvantages.
 
 __Why no structs?__
 

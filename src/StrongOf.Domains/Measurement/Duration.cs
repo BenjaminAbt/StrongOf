@@ -24,7 +24,8 @@ namespace StrongOf.Domains.Measurement;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongTimeSpanTypeConverter<Duration>))]
-public sealed class Duration(TimeSpan value) : StrongTimeSpan<Duration>(value)
+[StrongTimeSpan]
+public sealed partial class Duration
 {
     /// <summary>
     /// Determines whether the duration is positive (greater than <see cref="TimeSpan.Zero"/>).

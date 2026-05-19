@@ -98,6 +98,7 @@
 
   <!-- Global coverage settings applied to all test projects -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'" Label="Coverage">
+    <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
     <CollectCoverage>true</CollectCoverage>
     <CoverletOutputFormat>lcov,opencover,cobertura</CoverletOutputFormat>
     <CoverletOutput>$(MSBuildThisFileDirectory)TestResults/coverage/$(MSBuildProjectName).</CoverletOutput>
@@ -136,7 +137,7 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Label="Default Analyzers">
+  <ItemGroup Label="Default Analyzers" Condition="'$(IsRoslynComponent)' != 'true'">
     <PackageReference Include="Roslynator.Analyzers">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>

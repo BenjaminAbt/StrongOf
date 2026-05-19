@@ -7,8 +7,15 @@ namespace StrongOf.UnitTests;
 
 public class StrongDecimalTests
 {
-    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value) { }
-    private sealed class OtherTestDecimalOf(decimal Value) : StrongDecimal<OtherTestDecimalOf>(Value) { }
+    private sealed class TestDecimalOf(decimal Value) : StrongDecimal<TestDecimalOf>(Value), IStrongOf<decimal, TestDecimalOf>
+    {
+        public static TestDecimalOf Create(decimal value) => new(value);
+    }
+
+    private sealed class OtherTestDecimalOf(decimal Value) : StrongDecimal<OtherTestDecimalOf>(Value), IStrongOf<decimal, OtherTestDecimalOf>
+    {
+        public static OtherTestDecimalOf Create(decimal value) => new(value);
+    }
 
     [Fact]
     public void Equals_WithDifferentType_ReturnsFalse()

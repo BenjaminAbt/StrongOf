@@ -6,22 +6,28 @@ using System.Text.Json.Serialization;
 namespace StrongOf.Json;
 
 /// <summary>
-/// A JSON converter for StrongDateTime.
+/// System.Text.Json converter for <see cref="StrongDateTime{TStrong}"/> values.
+/// Uses ISO 8601 string representation for deterministic date-time payloads.
 /// </summary>
-/// <typeparam name="TStrong">The type of the StrongDateTime.</typeparam>
+/// <typeparam name="TStrong">Concrete strong date-time type.</typeparam>
 public class StrongDateTimeJsonConverter<TStrong> : JsonConverter<TStrong>
-    where TStrong : StrongDateTime<TStrong>
+    where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
 {
     /// <summary>
-    /// Reads and converts the JSON to type TStrong.
+    /// Reads JSON and converts it to <typeparamref name="TStrong"/>.
     /// </summary>
     /// <param name="reader">The Utf8JsonReader to read from.</param>
     /// <param name="typeToConvert">The type of object to convert.</param>
     /// <param name="options">Options to control the serializer behavior during reading.</param>
-    /// <returns>A value of type TStrong.</returns>
+    /// <returns>
+    /// Parsed <typeparamref name="TStrong"/> instance, or <see langword="null"/>
+    /// when the token is empty or cannot be parsed.
+    /// </returns>
     public override TStrong? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
     {
         string? value = reader.GetString();
+        // Parse strictly through the StrongOf ISO helper to keep incoming payload handling
+        // aligned with the StrongDateTime API surface.
         if (string.IsNullOrEmpty(value) is false && StrongDateTime<TStrong>.TryParseIso8601(value, out TStrong? strong))
         {
             return strong;
@@ -31,7 +37,7 @@ public class StrongDateTimeJsonConverter<TStrong> : JsonConverter<TStrong>
     }
 
     /// <summary>
-    /// Writes a TStrong value to a Utf8JsonWriter.
+    /// Writes <typeparamref name="TStrong"/> as an ISO 8601 JSON string.
     /// </summary>
     /// <param name="writer">The Utf8JsonWriter to write to.</param>
     /// <param name="strong">The value to write.</param>

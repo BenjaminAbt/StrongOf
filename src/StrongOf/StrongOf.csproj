@@ -10,4 +10,27 @@
         <None Include="readme.md" Pack="true" PackagePath="" />
     </ItemGroup>
 
+    <!-- Reference the source generator so it runs against this project (and is shipped inside the NuGet package). -->
+    <ItemGroup>
+        <ProjectReference Include="..\StrongOf.SourceGenerators\StrongOf.SourceGenerators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <!-- Pack the generator DLL into the StrongOf NuGet package so consumers get it automatically.
+         The OutputItemType="Analyzer" reference makes it run for this project, but does NOT
+         pack it into the consumer-facing NuGet; we have to add it explicitly. -->
+    <PropertyGroup>
+        <StrongOfSourceGeneratorPackPath>$(MSBuildThisFileDirectory)..\StrongOf.SourceGenerators\bin\$(Configuration)\netstandard2.0\StrongOf.SourceGenerators.dll</StrongOfSourceGeneratorPackPath>
+        <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_StrongOfPackAnalyzer</TargetsForTfmSpecificContentInPackage>
+    </PropertyGroup>
+    <Target Name="_StrongOfPackAnalyzer">
+        <Error Text="StrongOf.SourceGenerators must be built before packing StrongOf. Expected file: $(StrongOfSourceGeneratorPackPath)"
+               Condition="'$(TargetFramework)' == 'net8.0' and !Exists('$(StrongOfSourceGeneratorPackPath)')" />
+        <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+            <TfmSpecificPackageFile Include="$(StrongOfSourceGeneratorPackPath)"
+                                    PackagePath="analyzers/dotnet/cs" />
+        </ItemGroup>
+    </Target>
+
 </Project>

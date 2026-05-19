@@ -11,7 +11,7 @@ namespace StrongOf;
 /// </summary>
 /// <typeparam name="TStrong">The concrete strong-datetime type.</typeparam>
 public class StrongDateTimeTypeConverter<TStrong> : TypeConverter
-    where TStrong : StrongDateTime<TStrong>
+    where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
 {
     /// <inheritdoc />
     public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType)

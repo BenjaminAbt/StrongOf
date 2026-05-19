@@ -8,7 +8,10 @@ namespace StrongOf.Json.UnitTests;
 
 public class StrongDecimalJsonConverterTests
 {
-    private sealed class TestDecimalOf(decimal value) : StrongDecimal<TestDecimalOf>(value) { }
+    private sealed class TestDecimalOf(decimal value) : StrongDecimal<TestDecimalOf>(value), IStrongOf<decimal, TestDecimalOf>
+    {
+        public static TestDecimalOf Create(decimal value) => new(value);
+    }
 
     private readonly StrongDecimalJsonConverter<TestDecimalOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();

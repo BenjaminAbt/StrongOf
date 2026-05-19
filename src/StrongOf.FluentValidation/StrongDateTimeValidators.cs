@@ -1,56 +1,68 @@
 ﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-using System.Linq.Expressions;
-using System.Reflection;
 using FluentValidation;
-using FluentValidation.Internal;
 using FluentValidation.Validators;
 
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongDateTime.
+/// Provides FluentValidation rules for <see cref="StrongDateTime{TStrong}"/> values.
 /// </summary>
+/// <remarks>
+/// Comparisons are performed using raw <see cref="DateTime"/> ordering. Ensure that compared
+/// values use compatible <see cref="DateTime.Kind"/> semantics in your domain.
+/// </remarks>
 public static class StrongDateTimeValidators
 {
     /// <summary>
-    /// Checks if the StrongDateTime has a value.
+    /// Validates that the strong date-time has a value (is not <see langword="null"/>).
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongDateTime<TStrong>
+        where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
-    /// Checks if the StrongDateTime has a minimum value.
+    /// Validates that the strong date-time is greater than or equal to the specified minimum.
     /// </summary>
+    /// <remarks>
+    /// No kind normalization is applied. Pass values in the same temporal convention
+    /// (for example all UTC or all local) to avoid ambiguous comparisons.
+    /// </remarks>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
     /// <param name="min">The minimum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTime min)
-        where TStrong : StrongDateTime<TStrong>
+        where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
-    /// Checks if the StrongDateTime has a maximum value.
+    /// Validates that the strong date-time is less than or equal to the specified maximum.
     /// </summary>
+    /// <remarks>
+    /// No kind normalization is applied. Pass values in the same temporal convention
+    /// (for example all UTC or all local) to avoid ambiguous comparisons.
+    /// </remarks>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
     /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTime max)
-        where TStrong : StrongDateTime<TStrong>
+        where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
-    /// Checks if the StrongDateTime is within a specified range.
+    /// Validates that the strong date-time is within the specified inclusive range.
     /// </summary>
+    /// <remarks>
+    /// Range bounds are inclusive and compared directly against the wrapped <see cref="DateTime"/>.
+    /// </remarks>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
@@ -58,7 +70,7 @@ public static class StrongDateTimeValidators
     /// <param name="max">The maximum value of the range.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTime min, DateTime max)
-        where TStrong : StrongDateTime<TStrong>
+        where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);
 
     /// <summary>
@@ -67,15 +79,20 @@ public static class StrongDateTimeValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other strong DateTime.</param>
+    /// <param name="accessor">A delegate that returns the other strong DateTime to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongDateTime<TStrong>
+    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
+        where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        // Reuse FluentValidation's native validator to preserve placeholder formatting and
+        // message behavior for cross-property comparisons.
+        return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
     /// <summary>
@@ -84,14 +101,18 @@ public static class StrongDateTimeValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the strong DateTime.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other strong DateTime.</param>
+    /// <param name="accessor">A delegate that returns the other strong DateTime to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongDateTime<TStrong>
+    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
+        where TStrong : StrongDateTime<TStrong>, IStrongOf<DateTime, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo behavior with FluentValidation's native NotEqual validator.
+        return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

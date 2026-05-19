@@ -14,7 +14,10 @@ public class StrongDateTimeOffsetValidatorsTests
     private readonly TestValidator _validator = new();
 
     // Model
-    private sealed class TestStrongDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestStrongDateTimeOffsetOf>(Value) { }
+    private sealed class TestStrongDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestStrongDateTimeOffsetOf>(Value), IStrongOf<DateTimeOffset, TestStrongDateTimeOffsetOf>
+    {
+        public static TestStrongDateTimeOffsetOf Create(DateTimeOffset value) => new(value);
+    }
 
     private class TestModel
     {

@@ -23,7 +23,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongStringTypeConverter<LastName>))]
-public sealed class LastName(string value) : StrongString<LastName>(value), IValidatable
+[StrongString]
+public sealed partial class LastName : IValidatable
 {
     /// <summary>
     /// Validates whether the last name has a valid format (non-empty and contains only letters, spaces, hyphens, or apostrophes).

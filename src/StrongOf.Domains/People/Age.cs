@@ -22,7 +22,8 @@ namespace StrongOf.Domains.People;
 /// </example>
 [DebuggerDisplay("{Value} years")]
 [TypeConverter(typeof(StrongInt32TypeConverter<Age>))]
-public sealed class Age(int value) : StrongInt32<Age>(value), IValidatable
+[StrongInt32]
+public sealed partial class Age : IValidatable
 {
     /// <summary>
     /// The minimum valid age value.
@@ -44,6 +45,10 @@ public sealed class Age(int value) : StrongInt32<Age>(value), IValidatable
     /// </summary>
     /// <param name="birthDate">The birth date.</param>
     /// <returns>A new <see cref="Age"/> instance.</returns>
+    /// <remarks>
+    /// Age is calculated using calendar-year difference and then corrected when the birthday
+    /// has not yet occurred in the current year.
+    /// </remarks>
     /// <example>
     /// <code>
     /// var birthDate = new DateTime(1990, 5, 15);
@@ -55,6 +60,7 @@ public sealed class Age(int value) : StrongInt32<Age>(value), IValidatable
     {
         DateTime today = DateTime.Today;
         int age = today.Year - birthDate.Year;
+        // If this year's birthday is still in the future, subtract one to avoid off-by-one age.
         if (birthDate.Date > today.AddYears(-age))
         {
             age--;

@@ -23,7 +23,8 @@ namespace StrongOf.Domains.Measurement;
 /// </example>
 [DebuggerDisplay("{Value} kg")]
 [TypeConverter(typeof(StrongDecimalTypeConverter<WeightKg>))]
-public sealed class WeightKg(decimal value) : StrongDecimal<WeightKg>(value)
+[StrongDecimal]
+public sealed partial class WeightKg
 {
     /// <summary>
     /// Minimum valid weight in kilograms.

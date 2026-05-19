@@ -26,7 +26,8 @@ namespace StrongOf.Domains.Identity;
 /// </example>
 [DebuggerDisplay("Token[{Value.Length} chars]")]
 [TypeConverter(typeof(StrongStringTypeConverter<Token>))]
-public sealed class Token(string value) : StrongString<Token>(value)
+[StrongString]
+public sealed partial class Token
 {
     /// <summary>
     /// Determines whether the token has a non-empty value.

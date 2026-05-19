@@ -1,31 +1,32 @@
 ﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
-using System.Linq.Expressions;
-using System.Reflection;
 using FluentValidation;
-using FluentValidation.Internal;
 using FluentValidation.Validators;
 
 namespace StrongOf.FluentValidation;
 
 /// <summary>
-/// Provides validation rules for StrongDateTimeOffset.
+/// Provides FluentValidation rules for <see cref="StrongDateTimeOffset{TStrong}"/> values.
 /// </summary>
+/// <remarks>
+/// Comparisons use native <see cref="DateTimeOffset"/> ordering and therefore preserve
+/// offset-aware instant semantics.
+/// </remarks>
 public static class StrongDateTimeOffsetValidators
 {
     /// <summary>
-    /// Checks if the StrongDateTimeOffset has a value.
+    /// Validates that the strong date-time-offset has a value (is not <see langword="null"/>).
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
     /// <param name="rule">The rule builder.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasValue<T, TStrong>(this IRuleBuilder<T, TStrong?> rule)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null);
 
     /// <summary>
-    /// Checks if the StrongDateTimeOffset has a minimum value.
+    /// Validates that the strong date-time-offset is greater than or equal to the specified minimum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
@@ -33,11 +34,11 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="min">The minimum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMinimum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset min)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min);
 
     /// <summary>
-    /// Checks if the StrongDateTimeOffset has a maximum value.
+    /// Validates that the strong date-time-offset is less than or equal to the specified maximum.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
@@ -45,11 +46,11 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="max">The maximum value.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasMaximum<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset max)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null && strong.Value <= max);
 
     /// <summary>
-    /// Checks if the StrongDateTimeOffset is within a specified range.
+    /// Validates that the strong date-time-offset is within the specified inclusive range.
     /// </summary>
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
@@ -58,7 +59,7 @@ public static class StrongDateTimeOffsetValidators
     /// <param name="max">The maximum value of the range.</param>
     /// <returns>The rule builder options.</returns>
     public static IRuleBuilderOptions<T, TStrong?> HasRange<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, DateTimeOffset min, DateTimeOffset max)
-        where TStrong : StrongDateTimeOffset<TStrong>
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
         => rule.Must(strong => strong is not null && strong.Value >= min && strong.Value <= max);
 
     /// <summary>
@@ -67,15 +68,20 @@ public static class StrongDateTimeOffsetValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other StrongDateTimeOffset.</param>
+    /// <param name="accessor">A delegate that returns the other strong DateTimeOffset to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongDateTimeOffset<TStrong>
+    public static IRuleBuilderOptions<T, TStrong?> IsEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new EqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        // Use FluentValidation's native EqualValidator to preserve standard cross-property
+        // message formatting and placeholders.
+        return rule.SetValidator(new EqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 
     /// <summary>
@@ -84,14 +90,18 @@ public static class StrongDateTimeOffsetValidators
     /// <typeparam name="T">The type of the object being validated.</typeparam>
     /// <typeparam name="TStrong">The type of the StrongDateTimeOffset.</typeparam>
     /// <param name="rule">The rule builder.</param>
-    /// <param name="expression">The expression that specifies the other StrongDateTimeOffset.</param>
+    /// <param name="accessor">A delegate that returns the other strong DateTimeOffset to compare against.</param>
+    /// <param name="memberName">The display name of the compared member, used in error messages.</param>
     /// <returns>The rule builder options.</returns>
-    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(this IRuleBuilder<T, TStrong?> rule, Expression<Func<T, TStrong>> expression)
-        where TStrong : StrongDateTimeOffset<TStrong>
+    public static IRuleBuilderOptions<T, TStrong?> IsNotEqualTo<T, TStrong>(
+        this IRuleBuilder<T, TStrong?> rule,
+        Func<T, TStrong?> accessor,
+        string memberName)
+        where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
     {
-        MemberInfo member = expression.GetMember();
-        Func<T, TStrong> func = AccessorCache<T>.GetCachedAccessor(member, expression);
-        string name = InternalValidation.GetDisplayName(member, expression);
-        return rule.SetValidator(new NotEqualValidator<T, TStrong>(func, member, name)!);
+        ArgumentNullException.ThrowIfNull(accessor);
+        ArgumentNullException.ThrowIfNull(memberName);
+        // Mirror IsEqualTo behavior with FluentValidation's built-in NotEqualValidator.
+        return rule.SetValidator(new NotEqualValidator<T, TStrong?>(accessor, null!, memberName)!);
     }
 }

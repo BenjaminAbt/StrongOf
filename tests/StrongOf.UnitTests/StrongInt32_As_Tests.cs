@@ -6,7 +6,10 @@ namespace StrongOf.UnitTests;
 
 public class StrongInt32_As_Tests
 {
-    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value) { }
+    private sealed class TestInt32Of(int Value) : StrongInt32<TestInt32Of>(Value), IStrongOf<int, TestInt32Of>
+    {
+        public static TestInt32Of Create(int value) => new(value);
+    }
 
     [Fact]
     public void AsInt_ReturnsCorrectResult()

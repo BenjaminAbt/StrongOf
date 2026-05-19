@@ -22,7 +22,8 @@ namespace StrongOf.Domains.Identity;
 /// </example>
 [DebuggerDisplay("{Value}")]
 [TypeConverter(typeof(StrongGuidTypeConverter<EntityId>))]
-public sealed class EntityId(Guid value) : StrongGuid<EntityId>(value)
+[StrongGuid]
+public sealed partial class EntityId
 {
     /// <summary>
     /// Gets an empty <see cref="EntityId"/>.
