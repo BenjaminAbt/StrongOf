@@ -4,7 +4,12 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization.Metadata;
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+#if NET9_0
+using OpenApiSchema = Microsoft.OpenApi.Models.OpenApiSchema;
+#else
+using Microsoft.OpenApi;
+using OpenApiSchema = Microsoft.OpenApi.OpenApiSchema;
+#endif
 using StrongOf.AspNetCore.OpenApi;
 using Xunit;
 
@@ -62,16 +67,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestId));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("string", schema.Type);
+        AssertSchemaType(schema, "string");
         Assert.Equal("uuid", schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -79,16 +84,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestName));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("string", schema.Type);
+        AssertSchemaType(schema, "string");
         Assert.Null(schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -96,16 +101,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestCount));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("integer", schema.Type);
+        AssertSchemaType(schema, "integer");
         Assert.Equal("int32", schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -113,16 +118,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestAmount));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("integer", schema.Type);
+        AssertSchemaType(schema, "integer");
         Assert.Equal("int64", schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -130,16 +135,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestPrice));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("number", schema.Type);
+        AssertSchemaType(schema, "number");
         Assert.Equal("double", schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -147,16 +152,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestFlag));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("boolean", schema.Type);
+        AssertSchemaType(schema, "boolean");
         Assert.Null(schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -164,16 +169,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestInitial));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("string", schema.Type);
+        AssertSchemaType(schema, "string");
         Assert.Null(schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -181,16 +186,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestDate));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("string", schema.Type);
+        AssertSchemaType(schema, "string");
         Assert.Equal("date-time", schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -198,16 +203,16 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new() { Properties = { ["value"] = new OpenApiSchema() } };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestTimestamp));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("string", schema.Type);
+        AssertSchemaType(schema, "string");
         Assert.Equal("date-time", schema.Format);
-        Assert.Empty(schema.Properties);
+        AssertNoProperties(schema);
     }
 
     [Fact]
@@ -215,11 +220,8 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new()
-        {
-            Description = "Custom description",
-            Properties = { ["value"] = new OpenApiSchema() }
-        };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
+        schema.Description = "Custom description";
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestId));
 
         // Act
@@ -234,10 +236,7 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new()
-        {
-            Properties = { ["value"] = new OpenApiSchema() }
-        };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
         OpenApiSchemaTransformerContext context = CreateContext(typeof(TestId));
 
         // Act
@@ -252,19 +251,69 @@ public class StrongOfSchemaTransformerTests
     {
         // Arrange
         StrongOfSchemaTransformer transformer = new();
-        OpenApiSchema schema = new()
-        {
-            Type = "object",
-            Properties = { ["value"] = new OpenApiSchema() }
-        };
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
+        SetSchemaType(schema, "object");
         OpenApiSchemaTransformerContext context = CreateContext(typeof(string));
 
         // Act
         await transformer.TransformAsync(schema, context, CancellationToken.None);
 
         // Assert
-        Assert.Equal("object", schema.Type);
-        Assert.Single(schema.Properties);
+        AssertSchemaType(schema, "object");
+        AssertSingleValueProperty(schema);
+    }
+
+    private static OpenApiSchema CreateSchemaWithValueProperty()
+    {
+        OpenApiSchema schema = new();
+#if NET9_0
+        schema.Properties ??= new Dictionary<string, OpenApiSchema>(StringComparer.Ordinal);
+#else
+        schema.Properties ??= new Dictionary<string, Microsoft.OpenApi.IOpenApiSchema>(StringComparer.Ordinal);
+#endif
+        schema.Properties["value"] = new OpenApiSchema();
+        return schema;
+    }
+
+    private static void AssertNoProperties(OpenApiSchema schema)
+        => Assert.True((schema.Properties?.Count ?? 0) == 0);
+
+    private static void AssertSingleValueProperty(OpenApiSchema schema)
+        => Assert.True((schema.Properties?.Count ?? 0) == 1);
+
+    private static void SetSchemaType(OpenApiSchema schema, string value)
+    {
+#if NET9_0
+        schema.Type = value;
+#else
+        schema.Type = value switch
+        {
+            "string" => JsonSchemaType.String,
+            "integer" => JsonSchemaType.Integer,
+            "number" => JsonSchemaType.Number,
+            "boolean" => JsonSchemaType.Boolean,
+            "object" => JsonSchemaType.Object,
+            _ => throw new InvalidOperationException($"Unsupported schema type: {value}")
+        };
+#endif
+    }
+
+    private static void AssertSchemaType(OpenApiSchema schema, string expected)
+    {
+#if NET9_0
+        Assert.Equal(expected, schema.Type);
+#else
+        JsonSchemaType? expectedType = expected switch
+        {
+            "string" => JsonSchemaType.String,
+            "integer" => JsonSchemaType.Integer,
+            "number" => JsonSchemaType.Number,
+            "boolean" => JsonSchemaType.Boolean,
+            "object" => JsonSchemaType.Object,
+            _ => throw new InvalidOperationException($"Unsupported schema type: {expected}")
+        };
+        Assert.Equal(expectedType, schema.Type);
+#endif
     }
 
     private static OpenApiSchemaTransformerContext CreateContext(Type type)
