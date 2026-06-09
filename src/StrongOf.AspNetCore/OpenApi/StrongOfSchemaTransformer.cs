@@ -1,7 +1,12 @@
 // Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using Microsoft.AspNetCore.OpenApi;
-using Microsoft.OpenApi.Models;
+
+#if NET9_0
+using OpenApiSchema = Microsoft.OpenApi.Models.OpenApiSchema;
+#else
+using OpenApiSchema = Microsoft.OpenApi.OpenApiSchema;
+#endif
 
 namespace StrongOf.AspNetCore.OpenApi;
 
@@ -33,6 +38,7 @@ public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
     /// We map by interface (instead of concrete type) so all user-defined StrongOf classes
     /// are automatically covered without additional registration.
     /// </remarks>
+#if NET9_0
     private static readonly Dictionary<Type, (string Type, string? Format, string Description)> s_typeMap = new()
     {
         [typeof(IStrongGuid)] = ("string", "uuid", "A strongly-typed GUID value."),
@@ -47,13 +53,29 @@ public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
         [typeof(IStrongDateTimeOffset)] = ("string", "date-time", "A strongly-typed date and time value with UTC offset."),
         [typeof(IStrongTimeSpan)] = ("string", "duration", "A strongly-typed time interval."),
     };
+#else
+    private static readonly Dictionary<Type, (Microsoft.OpenApi.JsonSchemaType Type, string? Format, string Description)> s_typeMap = new()
+    {
+        [typeof(IStrongGuid)] = (Microsoft.OpenApi.JsonSchemaType.String, "uuid", "A strongly-typed GUID value."),
+        [typeof(IStrongString)] = (Microsoft.OpenApi.JsonSchemaType.String, null, "A strongly-typed string value."),
+        [typeof(IStrongInt32)] = (Microsoft.OpenApi.JsonSchemaType.Integer, "int32", "A strongly-typed 32-bit integer value."),
+        [typeof(IStrongInt64)] = (Microsoft.OpenApi.JsonSchemaType.Integer, "int64", "A strongly-typed 64-bit integer value."),
+        [typeof(IStrongDecimal)] = (Microsoft.OpenApi.JsonSchemaType.Number, "double", "A strongly-typed decimal value."),
+        [typeof(IStrongDouble)] = (Microsoft.OpenApi.JsonSchemaType.Number, "double", "A strongly-typed double-precision floating-point value."),
+        [typeof(IStrongBoolean)] = (Microsoft.OpenApi.JsonSchemaType.Boolean, null, "A strongly-typed boolean value."),
+        [typeof(IStrongChar)] = (Microsoft.OpenApi.JsonSchemaType.String, null, "A strongly-typed single character."),
+        [typeof(IStrongDateTime)] = (Microsoft.OpenApi.JsonSchemaType.String, "date-time", "A strongly-typed date and time value."),
+        [typeof(IStrongDateTimeOffset)] = (Microsoft.OpenApi.JsonSchemaType.String, "date-time", "A strongly-typed date and time value with UTC offset."),
+        [typeof(IStrongTimeSpan)] = (Microsoft.OpenApi.JsonSchemaType.String, "duration", "A strongly-typed time interval."),
+    };
+#endif
 
     /// <inheritdoc />
     public Task TransformAsync(OpenApiSchema schema, OpenApiSchemaTransformerContext context, CancellationToken cancellationToken)
     {
         Type type = context.JsonTypeInfo.Type;
 
-        foreach (KeyValuePair<Type, (string Type, string? Format, string Description)> entry in s_typeMap)
+        foreach (var entry in s_typeMap)
         {
             if (entry.Key.IsAssignableFrom(type))
             {
@@ -62,7 +84,7 @@ public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
                 schema.Type = entry.Value.Type;
                 schema.Format = entry.Value.Format;
                 schema.Description ??= entry.Value.Description;
-                schema.Properties.Clear();
+                schema.Properties?.Clear();
                 break;
             }
         }
