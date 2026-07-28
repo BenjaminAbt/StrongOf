@@ -6,17 +6,31 @@
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.11" />
+    <!-- Per-TFM pins: TestHost must match the target framework's shared runtime version,
+         otherwise the FrameworkReference-provided assemblies (e.g. Microsoft.Extensions.Options)
+         can mismatch with what TestHost's dependencies were compiled against, causing
+         TypeLoadException at test host startup on newer TFMs.
+         net11.0 is pinned to the preview version matching the installed SDK in global.json
+         (11.0.100-preview.3.26207.106); preview builds are not binary-compatible across previews. -->
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.11" Condition="'$(TargetFramework)' == 'net8.0'" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="9.0.18" Condition="'$(TargetFramework)' == 'net9.0'" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="10.0.10" Condition="'$(TargetFramework)' == 'net10.0'" />
+    <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="11.0.0-preview.3.26207.106" Condition="'$(TargetFramework)' == 'net11.0'" />
     <!-- Security: CVE-2026-49451 (GHSA-v5pm-xwqc-g5wc) - pin patched Microsoft.OpenApi versions.
          net9.0 uses Microsoft.OpenApi 1.x API (Models namespace); 1.6.29 is NOT in the vulnerable range (>= 2.0.0-preview.11).
          net10.0 uses Microsoft.OpenApi 2.x API (flat namespace); 2.7.5 is the minimum patched 2.x (>= 2.7.5), compatible with 10.0 source generators.
-         net11.0 uses Microsoft.OpenApi 3.x API; preview.6 requires >= 3.6.0 which is also patched (>= 3.5.4). -->
+         net11.0 uses Microsoft.OpenApi 3.x API; 3.6.0 is patched (>= 3.5.4) and compatible with Microsoft.AspNetCore.OpenApi's own 3.3.1 dependency. -->
     <PackageVersion Include="Microsoft.OpenApi" Version="1.6.29" Condition="'$(TargetFramework)' == 'net9.0'" />
     <PackageVersion Include="Microsoft.OpenApi" Version="2.7.5" Condition="'$(TargetFramework)' == 'net10.0'" />
     <PackageVersion Include="Microsoft.OpenApi" Version="3.6.0" Condition="'$(TargetFramework)' == 'net11.0'" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.18" Condition="'$(TargetFramework)' == 'net9.0'" />
     <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" Condition="'$(TargetFramework)' == 'net10.0'" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0-preview.6.26359.118" Condition="'$(TargetFramework)' == 'net11.0'" />
+    <!-- Pinned to the exact preview matching the installed SDK in global.json (11.0.100-preview.3.26207.106).
+         A newer Microsoft.AspNetCore.OpenApi preview (e.g. preview.6) transitively depends on a
+         Microsoft.Extensions.Hosting preview that is incompatible with the actually-installed
+         Microsoft.Extensions.Options runtime assembly, causing a TypeLoadException
+         (IAsyncStartupValidator) at test host startup. Bump this in lockstep with global.json. -->
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0-preview.3.26207.106" Condition="'$(TargetFramework)' == 'net11.0'" />
   </ItemGroup>
   <ItemGroup Label="DevOps">
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.6.133">
