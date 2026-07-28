@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.OpenApi;
 
 #if NET9_0
 using OpenApiSchema = Microsoft.OpenApi.Models.OpenApiSchema;
+using OpenApiSchemaType = string;
 #else
 using OpenApiSchema = Microsoft.OpenApi.OpenApiSchema;
+using OpenApiSchemaType = Microsoft.OpenApi.JsonSchemaType;
 #endif
 
 namespace StrongOf.AspNetCore.OpenApi;
@@ -75,7 +77,7 @@ public sealed class StrongOfSchemaTransformer : IOpenApiSchemaTransformer
     {
         Type type = context.JsonTypeInfo.Type;
 
-        foreach (var entry in s_typeMap)
+        foreach (KeyValuePair<Type, (OpenApiSchemaType Type, string? Format, string Description)> entry in s_typeMap)
         {
             if (entry.Key.IsAssignableFrom(type))
             {

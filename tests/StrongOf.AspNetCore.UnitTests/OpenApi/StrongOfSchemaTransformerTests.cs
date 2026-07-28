@@ -62,6 +62,16 @@ public class StrongOfSchemaTransformerTests
         public static TestTimestamp Create(DateTimeOffset value) => new(value);
     }
 
+    private sealed class TestRate(double value) : StrongDouble<TestRate>(value), IStrongOf<double, TestRate>
+    {
+        public static TestRate Create(double value) => new(value);
+    }
+
+    private sealed class TestDuration(TimeSpan value) : StrongTimeSpan<TestDuration>(value), IStrongOf<TimeSpan, TestDuration>
+    {
+        public static TestDuration Create(TimeSpan value) => new(value);
+    }
+
     [Fact]
     public async Task TransformAsync_StrongGuid_MapsToStringUuid()
     {
@@ -216,6 +226,40 @@ public class StrongOfSchemaTransformerTests
     }
 
     [Fact]
+    public async Task TransformAsync_StrongDouble_MapsToNumberDouble()
+    {
+        // Arrange
+        StrongOfSchemaTransformer transformer = new();
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
+        OpenApiSchemaTransformerContext context = CreateContext(typeof(TestRate));
+
+        // Act
+        await transformer.TransformAsync(schema, context, CancellationToken.None);
+
+        // Assert
+        AssertSchemaType(schema, "number");
+        Assert.Equal("double", schema.Format);
+        AssertNoProperties(schema);
+    }
+
+    [Fact]
+    public async Task TransformAsync_StrongTimeSpan_MapsToStringDuration()
+    {
+        // Arrange
+        StrongOfSchemaTransformer transformer = new();
+        OpenApiSchema schema = CreateSchemaWithValueProperty();
+        OpenApiSchemaTransformerContext context = CreateContext(typeof(TestDuration));
+
+        // Act
+        await transformer.TransformAsync(schema, context, CancellationToken.None);
+
+        // Assert
+        AssertSchemaType(schema, "string");
+        Assert.Equal("duration", schema.Format);
+        AssertNoProperties(schema);
+    }
+
+    [Fact]
     public async Task TransformAsync_PreservesExistingDescription()
     {
         // Arrange
@@ -326,10 +370,8 @@ public class StrongOfSchemaTransformerTests
 
         // OpenApiSchemaTransformerContext has an internal constructor;
         // create via reflection and set the required JsonTypeInfo property.
-#pragma warning disable SYSLIB0050 // FormatterServices.GetUninitializedObject is obsolete
         OpenApiSchemaTransformerContext context = (OpenApiSchemaTransformerContext)
-            System.Runtime.Serialization.FormatterServices.GetUninitializedObject(typeof(OpenApiSchemaTransformerContext));
-#pragma warning restore SYSLIB0050
+            System.Runtime.CompilerServices.RuntimeHelpers.GetUninitializedObject(typeof(OpenApiSchemaTransformerContext));
 
         typeof(OpenApiSchemaTransformerContext)
             .GetProperty(nameof(OpenApiSchemaTransformerContext.JsonTypeInfo))!

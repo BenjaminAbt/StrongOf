@@ -7,9 +7,16 @@
     <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="8.0.11" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.11" />
     <PackageVersion Include="Microsoft.AspNetCore.TestHost" Version="8.0.11" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" Condition="'$(TargetFramework)' == 'net9.0'" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.8" Condition="'$(TargetFramework)' == 'net10.0'" />
-    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0-preview.4.26230.115" Condition="'$(TargetFramework)' == 'net11.0'" />
+    <!-- Security: CVE-2026-49451 (GHSA-v5pm-xwqc-g5wc) - pin patched Microsoft.OpenApi versions.
+         net9.0 uses Microsoft.OpenApi 1.x API (Models namespace); 1.6.29 is NOT in the vulnerable range (>= 2.0.0-preview.11).
+         net10.0 uses Microsoft.OpenApi 2.x API (flat namespace); 2.7.5 is the minimum patched 2.x (>= 2.7.5), compatible with 10.0 source generators.
+         net11.0 uses Microsoft.OpenApi 3.x API; preview.6 requires >= 3.6.0 which is also patched (>= 3.5.4). -->
+    <PackageVersion Include="Microsoft.OpenApi" Version="1.6.29" Condition="'$(TargetFramework)' == 'net9.0'" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="2.7.5" Condition="'$(TargetFramework)' == 'net10.0'" />
+    <PackageVersion Include="Microsoft.OpenApi" Version="3.6.0" Condition="'$(TargetFramework)' == 'net11.0'" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="9.0.18" Condition="'$(TargetFramework)' == 'net9.0'" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="10.0.10" Condition="'$(TargetFramework)' == 'net10.0'" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="11.0.0-preview.6.26359.118" Condition="'$(TargetFramework)' == 'net11.0'" />
   </ItemGroup>
   <ItemGroup Label="DevOps">
     <PackageVersion Include="Nerdbank.GitVersioning" Version="3.6.133">
@@ -18,7 +25,7 @@
     </PackageVersion>
   </ItemGroup>
   <ItemGroup Label="Benchmarks">
-    <PackageVersion Include="BenchmarkDotNet" Version="0.16.0-nightly.20260516.537" />
+    <PackageVersion Include="BenchmarkDotNet" Version="0.16.0-preview.1" />
   </ItemGroup>
   <ItemGroup Label="Tests">
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
