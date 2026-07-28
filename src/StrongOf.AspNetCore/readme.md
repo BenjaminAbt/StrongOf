@@ -118,9 +118,14 @@ builder.Services.AddOpenApi(options =>
 | `StrongInt32<T>` | `integer` | `int32` |
 | `StrongInt64<T>` | `integer` | `int64` |
 | `StrongDecimal<T>` | `number` | `double` |
+| `StrongDouble<T>` | `number` | `double` |
+| `StrongBoolean<T>` | `boolean` | - |
 | `StrongChar<T>` | `string` | - |
 | `StrongDateTime<T>` | `string` | `date-time` |
 | `StrongDateTimeOffset<T>` | `string` | `date-time` |
+| `StrongTimeSpan<T>` | `string` | `duration` |
+
+Mapping is resolved via the `IStrong*` marker interfaces, so custom strong types are covered automatically without additional registration.
 
 ## GitHub
 

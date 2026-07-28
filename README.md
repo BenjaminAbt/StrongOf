@@ -431,7 +431,23 @@ builder.Services.AddOpenApi(options =>
 });
 ```
 
-This maps strong types to their underlying primitives (e.g. `UserId` becomes `string (uuid)` instead of a complex object).
+Without the transformer, strong types are described as complex nested objects (e.g. `{ "value": "..." }`). With it, they are documented as their underlying primitive wire type (e.g. `UserId` becomes `string (uuid)` instead of a complex object), and any existing `Value` property is removed from the schema.
+
+| Strong Type | OpenAPI Type | OpenAPI Format |
+|-------------|-------------|----------------|
+| `StrongGuid<T>` | `string` | `uuid` |
+| `StrongString<T>` | `string` | - |
+| `StrongInt32<T>` | `integer` | `int32` |
+| `StrongInt64<T>` | `integer` | `int64` |
+| `StrongDecimal<T>` | `number` | `double` |
+| `StrongDouble<T>` | `number` | `double` |
+| `StrongBoolean<T>` | `boolean` | - |
+| `StrongChar<T>` | `string` | - |
+| `StrongDateTime<T>` | `string` | `date-time` |
+| `StrongDateTimeOffset<T>` | `string` | `date-time` |
+| `StrongTimeSpan<T>` | `string` | `duration` |
+
+Mapping is resolved via the `IStrong*` marker interfaces, so custom strong types (including those from `StrongOf.Domains` or your own domain assemblies) are covered automatically without additional registration.
 
 ## Usage with Entity Framework Core
 
