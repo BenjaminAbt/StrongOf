@@ -79,6 +79,7 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
     /// <returns>A dictionary mapping model type to closed generic binder type.</returns>
     /// <exception cref="ArgumentException">Thrown when no supported StrongOf type is provided.</exception>
     /// <exception cref="NotSupportedException">Thrown when at least one type has no matching binder.</exception>
+    [RequiresDynamicCode("Automatic binder registration constructs generic types at runtime. Use explicit binder mappings instead.")]
     internal static Dictionary<Type, Type> CreateBinderMap(IEnumerable<Type> strongTypes)
     {
         ArgumentNullException.ThrowIfNull(strongTypes);
@@ -115,6 +116,8 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
     /// </summary>
     /// <param name="assemblies">Assemblies to scan.</param>
     /// <returns>A dictionary mapping discovered model types to closed generic binder types.</returns>
+    [RequiresUnreferencedCode("Assembly scanning can lose model types when trimming. Use explicit binder registrations. ASP.NET Core MVC does not support NativeAOT.")]
+    [RequiresDynamicCode("Automatic binder registration constructs generic types at runtime. Use explicit binder mappings instead.")]
     internal static Dictionary<Type, Type> CreateBinderMapFromAssemblies(IEnumerable<Assembly> assemblies)
     {
         ArgumentNullException.ThrowIfNull(assemblies);
@@ -143,6 +146,7 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
     /// <param name="strongType">Concrete StrongOf model type.</param>
     /// <param name="binderType">Resolved closed binder type when successful.</param>
     /// <returns><see langword="true"/> when a supported binder was found.</returns>
+    [RequiresDynamicCode("Automatic binder registration constructs generic types at runtime. Use explicit binder mappings instead.")]
     internal static bool TryResolveBinderType(Type strongType, [NotNullWhen(true)] out Type? binderType)
     {
         ArgumentNullException.ThrowIfNull(strongType);
@@ -213,6 +217,7 @@ public static class StrongOfMvcOptionsExtensions
     /// <param name="options">The MVC options.</param>
     /// <param name="strongTypes">The concrete StrongOf model types to register.</param>
     /// <returns>The MVC options for further chaining.</returns>
+    [RequiresDynamicCode("Automatic binder registration constructs generic types at runtime. Use explicit binder mappings instead.")]
     public static MvcOptions AddStrongOfModelBinderProvider(this MvcOptions options, params Type[] strongTypes)
     {
         ArgumentNullException.ThrowIfNull(options);
@@ -228,6 +233,8 @@ public static class StrongOfMvcOptionsExtensions
     /// <param name="options">The MVC options.</param>
     /// <param name="assemblies">Assemblies to scan for concrete StrongOf types.</param>
     /// <returns>The MVC options for further chaining.</returns>
+    [RequiresUnreferencedCode("Assembly scanning can lose model types when trimming. Use explicit binder registrations. ASP.NET Core MVC does not support NativeAOT.")]
+    [RequiresDynamicCode("Automatic binder registration constructs generic types at runtime. Use explicit binder mappings instead.")]
     public static MvcOptions AddStrongOfModelBinderProviderFromAssemblies(this MvcOptions options, params Assembly[] assemblies)
     {
         ArgumentNullException.ThrowIfNull(options);

@@ -10,6 +10,9 @@
   <Folder Name="/perf/">
     <Project Path="perf/StrongOf.Benchmarks/StrongOf.Benchmarks.csproj" />
   </Folder>
+  <Folder Name="/samples/">
+    <Project Path="samples/StrongOf.NativeAot/StrongOf.NativeAot.csproj" />
+  </Folder>
   <Folder Name="/src/">
     <Project Path="src/StrongOf.AspNetCore/StrongOf.AspNetCore.csproj" />
     <Project Path="src/StrongOf.Domains/StrongOf.Domains.csproj" />
@@ -33,6 +36,7 @@
     <File Path=".editorconfig" />
     <File Path=".gitignore" />
     <File Path="Directory.Build.props" />
+    <File Path="Directory.Build.targets" />
     <File Path="Directory.Packages.props" />
     <File Path="global.json" />
     <File Path="LICENSE" />

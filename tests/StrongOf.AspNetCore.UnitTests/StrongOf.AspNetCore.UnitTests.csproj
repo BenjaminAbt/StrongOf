@@ -12,15 +12,10 @@
         <ProjectReference Include="..\..\src\StrongOf.AspNetCore\StrongOf.AspNetCore.csproj" />
     </ItemGroup>
 
-    <!-- OpenApi tests: available on net9.0+ only -->
-    <ItemGroup Condition="'$(TargetFramework)' != 'net8.0'">
+    <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
         <!-- Security fix: CVE-2026-49451 (GHSA-v5pm-xwqc-g5wc) - pin patched Microsoft.OpenApi version -->
         <PackageReference Include="Microsoft.OpenApi" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-        <Compile Remove="OpenApi\**" />
     </ItemGroup>
 
 </Project>

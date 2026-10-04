@@ -17,6 +17,21 @@ public class StrongDateTimeOffsetJsonConverterTests
     private readonly StrongDateTimeOffsetJsonConverter<TestDateTimeOffsetOf> _converter = new();
     private readonly JsonSerializerOptions _options = new();
 
+    [Theory]
+    [InlineData("2026-10-04T12:34:56+02:00")]
+    [InlineData("2026-10-04T12:34:56.123-05:30")]
+    [InlineData("2026-10-04T12:34:56Z")]
+    public void Read_Iso8601_PreservesOffset(string input)
+    {
+        Utf8JsonReader reader = new(Encoding.UTF8.GetBytes('"' + input + '"'));
+        Assert.True(reader.Read());
+
+        TestDateTimeOffsetOf? result = _converter.Read(ref reader, typeof(TestDateTimeOffsetOf), _options);
+
+        Assert.NotNull(result);
+        Assert.True(DateTimeOffset.Parse(input, CultureInfo.InvariantCulture).EqualsExact(result.Value));
+    }
+
     [Fact]
     public void Read_ValidJson_ReturnsStrongDateTime()
     {

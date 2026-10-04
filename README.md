@@ -21,7 +21,7 @@
 </p>
 
 <p align="center">
-    <strong>Strongly typed primitives for .NET 8, .NET 9, .NET 10, and .NET 11.</strong>
+    <strong>Strongly typed primitives for .NET 9, .NET 10, and .NET 11.</strong>
     <br />
     Core library, domain types, JSON, ASP.NET Core, EF Core, and FluentValidation integrations.
 </p>
@@ -42,6 +42,7 @@ It is currently unclear whether this feature will ever become part of the langua
 ## Table of Contents
 
 - [The idea](#the-idea)
+- [NativeAOT](#nativeaot)
 - [Usage](#usage)
     - [Usage with source generators](#usage-with-source-generators)
     - [Usage without source generators](#usage-without-source-generators)
@@ -124,6 +125,44 @@ public User AddUser(TenantId tenantId, UserId userId, FirstName firstName, LastN
 
 Now you are safe!
 
+## NativeAOT
+
+Current packages require .NET 9 or later; .NET 8 is no longer a target framework.
+
+`StrongOf` supports NativeAOT and trimming on .NET 9, 10, and 11. Factories dispatch to static
+`Create` implementations without reflection or runtime code generation. `StrongOf.Json` and
+`StrongOf.Domains` are included in the native smoke test as well.
+
+| Package | NativeAOT scope |
+|---------|-----------------|
+| `StrongOf` | Supported; AOT and trimming analyzers enabled |
+| `StrongOf.Json` | Supported with a generated `JsonSerializerContext`; see the JSON example below |
+| `StrongOf.Domains` | Supported; platform-dependent operations still depend on OS data such as time zones |
+| `StrongOf.SourceGenerators` | Runs at build time, not inside the native application |
+| `StrongOf.AspNetCore` | No package-wide guarantee; MVC is unsupported by NativeAOT |
+| `StrongOf.EntityFrameworkCore` | No NativeAOT guarantee for the current EF Core 8 dependency |
+| `StrongOf.FluentValidation` | No NativeAOT guarantee for the FluentValidation dependency |
+
+Enable native publishing in your **application**:
+
+```xml
+<PropertyGroup>
+  <PublishAot>true</PublishAot>
+  <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+</PropertyGroup>
+```
+
+The supported library projects declare `IsAotCompatible=true`. `Directory.Build.targets` additionally
+enables `VerifyReferenceAotCompatibility` for their .NET 10+ targets. This is a metadata check (`IL3058`),
+not a replacement for AOT code analysis or native execution. Older framework reference assemblies do not
+carry the metadata introduced in .NET 10, so that additional check is not enabled for .NET 9.
+The Roslyn generator and test projects are not marked as runtime AOT libraries.
+
+CI publishes and runs the [NativeAOT example](samples/StrongOf.NativeAot/readme.md) for .NET 9, 10, and 11
+on Windows x64 and Linux x64, with compiler/linker warnings as errors and JSON reflection disabled.
+It roots the Core, Json and Domains assemblies to analyze unused library code as well. Other platforms and
+the ASP.NET Core, EF Core and FluentValidation integrations are outside this native test's coverage.
+
 ## Usage
 
 The recommended approach is to define strong types with the built-in source generator. If you prefer the classic hand-written form, that is still fully supported and shown afterwards.
@@ -139,6 +178,8 @@ Recommended style is the generic form `Strong<TTarget>`:
 - Preferred: `[StrongGuid]` and `[Strong<Guid>]`
 - Also supported: `[Strong(typeof(Guid))]`
 - Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
+- Generated classes must be top-level, non-generic partial classes. A class such as `UserId<T>` produces
+  diagnostic `STRONG005`; this restriction does not apply to the marker syntax `[Strong<Guid>]`.
 
 ```csharp
 using StrongOf.SourceGeneration;
@@ -328,35 +369,47 @@ The namespace names are deliberately chosen to **not conflict** with common doma
 
 ## Usage with Json
 
-You can just use [StrongOf.Json](https://NuBrowse.com/packages/StrongOf.Json) and use one of the pre-defined converters.
-
-**Recommended: Options-based (explicit registration):**
-
-```csharp
-JsonSerializerOptions serializeOptions = new()
-{
-    WriteIndented = true,
-    Converters =
-    {
-        new StrongGuidJsonConverter<UserId>(),
-        new StrongStringJsonConverter<EmailAddress>(),
-    }
-};
-
-string jsonString = JsonSerializer.Serialize(myObject, serializeOptions);
-```
-
-**Attribute-based:**
+Use [StrongOf.Json](https://NuBrowse.com/packages/StrongOf.Json) with generated JSON metadata.
+For strong types generated in the same project, place the converter attribute on the strong type itself:
 
 ```csharp
-public class MyClass
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using StrongOf.Json;
+using StrongOf.SourceGeneration;
+
+UserDto user = new() { Id = UserId.From(Guid.NewGuid()) };
+string json = JsonSerializer.Serialize(user, AppJsonContext.Default.UserDto);
+UserDto restored = JsonSerializer.Deserialize(json, AppJsonContext.Default.UserDto)!;
+
+[StrongGuid]
+[JsonConverter(typeof(StrongGuidJsonConverter<UserId>))]
+public sealed partial class UserId;
+
+public sealed class UserDto
 {
-    [JsonConverter(typeof(StrongGuidJsonConverter<UserId>))]
-    public UserId Id { get; set; }
+    public UserId Id { get; set; } = null!;
 }
+
+[JsonSerializable(typeof(UserDto))]
+internal partial class AppJsonContext : JsonSerializerContext;
 ```
+
+The two source generators do not see each other's generated implementations. For a freshly generated
+strong type, using only a property-level converter can produce `CS7036` in the JSON-generated code.
+The explicit type-level attribute above avoids that problem. A converter alone also does not replace
+the JSON context needed by NativeAOT. See [JSON documentation](src/StrongOf.Json/readme.md) for options,
+precompiled domain types and wire formats.
+
+`StrongDateTimeOffset.FromIso8601` and the JSON converter accept zero to seven fractional digits with
+`Z` or an explicit offset. They preserve that offset instead of normalizing to UTC. Use `.ToUniversalTime()`
+on the underlying value when UTC normalization is required.
 
 ## Usage with ASP.NET Core
+
+This extension does not make ASP.NET Core MVC NativeAOT-compatible. Assembly-scanning registration is
+annotated with `RequiresUnreferencedCode`, and automatic generic binder registration with
+`RequiresDynamicCode`. See the [adapter documentation](src/StrongOf.AspNetCore/readme.md) for the boundary.
 
 You can just use [StrongOf.AspNetCore](https://NuBrowse.com/packages/StrongOf.AspNetCore) and use one of the pre-defined binders from the `StrongOf.AspNetCore.Mvc` namespace:
 
@@ -451,6 +504,9 @@ Mapping is resolved via the `IStrong*` marker interfaces, so custom strong types
 
 ## Usage with Entity Framework Core
 
+The current adapter uses EF Core 8 and does not promise NativeAOT support for database operations.
+The core strong types remain usable without EF Core; see [adapter documentation](src/StrongOf.EntityFrameworkCore/readme.md).
+
 Install [StrongOf.EntityFrameworkCore](https://NuBrowse.com/packages/StrongOf.EntityFrameworkCore) for first-class EF Core integration with a generic value converter that works for all strong types - no per-type converter classes needed.
 
 ```bash
@@ -520,6 +576,9 @@ See the [StrongOf.EntityFrameworkCore readme](src/StrongOf.EntityFrameworkCore/r
 The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type, while `OnModelCreating` remains available when you want more explicit per-property control.
 
 ## Usage with FluentValidation
+
+This extension has no package-wide NativeAOT guarantee. Its FluentValidation dependency must be assessed
+in the consuming application. Core `IValidatable` and `StrongValidation` helpers require no FluentValidation dependency.
 
 FluentValidation is a great library for validating models; especially popular in the ASP.NET Core world.
 Therefore, separate validations are available for `StrongOf` models, which are constantly being expanded.
@@ -675,6 +734,9 @@ public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Gu
 The generator does exactly this for you.
 
 ## Performance matters
+
+The historical measurements below include .NET 8 for comparison. Current packages and benchmark jobs
+target .NET 9, 10, and 11 only.
 
 Since the strong types created here can still be instantiated with `new()`, this also means an enormous performance advantage over libraries that have to work with `Activator.CreateInstance` or `Expression.New`.
 

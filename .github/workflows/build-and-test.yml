@@ -22,6 +22,44 @@ on:
         value: ${{ jobs.build.outputs.version }}
 
 jobs:
+  native-aot:
+    name: NativeAOT (${{ matrix.rid }}, ${{ matrix.framework }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        framework: [net9.0, net10.0, net11.0]
+        include:
+          - os: ubuntu-latest
+            rid: linux-x64
+          - os: windows-latest
+            rid: win-x64
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: |
+            9.0.x
+            10.0.x
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 11.0.x
+          dotnet-quality: preview
+      - name: Install native toolchain
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang zlib1g-dev
+      - name: Publish native sample (warnings are errors)
+        run: dotnet publish samples/StrongOf.NativeAot/StrongOf.NativeAot.csproj -c Release -f ${{ matrix.framework }} -r ${{ matrix.rid }} -o artifacts/native-aot
+      - name: Run native sample (Linux)
+        if: runner.os == 'Linux'
+        run: ./artifacts/native-aot/StrongOf.NativeAot --require-native
+      - name: Run native sample (Windows)
+        if: runner.os == 'Windows'
+        run: ./artifacts/native-aot/StrongOf.NativeAot.exe --require-native
+
   build:
     name: Build and Test
     runs-on: ubuntu-latest
@@ -38,7 +76,6 @@ jobs:
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: |
-            8.0.x
             9.0.x
             10.0.x
 

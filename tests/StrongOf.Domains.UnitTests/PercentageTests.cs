@@ -52,11 +52,16 @@ public class PercentageTests
         Assert.Equal(expected, result);
     }
 
+    public static TheoryData<decimal, decimal> FractionCases => new()
+    {
+        { 0m, 0m },
+        { 50m, 0.5m },
+        { 100m, 1m },
+        { 75.5m, 0.755m },
+    };
+
     [Theory]
-    [InlineData(0, 0)]
-    [InlineData(50, 0.5)]
-    [InlineData(100, 1)]
-    [InlineData(75.5, 0.755)]
+    [MemberData(nameof(FractionCases))]
     public void ToFraction_ReturnsExpectedResult(decimal value, decimal expected)
     {
         // Arrange

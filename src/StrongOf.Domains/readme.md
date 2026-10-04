@@ -4,6 +4,17 @@ Predefined strongly-typed domain models based on [StrongOf](https://NuBrowse.com
 
 The namespace structure is deliberately designed so that namespace names do **not** collide with common class names you might use in your own codebase (e.g. `Address`, `Person`, `Network`).
 
+## NativeAOT
+
+This package enables AOT/trimming analysis and is included in the
+[native smoke test](https://github.com/BenjaminAbt/StrongOf/tree/main/samples/StrongOf.NativeAot).
+Domain factories and generated regular expressions do not require runtime code generation.
+Operations such as time-zone lookup still depend on the operating system's data.
+
+For JSON, domain types are already compiled, so property-level StrongOf.Json converters may be used
+alongside a generated `JsonSerializerContext`. See the
+[JSON example](https://github.com/BenjaminAbt/StrongOf/blob/main/src/StrongOf.Json/readme.md).
+
 ## Available Domain Types
 
 | Namespace | Types |

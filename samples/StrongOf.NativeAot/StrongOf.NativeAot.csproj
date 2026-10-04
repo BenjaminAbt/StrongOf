@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <PublishAot>true</PublishAot>
+    <IsAotCompatible>true</IsAotCompatible>
+    <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+    <ILLinkTreatWarningsAsErrors>true</ILLinkTreatWarningsAsErrors>
+    <TrimmerSingleWarn>false</TrimmerSingleWarn>
+    <GenerateDocumentationFile>false</GenerateDocumentationFile>
+    <!-- StrongOf base classes already implement equality. -->
+    <NoWarn>$(NoWarn);MA0095</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/StrongOf.Json/StrongOf.Json.csproj" />
+    <ProjectReference Include="../../src/StrongOf.Domains/StrongOf.Domains.csproj" />
+    <ProjectReference Include="../../src/StrongOf.SourceGenerators/StrongOf.SourceGenerators.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+    <!-- Analyze unused public APIs as well as the instantiated paths exercised below. -->
+    <TrimmerRootAssembly Include="StrongOf" />
+    <TrimmerRootAssembly Include="StrongOf.Json" />
+    <TrimmerRootAssembly Include="StrongOf.Domains" />
+  </ItemGroup>
+</Project>

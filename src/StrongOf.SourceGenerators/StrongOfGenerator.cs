@@ -152,6 +152,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             PrimitiveType: primitiveType,
             IsPartial: isPartial,
             IsNested: isNested,
+            IsGeneric: typeSymbol.Arity != 0,
             DiagnosticLocation: classDecl.Identifier.GetLocation());
     }
 
@@ -234,6 +235,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             PrimitiveType: primitiveType,
             IsPartial: isPartial,
             IsNested: isNested,
+            IsGeneric: typeSymbol.Arity != 0,
             DiagnosticLocation: classDecl.Identifier.GetLocation());
     }
 
@@ -320,6 +322,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             PrimitiveType: primitiveType,
             IsPartial: isPartial,
             IsNested: isNested,
+            IsGeneric: typeSymbol.Arity != 0,
             DiagnosticLocation: classDecl.Identifier.GetLocation());
     }
 
@@ -562,6 +565,12 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             return;
         }
 
+        if (target.IsGeneric)
+        {
+            spc.ReportDiagnostic(Diagnostic.Create(Diagnostics.GenericTypesNotSupported, target.DiagnosticLocation, target.TypeName));
+            return;
+        }
+
         if (!target.IsPartial)
         {
             spc.ReportDiagnostic(Diagnostic.Create(Diagnostics.MustBePartial, target.DiagnosticLocation, target.TypeName));
@@ -619,13 +628,22 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         bool IsNested,
         Location DiagnosticLocation,
         string? UnsupportedTypeName = null,
-        bool HasMultipleMarkers = false);
+        bool HasMultipleMarkers = false,
+        bool IsGeneric = false);
 
     /// <summary>
     /// Centralized diagnostic descriptors emitted by the StrongOf source generator.
     /// </summary>
     private static class Diagnostics
     {
+        public static readonly DiagnosticDescriptor GenericTypesNotSupported = new(
+            id: "STRONG005",
+            title: "Generic StrongOf classes are not supported",
+            messageFormat: "'{0}' declares type parameters. StrongOf source generation requires a non-generic class.",
+            category: "StrongOf",
+            defaultSeverity: DiagnosticSeverity.Error,
+            isEnabledByDefault: true);
+
         public static readonly DiagnosticDescriptor MustBePartial = new(
             id: "STRONG001",
             title: "StrongOf marker requires partial class",

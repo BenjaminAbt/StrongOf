@@ -9,7 +9,6 @@ namespace StrongOf.Benchmarks.StrongEquality;
 #pragma warning disable CA1822 // Mark members as static
 
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net80)]
 [SimpleJob(RuntimeMoniker.Net90)]
 [SimpleJob(RuntimeMoniker.Net10_0, baseline: true)]
 [CategoriesColumn]
