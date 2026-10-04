@@ -3,6 +3,17 @@
 Entity Framework Core value converters for [StrongOf](https://NuBrowse.com/packages/StrongOf/) strongly-typed primitives.
 Seamlessly persist strong types like `UserId`, `Email`, or `Amount` to and from the database - without losing type safety.
 
+## NativeAOT boundary
+
+This adapter currently depends on EF Core 8 and does not guarantee NativeAOT support for database operations.
+The core StrongOf factories are AOT-compatible, but that does not make EF Core model discovery, query
+compilation, providers or materialization compatible. Code analysis is enabled on this adapter without
+marking the assembly `IsAotCompatible`.
+
+For EF Core's separate, version-dependent NativeAOT work, see
+[NativeAOT and precompiled queries](https://learn.microsoft.com/ef/core/performance/nativeaot-and-precompiled-queries).
+The examples below are ordinary EF Core examples, not NativeAOT deployment examples.
+
 ## Installation
 
 ```bash

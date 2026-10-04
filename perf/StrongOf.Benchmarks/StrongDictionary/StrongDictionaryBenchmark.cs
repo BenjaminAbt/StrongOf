@@ -23,7 +23,6 @@ public sealed partial class TestStrongString;
 /// avoid boxing and unnecessary virtual calls.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net80)]
 [SimpleJob(RuntimeMoniker.Net90)]
 [SimpleJob(RuntimeMoniker.Net10_0, baseline: true)]
 [CategoriesColumn]

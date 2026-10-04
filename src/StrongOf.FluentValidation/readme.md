@@ -2,6 +2,16 @@
 
 FluentValidation extensions for [StrongOf](https://NuBrowse.com/packages/StrongOf) types.
 
+## NativeAOT boundary
+
+This extension does not promise NativeAOT compatibility for its FluentValidation dependency. Its source is
+checked with the AOT and trimming analyzers, but the assembly is not marked `IsAotCompatible` and the
+repository's native smoke test does not cover FluentValidation.
+
+For validation without that dependency, use `IValidatable`, `StrongValidation.TryCreate` or
+`StrongValidation.Require` from the AOT-compatible core package. Applications using FluentValidation must
+publish and test their complete validator configuration and dependencies separately.
+
 ## Why Not `NotNull()`?
 
 For strong types, `NotNull()` only checks the object reference. StrongOf provides `HasValue()` which covers both nullability and empty values:

@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <PropertyGroup Label="Native AoT Analyzers">
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
     <PropertyGroup Label="Package">
         <PackageId>StrongOf</PackageId>
         <IsPackable>true</IsPackable>
@@ -26,8 +30,8 @@
     </PropertyGroup>
     <Target Name="_StrongOfPackAnalyzer">
         <Error Text="StrongOf.SourceGenerators must be built before packing StrongOf. Expected file: $(StrongOfSourceGeneratorPackPath)"
-               Condition="'$(TargetFramework)' == 'net8.0' and !Exists('$(StrongOfSourceGeneratorPackPath)')" />
-        <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
+               Condition="'$(TargetFramework)' == 'net9.0' and !Exists('$(StrongOfSourceGeneratorPackPath)')" />
+        <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
             <TfmSpecificPackageFile Include="$(StrongOfSourceGeneratorPackPath)"
                                     PackagePath="analyzers/dotnet/cs" />
         </ItemGroup>

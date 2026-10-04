@@ -17,7 +17,6 @@ public sealed partial class TestStrongGuid;
 /// runtime-performance overhaul can be tracked over time.
 /// </summary>
 [MemoryDiagnoser]
-[SimpleJob(RuntimeMoniker.Net80)]
 [SimpleJob(RuntimeMoniker.Net90)]
 [SimpleJob(RuntimeMoniker.Net10_0, baseline: true)]
 [CategoriesColumn]

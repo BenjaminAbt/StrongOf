@@ -1,5 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+    <PropertyGroup Label="Native AoT Analyzers">
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.Domains</PackageId>
         <IsPackable>true</IsPackable>

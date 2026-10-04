@@ -7,6 +7,34 @@ namespace StrongOf.UnitTests;
 
 public class StrongDateTimeOffset_Tests
 {
+    [Theory]
+    [InlineData("2026-10-04T12:34:56+02:00", 120)]
+    [InlineData("2026-10-04T12:34:56.1-05:30", -330)]
+    [InlineData("2026-10-04T12:34:56.123+02:00", 120)]
+    [InlineData("2026-10-04T12:34:56.1234567+02:00", 120)]
+    [InlineData("2026-10-04T12:34:56Z", 0)]
+    [InlineData("2026-10-04T12:34:56.1234567Z", 0)]
+    public void Iso8601_PreservesOffsetAndTimestamp(string input, int offsetMinutes)
+    {
+        Assert.True(TestDateTimeOffsetOf.TryParseIso8601(input, out TestDateTimeOffsetOf? parsed));
+        DateTimeOffset expected = DateTimeOffset.Parse(input, CultureInfo.InvariantCulture);
+        Assert.Equal(TimeSpan.FromMinutes(offsetMinutes), parsed.Value.Offset);
+        Assert.True(expected.EqualsExact(parsed.Value));
+        Assert.True(expected.EqualsExact(TestDateTimeOffsetOf.FromIso8601(input).Value));
+        Assert.True(expected.EqualsExact(TestDateTimeOffsetOf.FromIso8601(parsed.ToStringIso8601()).Value));
+    }
+
+    [Theory]
+    [InlineData("not a date")]
+    [InlineData("2026-02-30T12:34:56+02:00")]
+    [InlineData("10/04/2026 12:34:56")]
+    [InlineData("2026-10-04T12:34:56")]
+    public void Iso8601_RejectsInvalidOrMissingOffset(string input)
+    {
+        Assert.False(TestDateTimeOffsetOf.TryParseIso8601(input, out _));
+        Assert.Throws<FormatException>(() => TestDateTimeOffsetOf.FromIso8601(input));
+    }
+
     private sealed class TestDateTimeOffsetOf(DateTimeOffset Value) : StrongDateTimeOffset<TestDateTimeOffsetOf>(Value), IStrongOf<DateTimeOffset, TestDateTimeOffsetOf>
     {
         public static TestDateTimeOffsetOf Create(DateTimeOffset value) => new(value);

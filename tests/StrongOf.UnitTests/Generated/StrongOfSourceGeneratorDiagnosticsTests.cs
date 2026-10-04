@@ -11,6 +11,25 @@ namespace StrongOf.UnitTests.Generated;
 
 public sealed class StrongOfSourceGeneratorDiagnosticsTests
 {
+    [Theory]
+    [InlineData("StrongGuid")]
+    [InlineData("Strong<System.Guid>")]
+    [InlineData("Strong(typeof(System.Guid))")]
+    public void GenericClass_ReportsStrong005(string marker)
+    {
+        string source = $$"""
+                          using StrongOf.SourceGeneration;
+                          namespace Demo;
+                          [{{marker}}]
+                          public partial class UserId<T>;
+                          """;
+
+        ImmutableArray<Diagnostic> diagnostics = RunGenerator(source);
+
+        Diagnostic diagnostic = Assert.Single(diagnostics.Where(static d => string.Equals(d.Id, "STRONG005", StringComparison.Ordinal)));
+        Assert.Equal(DiagnosticSeverity.Error, diagnostic.Severity);
+    }
+
     [Fact]
     public void MultiplePrimitiveMarkers_ReportStrong004ExactlyOnce()
     {
@@ -107,31 +126,21 @@ public sealed class StrongOfSourceGeneratorDiagnosticsTests
     {
         string repositoryRoot = ResolveRepositoryRoot();
 
-        string debugPath = Path.Combine(
+        string generatorPath = Path.Combine(
             repositoryRoot,
             "src",
             "StrongOf.SourceGenerators",
             "bin",
+#if DEBUG
             "Debug",
-            "netstandard2.0",
-            "StrongOf.SourceGenerators.dll");
-
-        if (File.Exists(debugPath))
-        {
-            return debugPath;
-        }
-
-        string releasePath = Path.Combine(
-            repositoryRoot,
-            "src",
-            "StrongOf.SourceGenerators",
-            "bin",
+#else
             "Release",
+#endif
             "netstandard2.0",
             "StrongOf.SourceGenerators.dll");
 
-        Assert.True(File.Exists(releasePath), "StrongOf.SourceGenerators.dll was not found in Debug or Release output.");
-        return releasePath;
+        Assert.True(File.Exists(generatorPath), "StrongOf.SourceGenerators.dll was not found for the current build configuration.");
+        return generatorPath;
     }
 
     private static string ResolveRepositoryRoot()

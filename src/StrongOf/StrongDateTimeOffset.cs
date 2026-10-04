@@ -51,6 +51,12 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
           IUtf8SpanFormattable
     where TStrong : StrongDateTimeOffset<TStrong>, IStrongOf<DateTimeOffset, TStrong>
 {
+    private static readonly string[] s_iso8601Formats =
+    [
+        "yyyy-MM-dd'T'HH:mm:ss.FFFFFFFzzz",
+        "yyyy-MM-dd'T'HH:mm:ss.FFFFFFF'Z'",
+    ];
+
     /// <summary>
     /// Gets the underlying <see cref="DateTimeOffset"/> value.
     /// </summary>
@@ -145,6 +151,10 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
     /// <summary>
     /// Creates a new instance from an ISO 8601 formatted string.
     /// </summary>
+    /// <remarks>
+    /// Accepts seconds with zero to seven fractional digits followed by an explicit offset or Z.
+    /// Preserves the supplied offset; use <see cref="DateTimeOffset.ToUniversalTime"/> for UTC normalization.
+    /// </remarks>
     /// <param name="value">The ISO 8601 string to convert (e.g., "2024-01-15T10:30:00+00:00").</param>
     /// <returns>A new instance of <typeparamref name="TStrong"/>.</returns>
     /// <exception cref="FormatException">The string is not in a valid ISO 8601 format.</exception>
@@ -155,7 +165,7 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
     /// </example>
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static TStrong FromIso8601(string value)
-        => From(DateTimeOffset.ParseExact(value, "o", CultureInfo.InvariantCulture.DateTimeFormat, DateTimeStyles.AdjustToUniversal));
+        => From(DateTimeOffset.ParseExact(value, s_iso8601Formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal));
 
     /// <summary>
     /// Compares the current instance with another object and returns an integer indicating
@@ -270,8 +280,9 @@ public abstract partial class StrongDateTimeOffset<TStrong>(DateTimeOffset Value
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static bool TryParseIso8601(ReadOnlySpan<char> content, [NotNullWhen(true)] out TStrong? strong)
     {
-        if (TryParseExact(content, "o", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out strong))
+        if (DateTimeOffset.TryParseExact(content, s_iso8601Formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out DateTimeOffset value))
         {
+            strong = From(value);
             return true;
         }
 

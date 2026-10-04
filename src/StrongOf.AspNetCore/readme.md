@@ -2,6 +2,25 @@
 
 ASP.NET Core integration for [StrongOf](https://NuBrowse.com/packages/StrongOf) types. Includes MVC model binders, Minimal API validation, and OpenAPI schema transformation.
 
+## NativeAOT boundary
+
+This extension package has no package-wide NativeAOT guarantee. The core `StrongOf` package is independently
+AOT-compatible. ASP.NET Core MVC is not supported by NativeAOT; neither explicit model binders nor disabling
+warnings changes that framework limitation.
+
+Assembly-scanning registration is annotated with `RequiresUnreferencedCode`, and registration that constructs
+closed generic binder types at runtime is annotated with `RequiresDynamicCode`. Prefer explicit binder mappings
+for predictable registration in MVC applications. These mappings do not make MVC NativeAOT-compatible.
+
+Minimal API applications have a different deployment model. Use the ASP.NET Core NativeAOT template,
+generated request delegates, and generated JSON metadata for all request/response types. The examples below
+show integration API usage, not a complete AOT application. User-defined strong types freshly generated in
+that application also need the explicit type-level JSON converter described in the
+[JSON documentation](https://github.com/BenjaminAbt/StrongOf/blob/main/src/StrongOf.Json/readme.md).
+OpenAPI and other ASP.NET Core dependencies must be evaluated separately for the selected version.
+
+See [ASP.NET Core's compatibility table](https://learn.microsoft.com/aspnet/core/fundamentals/native-aot).
+
 ## Installation
 
 ```bash
