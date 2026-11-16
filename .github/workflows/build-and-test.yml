@@ -42,10 +42,7 @@ jobs:
           dotnet-version: |
             9.0.x
             10.0.x
-      - uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 11.0.x
-          dotnet-quality: preview
+          global-json-file: global.json
       - name: Install native toolchain
         if: runner.os == 'Linux'
         run: |
@@ -72,18 +69,13 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Setup .NET (stable)
+      - name: Setup .NET
         uses: actions/setup-dotnet@v5
         with:
           dotnet-version: |
             9.0.x
             10.0.x
-
-      - name: Setup .NET (preview)
-        uses: actions/setup-dotnet@v5
-        with:
-          dotnet-version: 11.0.x
-          dotnet-quality: preview
+          global-json-file: global.json
 
       - name: Calculate Version with NBGV
         uses: dotnet/nbgv@master
