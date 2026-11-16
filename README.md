@@ -32,6 +32,20 @@ __StrongOf__ helps to implement primitives as a strong type that represents a do
 
 In contrast to other approaches, __StrongOf__ is above all simple and performant - and not over-engineered.
 
+Build with the stable .NET SDK 11.0.100 pinned in `global.json` (C# 15).
+Running the complete test suite also requires the .NET 9 and .NET 10 runtimes.
+Framework dependencies are selected per target framework:
+
+| Target framework | ASP.NET Core OpenAPI / TestHost | EF Core / InMemory | Microsoft.OpenApi |
+| --- | --- | --- | --- |
+| `net9.0` | 9.0.23 | 9.0.23 | 1.6.31 |
+| `net10.0` | 10.0.15 | 10.0.15 | 2.13.0 |
+| `net11.0` | 11.0.0 | 11.0.0 | 3.11.0 |
+
+`net9.0` remains available for compatibility; Microsoft's support ended on November 10, 2026.
+The source generator continues to target `netstandard2.0` and uses Roslyn 5.12 from the .NET 11 SDK.
+BenchmarkDotNet uses the 0.16 preview line for its .NET 11 runtime support.
+
 ## Why? 
 
 This library was created because C# still does not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations).

@@ -14,11 +14,16 @@ public class TemperatureCelsiusTests
         Assert.Equal(20m, temp.Value);
     }
 
+    public static TheoryData<decimal, bool> ValidRangeData => new()
+    {
+        { -273.15m, true },
+        { 0m, true },
+        { 1000m, true },
+        { -274m, false },
+    };
+
     [Theory]
-    [InlineData(-273.15, true)]
-    [InlineData(0, true)]
-    [InlineData(1000, true)]
-    [InlineData(-274, false)]
+    [MemberData(nameof(ValidRangeData))]
     public void IsValidRange_ReturnsExpected(decimal value, bool expected)
     {
         TemperatureCelsius temp = new TemperatureCelsius(value);

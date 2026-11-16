@@ -36,7 +36,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="Compiler">
-    <LangVersion>preview</LangVersion>
+    <LangVersion>15.0</LangVersion>
     <DebugType>embedded</DebugType>
     <Nullable>enable</Nullable>
     <DefaultLanguage>en-US</DefaultLanguage>
