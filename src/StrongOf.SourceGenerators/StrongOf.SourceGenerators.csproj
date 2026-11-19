@@ -33,8 +33,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" PrivateAssets="all" />
+    <!-- Pinned to the lowest supported compiler (see StrongOfGeneratorRoslynVersion in Directory.Packages.props),
+         independent of the Roslyn version used by analyzers and tests. -->
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" VersionOverride="$(StrongOfGeneratorRoslynVersion)" PrivateAssets="all" />
   </ItemGroup>
+
+  <!-- Guard: the generator must never reference a newer Roslyn than StrongOfGeneratorRoslynVersion
+       (also catches transitive bumps), otherwise consumers on older SDKs can no longer load it. -->
+  <Target Name="_StrongOfVerifyRoslynCompatibility" AfterTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <_StrongOfRoslynReference Include="@(ReferencePath)"
+                                Condition="$([System.String]::Copy('%(ReferencePath.NuGetPackageId)').StartsWith('Microsoft.CodeAnalysis'))" />
+    </ItemGroup>
+    <Error Condition="'$(StrongOfGeneratorRoslynVersion)' == ''"
+           Text="StrongOfGeneratorRoslynVersion is not set (expected in Directory.Packages.props)." />
+    <Error Condition="'@(_StrongOfRoslynReference)' != '' and $([MSBuild]::VersionGreaterThan('%(_StrongOfRoslynReference.NuGetPackageVersion)', '$(StrongOfGeneratorRoslynVersion)'))"
+           Text="StrongOf.SourceGenerators references %(_StrongOfRoslynReference.NuGetPackageId) %(_StrongOfRoslynReference.NuGetPackageVersion), which is newer than the supported minimum Roslyn $(StrongOfGeneratorRoslynVersion). This would break consumers on older SDKs." />
+  </Target>
 
   <!-- Polyfill init-only setters / records for netstandard2.0 (compile-only); included via SDK default compile items. -->
 
