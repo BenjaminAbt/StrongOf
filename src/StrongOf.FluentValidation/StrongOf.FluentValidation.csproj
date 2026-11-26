@@ -8,6 +8,8 @@
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.FluentValidation</PackageId>
         <IsPackable>true</IsPackable>
+        <Description>FluentValidation rule extensions for StrongOf strongly typed primitives.</Description>
+        <PackageTags>StrongOf, FluentValidation, Validation, DDD</PackageTags>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

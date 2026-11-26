@@ -2,11 +2,14 @@
 
     <PropertyGroup Label="Native AoT Analyzers">
         <IsAotCompatible>true</IsAotCompatible>
+        <VerifyReferenceAotCompatibility Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">true</VerifyReferenceAotCompatibility>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.Json</PackageId>
         <IsPackable>true</IsPackable>
+        <Description>Native AOT-compatible System.Text.Json converters for StrongOf strongly typed primitives.</Description>
+        <PackageTags>StrongOf, Json, System.Text.Json, Serialization, JsonConverter, NativeAOT</PackageTags>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

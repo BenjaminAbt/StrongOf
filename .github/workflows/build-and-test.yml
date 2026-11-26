@@ -36,8 +36,8 @@ jobs:
             rid: win-x64
         os: [ubuntu-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: |
             9.0.x
@@ -65,12 +65,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: |
             9.0.x
@@ -78,7 +78,7 @@ jobs:
           global-json-file: global.json
 
       - name: Calculate Version with NBGV
-        uses: dotnet/nbgv@master
+        uses: dotnet/nbgv@v0.5.2
         id: nbgv
         with:
           setAllVars: true
@@ -86,6 +86,9 @@ jobs:
       - name: Version Info
         run: |
           echo "Calculated version: ${{ steps.nbgv.outputs.SemVer2 }}"
+
+      - name: Verify formatting
+        run: dotnet format --verify-no-changes --verbosity minimal
 
       - name: Build
         run: dotnet build --configuration ${{ inputs.configuration }} --verbosity minimal /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
@@ -96,7 +99,7 @@ jobs:
 
       - name: Upload test results
         if: always() && inputs.upload-test-results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: test-results
           path: |
@@ -108,7 +111,7 @@ jobs:
 
       - name: Upload NuGet packages
         if: inputs.upload-packages
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: nuget-packages
           path: |

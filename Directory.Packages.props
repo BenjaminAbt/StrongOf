@@ -80,7 +80,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.12.0">
+    <!-- Keep the shipped generator loadable by .NET 9, 10, and 11 SDKs without CS9057. -->
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="4.12.0" Condition="'$(MSBuildProjectName)' == 'StrongOf.SourceGenerators'" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.12.0" Condition="'$(MSBuildProjectName)' != 'StrongOf.SourceGenerators'">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageVersion>

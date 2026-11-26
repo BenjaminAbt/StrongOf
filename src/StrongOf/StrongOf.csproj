@@ -2,11 +2,14 @@
 
     <PropertyGroup Label="Native AoT Analyzers">
         <IsAotCompatible>true</IsAotCompatible>
+        <VerifyReferenceAotCompatibility Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">true</VerifyReferenceAotCompatibility>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
         <PackageId>StrongOf</PackageId>
         <IsPackable>true</IsPackable>
+        <Description>Strongly typed primitives for .NET with a bundled Roslyn source generator. Wrap Guid, string, int, long, decimal, double, bool, char, DateTime, DateTimeOffset and TimeSpan values in zero-boilerplate, Native AOT-compatible domain types.</Description>
+        <PackageTags>Strong, StrongOf, StronglyTypedId, ValueObject, DDD, SourceGenerator, NativeAOT</PackageTags>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 
@@ -26,6 +29,7 @@
          pack it into the consumer-facing NuGet; we have to add it explicitly. -->
     <PropertyGroup>
         <StrongOfSourceGeneratorPackPath>$(MSBuildThisFileDirectory)..\StrongOf.SourceGenerators\bin\$(Configuration)\netstandard2.0\StrongOf.SourceGenerators.dll</StrongOfSourceGeneratorPackPath>
+        <StrongOfSourceGeneratorPdbPackPath>$(MSBuildThisFileDirectory)..\StrongOf.SourceGenerators\bin\$(Configuration)\netstandard2.0\StrongOf.SourceGenerators.pdb</StrongOfSourceGeneratorPdbPackPath>
         <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_StrongOfPackAnalyzer</TargetsForTfmSpecificContentInPackage>
     </PropertyGroup>
     <Target Name="_StrongOfPackAnalyzer">
@@ -33,6 +37,9 @@
                Condition="'$(TargetFramework)' == 'net9.0' and !Exists('$(StrongOfSourceGeneratorPackPath)')" />
         <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
             <TfmSpecificPackageFile Include="$(StrongOfSourceGeneratorPackPath)"
+                                    PackagePath="analyzers/dotnet/cs" />
+            <TfmSpecificPackageFile Include="$(StrongOfSourceGeneratorPdbPackPath)"
+                                    Condition="Exists('$(StrongOfSourceGeneratorPdbPackPath)')"
                                     PackagePath="analyzers/dotnet/cs" />
         </ItemGroup>
     </Target>

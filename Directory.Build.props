@@ -58,7 +58,7 @@
 
   <PropertyGroup Label="Package">
     <IsPackable>false</IsPackable>
-    <NoPackageAnalysis>true</NoPackageAnalysis>
+    <EnablePackageValidation Condition="'$(IsPackable)' == 'true'">true</EnablePackageValidation>
     <MinClientVersion>2.12</MinClientVersion>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols Condition="'$(IsPackable)' == 'true'">true</IncludeSymbols>

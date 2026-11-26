@@ -8,6 +8,8 @@
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.EntityFrameworkCore</PackageId>
         <IsPackable>true</IsPackable>
+        <Description>Entity Framework Core value converters and model configuration conventions for StrongOf strongly typed primitives.</Description>
+        <PackageTags>StrongOf, EntityFrameworkCore, EFCore, ValueConverter, DDD</PackageTags>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 
