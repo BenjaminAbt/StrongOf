@@ -87,11 +87,13 @@ jobs:
         run: |
           echo "Calculated version: ${{ steps.nbgv.outputs.SemVer2 }}"
 
-      - name: Verify formatting
-        run: dotnet format --verify-no-changes --verbosity minimal
-
       - name: Build
         run: dotnet build --configuration ${{ inputs.configuration }} --verbosity minimal /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
+
+      - name: Verify formatting
+        run: |
+          dotnet build src/StrongOf.SourceGenerators/StrongOf.SourceGenerators.csproj --configuration Debug --verbosity minimal
+          dotnet format --verify-no-changes --verbosity minimal
 
       - name: Test and verify 100% line and branch coverage
         shell: pwsh
