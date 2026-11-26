@@ -38,6 +38,9 @@ public class ZipCodeTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, ZipCode.TryCreate(value, out ZipCode? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Theory]

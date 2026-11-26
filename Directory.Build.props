@@ -42,6 +42,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <ImplicitUsings>enable</ImplicitUsings>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
@@ -70,15 +71,17 @@
     </Description>
     <PackageProjectUrl>https://github.com/BenjaminAbt/StrongOf</PackageProjectUrl>
     <RepositoryUrl>https://github.com/BenjaminAbt/StrongOf</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageTags>Strong, StrongOf, DDD, Value Objects, Domain Driven Design</PackageTags>
     <!-- Central package icon for NuGet packages (file is included into the package via ItemGroup below) -->
-    <PackageIcon>benjamin-abt-strongof.png</PackageIcon>
+    <PackageIcon>strongof.png</PackageIcon>
   </PropertyGroup>
 
-  <!-- Ensure the repository root res/benjamin-abt-strongof.png is packed into NuGet packages -->
+  <!-- Ensure the repository root res/strongof.png is packed into NuGet packages -->
   <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)res\benjamin-abt-strongof.png" Pack="true" PackagePath="" />
+    <None Include="$(MSBuildThisFileDirectory)res\strongof.png" Pack="true" PackagePath="" />
   </ItemGroup>
 
   <PropertyGroup Condition="'$(IsTestProject)' != 'true' AND '$(IsBenchmarkProject)' != 'true'">
@@ -99,17 +102,6 @@
   <!-- Global coverage settings applied to all test projects -->
   <PropertyGroup Condition="'$(IsTestProject)' == 'true'" Label="Coverage">
     <UseMicrosoftTestingPlatformRunner>true</UseMicrosoftTestingPlatformRunner>
-    <CollectCoverage>true</CollectCoverage>
-    <CoverletOutputFormat>lcov,opencover,cobertura</CoverletOutputFormat>
-    <CoverletOutput>$(MSBuildThisFileDirectory)TestResults/coverage/$(MSBuildProjectName).</CoverletOutput>
-    <ExcludeByAttribute>GeneratedCodeAttribute,CompilerGeneratedAttribute,ExcludeFromCodeCoverageAttribute</ExcludeByAttribute>
-    <ExcludeByFile>**/*Program.cs;**/*Startup.cs;**/*GlobalUsings.cs</ExcludeByFile>
-    <UseSourceLink>true</UseSourceLink>
-    <!-- Enforce high line coverage; branch coverage is informative only -->
-    <!-- Note: Set to 96 to account for performance-optimized helper methods and framework-specific code paths -->
-    <Threshold>96</Threshold>
-    <ThresholdType>line</ThresholdType>
-    <ThresholdStat>total</ThresholdStat>
   </PropertyGroup>
 
   <ItemGroup Label="Default Test Dependencies" Condition="'$(IsTestProject)' == 'true'">
@@ -131,9 +123,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="coverlet.collector">
+    <PackageReference Include="coverlet.mtp">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <IncludeAssets>compile; runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
 

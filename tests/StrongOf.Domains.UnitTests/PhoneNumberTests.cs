@@ -40,6 +40,9 @@ public class PhoneNumberTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, PhoneNumber.TryCreate(phone, out PhoneNumber? created));
+        Assert.Equal(expected ? phone : null, created?.Value);
     }
 
     [Theory]

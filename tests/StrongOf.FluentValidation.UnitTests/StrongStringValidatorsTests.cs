@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Text.RegularExpressions;
 using FluentValidation;
@@ -90,5 +90,19 @@ public class StrongStringValidatorsTests
         TestModel model = new() { Strong = new("test") };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
+    }
+
+    [Fact]
+    public void AccessorComparesTheOtherProperty()
+    {
+        TestModel model = new() { Strong = new("value"), Other = new("value") };
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
+        Assert.True(_validator.Validate(model).IsValid);
+        TestValidator different = new();
+        different.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other, nameof(TestModel.Other));
+        Assert.False(different.Validate(model).IsValid);
+        model.Other = null;
+        Assert.False(_validator.Validate(model).IsValid);
+        Assert.True(different.Validate(model).IsValid);
     }
 }

@@ -17,6 +17,9 @@ public class LocaleTests
     {
         Locale locale = new Locale(value);
         Assert.Equal(expected, locale.IsValidFormat());
+
+        Assert.Equal(expected, Locale.TryCreate(value, out Locale? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

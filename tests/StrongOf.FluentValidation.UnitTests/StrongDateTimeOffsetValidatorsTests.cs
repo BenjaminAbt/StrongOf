@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using FluentValidation;
 using FluentValidation.TestHelper;
@@ -109,5 +109,19 @@ public class StrongDateTimeOffsetValidatorsTests
         TestModel model = new() { Strong = new(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero)) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Strong);
+    }
+
+    [Fact]
+    public void AccessorComparesTheOtherProperty()
+    {
+        TestModel model = new() { Strong = new(DateTimeOffset.UnixEpoch), Other = new(DateTimeOffset.UnixEpoch) };
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
+        Assert.True(_validator.Validate(model).IsValid);
+        TestValidator different = new();
+        different.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other, nameof(TestModel.Other));
+        Assert.False(different.Validate(model).IsValid);
+        model.Other = null;
+        Assert.False(_validator.Validate(model).IsValid);
+        Assert.True(different.Validate(model).IsValid);
     }
 }

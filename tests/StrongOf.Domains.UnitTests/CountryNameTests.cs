@@ -23,6 +23,9 @@ public class CountryNameTests
     {
         CountryName name = new CountryName(value);
         Assert.Equal(expected, name.IsValidFormat());
+
+        Assert.Equal(expected, CountryName.TryCreate(value, out CountryName? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

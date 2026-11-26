@@ -1,9 +1,9 @@
 // Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Text.Json.Serialization;
+using StrongOf.Domains.Networking;
 using StrongOf.Json;
 using StrongOf.SourceGeneration;
-using StrongOf.Domains.Networking;
 
 namespace StrongOf.NativeAot;
 

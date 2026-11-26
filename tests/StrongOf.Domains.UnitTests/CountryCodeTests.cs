@@ -40,6 +40,9 @@ public class CountryCodeTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, CountryCode.TryCreate(code, out CountryCode? created));
+        Assert.Equal(expected ? code : null, created?.Value);
     }
 
     [Theory]

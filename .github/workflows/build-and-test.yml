@@ -90,19 +90,18 @@ jobs:
       - name: Build
         run: dotnet build --configuration ${{ inputs.configuration }} --verbosity minimal /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
 
-      - name: Test
-        # --no-build reuses artifacts from the Build step above.
-        # Arguments after '--' are passed directly to the xunit.v3 MTP runner.
-        # '--report-xunit-trx' is the xUnit.net TRX reporter (not the VSTest '--logger' flag,
-        # which MTP does not support).
-        run: dotnet test --configuration ${{ inputs.configuration }} --no-build --verbosity normal /p:Version=${{ steps.nbgv.outputs.SemVer2 }} -- --report-xunit-trx
+      - name: Test and verify 100% line and branch coverage
+        shell: pwsh
+        run: ./tools/Test-Coverage.ps1 -Configuration '${{ inputs.configuration }}' -NoBuild
 
       - name: Upload test results
         if: always() && inputs.upload-test-results
         uses: actions/upload-artifact@v6
         with:
           name: test-results
-          path: '**/TestResults/**/*.trx'
+          path: |
+            TestResults/coverage-*/*.trx
+            TestResults/coverage-*/coverage.cobertura.*.xml
 
       - name: Pack NuGet packages
         run: dotnet pack --configuration ${{ inputs.configuration }} --no-build --include-symbols -p:SymbolPackageFormat=snupkg --output ./artifacts /p:PackageVersion=${{ steps.nbgv.outputs.SemVer2 }}

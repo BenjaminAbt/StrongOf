@@ -55,4 +55,18 @@ public class StrongBooleanJsonConverterTests
         // Assert
         Assert.Equal("true", json);
     }
+
+    [Fact]
+    public void EmptyJsonStringProducesNull()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Null(JsonSerializer.Deserialize<TestBooleanOf>("\"\"", _options));
+    }
+
+    [Fact]
+    public void QuotedPrimitiveIsParsed()
+    {
+        _options.Converters.Add(_converter);
+        Assert.True(JsonSerializer.Deserialize<TestBooleanOf>("\"true\"", _options)!.Value);
+    }
 }

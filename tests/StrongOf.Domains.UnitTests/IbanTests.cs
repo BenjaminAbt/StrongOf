@@ -15,6 +15,9 @@ public class IbanTests
     {
         Iban iban = new Iban(value);
         Assert.Equal(expected, iban.IsValidFormat());
+
+        Assert.Equal(expected, Iban.TryCreate(value, out Iban? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

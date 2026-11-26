@@ -25,6 +25,9 @@ public class HouseNumberTests
     {
         HouseNumber number = new HouseNumber(value);
         Assert.Equal(expected, number.IsValidFormat());
+
+        Assert.Equal(expected, HouseNumber.TryCreate(value, out HouseNumber? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

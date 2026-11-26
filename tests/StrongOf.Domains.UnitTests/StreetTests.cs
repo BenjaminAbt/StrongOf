@@ -36,6 +36,9 @@ public class StreetTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, Street.TryCreate(value, out Street? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Theory]

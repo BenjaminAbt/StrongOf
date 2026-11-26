@@ -9,7 +9,7 @@
       <!-- Reference the source generator directly (analyzer references aren't transitive through project references). -->
       <ProjectReference Include="..\..\src\StrongOf.SourceGenerators\StrongOf.SourceGenerators.csproj"
                         OutputItemType="Analyzer"
-                                                ReferenceOutputAssembly="false" />
+                          ReferenceOutputAssembly="true" />
     </ItemGroup>
 
     <ItemGroup>

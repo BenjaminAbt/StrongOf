@@ -111,15 +111,9 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (context.TargetSymbol is not INamedTypeSymbol typeSymbol)
-        {
-            return null;
-        }
-
-        if (context.TargetNode is not ClassDeclarationSyntax classDecl)
-        {
-            return null;
-        }
+        // Each registered syntax predicate accepts only class declarations.
+        INamedTypeSymbol typeSymbol = (INamedTypeSymbol)context.TargetSymbol;
+        ClassDeclarationSyntax classDecl = (ClassDeclarationSyntax)context.TargetNode;
 
         if (TryResolveMultipleMarkerDiagnosticTarget(context, typeSymbol, classDecl, out TargetType? multipleMarkerTarget))
         {
@@ -141,13 +135,9 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         // Top-level type only (no nested types) - keeps generated file naming sane.
         bool isNested = typeSymbol.ContainingType is not null;
 
-        string? namespaceName = typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns
-            ? ns.ToDisplayString()
-            : null;
-
         return new TargetType(
             TypeName: typeSymbol.Name,
-            Namespace: namespaceName,
+            Namespace: GetNamespace(typeSymbol),
             BaseTypeName: baseTypeName,
             PrimitiveType: primitiveType,
             IsPartial: isPartial,
@@ -171,40 +161,25 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (context.TargetSymbol is not INamedTypeSymbol typeSymbol)
-        {
-            return null;
-        }
-
-        if (context.TargetNode is not ClassDeclarationSyntax classDecl)
-        {
-            return null;
-        }
+        // Each registered syntax predicate accepts only class declarations.
+        INamedTypeSymbol typeSymbol = (INamedTypeSymbol)context.TargetSymbol;
+        ClassDeclarationSyntax classDecl = (ClassDeclarationSyntax)context.TargetNode;
 
         if (TryResolveMultipleMarkerDiagnosticTarget(context, typeSymbol, classDecl, out TargetType? multipleMarkerTarget))
         {
             return multipleMarkerTarget;
         }
 
-        if (context.Attributes.Length == 0)
-        {
-            return null;
-        }
-
-        AttributeData attribute = context.Attributes[0];
-        if (attribute.AttributeClass?.TypeArguments.Length != 1)
-        {
-            return null;
-        }
-
-        ITypeSymbol targetType = attribute.AttributeClass.TypeArguments[0];
+        // ForAttributeWithMetadataName matched StrongAttribute`1, so there is
+        // at least one matching attribute and its class has one type argument.
+        ITypeSymbol targetType = context.Attributes[0].AttributeClass!.TypeArguments[0];
         if (!TryMapTargetType(targetType, out string baseTypeName, out string primitiveType))
         {
             // Returning a diagnostic target keeps reporting centralized in Emit(), so every
             // pipeline follows the same diagnostic ordering and formatting behavior.
             return new TargetType(
                 TypeName: typeSymbol.Name,
-                Namespace: typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
+                Namespace: GetNamespace(typeSymbol),
                 BaseTypeName: string.Empty,
                 PrimitiveType: string.Empty,
                 IsPartial: false,
@@ -224,13 +199,10 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         }
 
         bool isNested = typeSymbol.ContainingType is not null;
-        string? namespaceName = typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } targetNs
-            ? targetNs.ToDisplayString()
-            : null;
 
         return new TargetType(
             TypeName: typeSymbol.Name,
-            Namespace: namespaceName,
+            Namespace: GetNamespace(typeSymbol),
             BaseTypeName: baseTypeName,
             PrimitiveType: primitiveType,
             IsPartial: isPartial,
@@ -254,24 +226,13 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        if (context.TargetSymbol is not INamedTypeSymbol typeSymbol)
-        {
-            return null;
-        }
-
-        if (context.TargetNode is not ClassDeclarationSyntax classDecl)
-        {
-            return null;
-        }
+        // Each registered syntax predicate accepts only class declarations.
+        INamedTypeSymbol typeSymbol = (INamedTypeSymbol)context.TargetSymbol;
+        ClassDeclarationSyntax classDecl = (ClassDeclarationSyntax)context.TargetNode;
 
         if (TryResolveMultipleMarkerDiagnosticTarget(context, typeSymbol, classDecl, out TargetType? multipleMarkerTarget))
         {
             return multipleMarkerTarget;
-        }
-
-        if (context.Attributes.Length == 0)
-        {
-            return null;
         }
 
         AttributeData attribute = context.Attributes[0];
@@ -281,7 +242,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         }
 
         TypedConstant argument = attribute.ConstructorArguments[0];
-        if (argument.Kind != TypedConstantKind.Type || argument.Value is not ITypeSymbol targetType)
+        if (argument.Value is not ITypeSymbol targetType)
         {
             return null;
         }
@@ -291,7 +252,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             // Keep unsupported-type handling deferred to Emit() for deterministic diagnostics.
             return new TargetType(
                 TypeName: typeSymbol.Name,
-                Namespace: typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns ? ns.ToDisplayString() : null,
+                Namespace: GetNamespace(typeSymbol),
                 BaseTypeName: string.Empty,
                 PrimitiveType: string.Empty,
                 IsPartial: false,
@@ -311,13 +272,10 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
         }
 
         bool isNested = typeSymbol.ContainingType is not null;
-        string? namespaceName = typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } targetNs
-            ? targetNs.ToDisplayString()
-            : null;
 
         return new TargetType(
             TypeName: typeSymbol.Name,
-            Namespace: namespaceName,
+            Namespace: GetNamespace(typeSymbol),
             BaseTypeName: baseTypeName,
             PrimitiveType: primitiveType,
             IsPartial: isPartial,
@@ -445,23 +403,16 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
             return false;
         }
 
-        string? currentMarkerName = context.Attributes.Length > 0
-            ? context.Attributes[0].AttributeClass?.MetadataName
-            : null;
-
-        if (currentMarkerName is null || string.CompareOrdinal(currentMarkerName, canonicalMarkerName) != 0)
+        string currentMarkerName = context.Attributes[0].AttributeClass!.MetadataName;
+        if (string.CompareOrdinal(currentMarkerName, canonicalMarkerName) != 0)
         {
             // Another marker pipeline reports STRONG004 for this type.
             return true;
         }
 
-        string? namespaceName = typeSymbol.ContainingNamespace is { IsGlobalNamespace: false } ns
-            ? ns.ToDisplayString()
-            : null;
-
         diagnosticTarget = new TargetType(
             TypeName: typeSymbol.Name,
-            Namespace: namespaceName,
+            Namespace: GetNamespace(typeSymbol),
             BaseTypeName: string.Empty,
             PrimitiveType: string.Empty,
             IsPartial: false,
@@ -471,6 +422,11 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
         return true;
     }
+
+    private static string? GetNamespace(INamedTypeSymbol typeSymbol)
+        => typeSymbol.ContainingNamespace.IsGlobalNamespace
+            ? null
+            : typeSymbol.ContainingNamespace.ToDisplayString();
 
     /// <summary>
     /// Checks whether a class declaration uses more than one Strong marker attribute.
@@ -487,7 +443,7 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
 
         foreach (AttributeData attribute in typeSymbol.GetAttributes())
         {
-            if (!TryGetStrongMarkerMetadataName(attribute.AttributeClass, out string markerName))
+            if (!TryGetStrongMarkerMetadataName(attribute.AttributeClass!, out string markerName))
             {
                 continue;
             }
@@ -510,11 +466,11 @@ public sealed class StrongOfGenerator : IIncrementalGenerator
     /// <param name="attributeClass">Attribute symbol to inspect.</param>
     /// <param name="markerName">Resolved metadata name when successful.</param>
     /// <returns><see langword="true"/> when the attribute belongs to StrongOf markers.</returns>
-    private static bool TryGetStrongMarkerMetadataName(INamedTypeSymbol? attributeClass, out string markerName)
+    private static bool TryGetStrongMarkerMetadataName(INamedTypeSymbol attributeClass, out string markerName)
     {
         markerName = string.Empty;
 
-        if (attributeClass?.ContainingNamespace.ToDisplayString() != AttributeNamespace)
+        if (attributeClass.ContainingNamespace.ToDisplayString() != AttributeNamespace)
         {
             return false;
         }

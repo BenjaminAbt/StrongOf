@@ -41,6 +41,9 @@ public class MacAddressTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, MacAddress.TryCreate(value, out MacAddress? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Theory]

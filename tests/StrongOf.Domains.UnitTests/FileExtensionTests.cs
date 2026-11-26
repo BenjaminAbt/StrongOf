@@ -23,6 +23,9 @@ public class FileExtensionTests
     {
         FileExtension ext = new FileExtension(value);
         Assert.Equal(expected, ext.IsValidFormat());
+
+        Assert.Equal(expected, FileExtension.TryCreate(value, out FileExtension? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

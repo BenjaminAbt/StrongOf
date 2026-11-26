@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using FluentValidation;
 using FluentValidation.TestHelper;
@@ -73,5 +73,19 @@ public class StrongInt32ValidatorsTests
         TestModel model = new() { Strong = new TestInt32Of(15) };
         TestValidationResult<TestModel> result = _validator.TestValidate(model);
         Assert.True(result.IsValid);
+    }
+
+    [Fact]
+    public void AccessorComparesTheOtherProperty()
+    {
+        TestModel model = new() { Strong = new(1), Other = new(1) };
+        _validator.RuleFor(x => x.Strong).IsEqualTo(x => x.Other, nameof(TestModel.Other));
+        Assert.True(_validator.Validate(model).IsValid);
+        TestValidator different = new();
+        different.RuleFor(x => x.Strong).IsNotEqualTo(x => x.Other, nameof(TestModel.Other));
+        Assert.False(different.Validate(model).IsValid);
+        model.Other = null;
+        Assert.False(_validator.Validate(model).IsValid);
+        Assert.True(different.Validate(model).IsValid);
     }
 }

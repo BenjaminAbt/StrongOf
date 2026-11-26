@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Globalization;
 using System.Text;
@@ -69,5 +69,12 @@ public class StrongDateTimeOffsetJsonConverterTests
 
         // Assert
         Assert.Equal("2023-12-17T14:24:22.6412808+00:00", jsonValue);
+    }
+
+    [Fact]
+    public void EmptyJsonStringProducesNull()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Null(JsonSerializer.Deserialize<TestDateTimeOffsetOf>("\"\"", _options));
     }
 }

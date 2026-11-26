@@ -24,6 +24,9 @@ public class LanguageCodeTests
     {
         LanguageCode code = new LanguageCode(value);
         Assert.Equal(expected, code.IsValidFormat());
+
+        Assert.Equal(expected, LanguageCode.TryCreate(value, out LanguageCode? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

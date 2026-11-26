@@ -39,6 +39,9 @@ public class FirstNameTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, FirstName.TryCreate(name, out FirstName? created));
+        Assert.Equal(expected ? name : null, created?.Value);
     }
 
     [Theory]

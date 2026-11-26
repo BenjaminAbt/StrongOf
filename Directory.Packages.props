@@ -54,9 +54,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="coverlet.collector" Version="10.1.1">
+    <PackageVersion Include="coverlet.mtp" Version="10.1.1">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <IncludeAssets>compile; runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
   </ItemGroup>
   <ItemGroup Label="Analyzers">

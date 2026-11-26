@@ -55,4 +55,18 @@ public class StrongDoubleJsonConverterTests
         // Assert
         Assert.Equal("123.45", json);
     }
+
+    [Fact]
+    public void EmptyJsonStringProducesNull()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Null(JsonSerializer.Deserialize<TestDoubleOf>("\"\"", _options));
+    }
+
+    [Fact]
+    public void QuotedPrimitiveIsParsed()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Equal(1.5, JsonSerializer.Deserialize<TestDoubleOf>("\"1.5\"", _options)!.Value);
+    }
 }

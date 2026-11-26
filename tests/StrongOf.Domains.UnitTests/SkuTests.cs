@@ -16,6 +16,9 @@ public class SkuTests
     {
         Sku sku = new Sku(value);
         Assert.Equal(expected, sku.IsValidFormat());
+
+        Assert.Equal(expected, Sku.TryCreate(value, out Sku? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]
