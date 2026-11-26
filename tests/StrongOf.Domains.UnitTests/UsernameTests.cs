@@ -41,6 +41,9 @@ public class UsernameTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, Username.TryCreate(name, out Username? created));
+        Assert.Equal(expected ? name : null, created?.Value);
     }
 
     [Fact]

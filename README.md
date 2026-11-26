@@ -1,237 +1,81 @@
+<div align="center">
+
+<img src="res/strongof.png" alt="StrongOf rhinoceros with a golden cube" width="180" />
+
 # StrongOf
 
-<p align="center">
-    <img src="res/benjamin-abt-strongof.png" alt="StrongOf" width="160" />
-</p>
+**Strongly typed primitives for .NET**
 
-<p align="center">
-    <a href="https://NuBrowse.com/packages/StrongOf"><img src="https://img.shields.io/nuget/v/StrongOf?label=StrongOf&logo=nuget&color=0f766e" alt="StrongOf" /></a>
-    <a href="https://NuBrowse.com/packages/StrongOf.Domains"><img src="https://img.shields.io/nuget/v/StrongOf.Domains?label=StrongOf.Domains&logo=nuget&color=0f766e" alt="StrongOf.Domains" /></a>
-    <a href="https://NuBrowse.com/packages/StrongOf.Json"><img src="https://img.shields.io/nuget/v/StrongOf.Json?label=StrongOf.Json&logo=nuget&color=0f766e" alt="StrongOf.Json" /></a>
-</p>
+Give identifiers, quantities and other domain values their own C# types. StrongOf includes a source generator, ready-to-use domain types and integrations for JSON, ASP.NET Core, Entity Framework Core and FluentValidation.
 
-<p align="center">
-    <a href="https://NuBrowse.com/packages/StrongOf.AspNetCore"><img src="https://img.shields.io/nuget/v/StrongOf.AspNetCore?label=StrongOf.AspNetCore&logo=nuget&color=0369a1" alt="StrongOf.AspNetCore" /></a>
-    <a href="https://NuBrowse.com/packages/StrongOf.EntityFrameworkCore"><img src="https://img.shields.io/nuget/v/StrongOf.EntityFrameworkCore?label=StrongOf.EntityFrameworkCore&logo=nuget&color=0369a1" alt="StrongOf.EntityFrameworkCore" /></a>
-    <a href="https://NuBrowse.com/packages/StrongOf.FluentValidation"><img src="https://img.shields.io/nuget/v/StrongOf.FluentValidation?label=StrongOf.FluentValidation&logo=nuget&color=0369a1" alt="StrongOf.FluentValidation" /></a>
-</p>
+[![Build](https://img.shields.io/github/actions/workflow/status/BenjaminAbt/StrongOf/main-build.yml?branch=main&logo=githubactions&label=build)](https://github.com/BenjaminAbt/StrongOf/actions/workflows/main-build.yml)
+[![Coverage: 100% line and branch coverage, enforced in CI](https://img.shields.io/badge/coverage-100%25-brightgreen)](#build-and-test)
+[![NuGet](https://img.shields.io/nuget/v/StrongOf?logo=nuget)](https://nubrowse.com/packages/StrongOf)
+[![Downloads](https://img.shields.io/nuget/dt/StrongOf?label=downloads)](https://nubrowse.com/packages/StrongOf)
+[![MIT license](https://img.shields.io/github/license/BenjaminAbt/StrongOf)](LICENSE)
 
-<p align="center">
-    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-f4b400.svg" alt="License: MIT" /></a>
-</p>
+[![.NET 9, 10 and 11](https://img.shields.io/badge/.NET-9%20%7C%2010%20%7C%2011-512BD4?logo=dotnet)](#build-and-test)
+[![Native AOT and trimming](https://img.shields.io/badge/core-Native%20AOT%20%26%20trimming-512BD4)](#native-aot-and-trimming)
+[![Strong-named assemblies](https://img.shields.io/badge/strong--named-yes-blue)](#build-and-test)
+[![SourceLink enabled](https://img.shields.io/badge/SourceLink-enabled-blue)](https://learn.microsoft.com/dotnet/standard/library-guidance/sourcelink)
 
-<p align="center">
-    <strong>Strongly typed primitives for .NET 9, .NET 10, and .NET 11.</strong>
-    <br />
-    Core library, domain types, JSON, ASP.NET Core, EF Core, and FluentValidation integrations.
-</p>
+[![GitHub stars](https://img.shields.io/github/stars/BenjaminAbt/StrongOf?logo=github)](https://github.com/BenjaminAbt/StrongOf/stargazers)
+[![Last commit](https://img.shields.io/github/last-commit/BenjaminAbt/StrongOf/main?logo=github)](https://github.com/BenjaminAbt/StrongOf/commits/main)
+[![Open issues](https://img.shields.io/github/issues/BenjaminAbt/StrongOf?logo=github)](https://github.com/BenjaminAbt/StrongOf/issues)
 
----
+</div>
 
-__StrongOf__ helps to implement primitives as a strong type that represents a domain object (e.g. UserId, EmailAddress, etc.). It is a simple class that wraps a value and provides a few helper methods to make it easier to work with.
+## NuGet
 
-In contrast to other approaches, __StrongOf__ is above all simple and performant - and not over-engineered.
-
-Build with the stable .NET SDK 11.0.100 pinned in `global.json` (C# 15).
-Running the complete test suite also requires the .NET 9 and .NET 10 runtimes.
-Framework dependencies are selected per target framework:
-
-| Target framework | ASP.NET Core OpenAPI / TestHost | EF Core / InMemory | Microsoft.OpenApi |
+| Package | Version | Downloads | Install |
 | --- | --- | --- | --- |
-| `net9.0` | 9.0.23 | 9.0.23 | 1.6.31 |
-| `net10.0` | 10.0.15 | 10.0.15 | 2.13.0 |
-| `net11.0` | 11.0.0 | 11.0.0 | 3.11.0 |
+| **[StrongOf](https://nubrowse.com/packages/StrongOf)**<br><sub>Primitive wrappers and the bundled source generator</sub> | [![Version](https://img.shields.io/nuget/v/StrongOf?logo=nuget)](https://nubrowse.com/packages/StrongOf) | [![Downloads](https://img.shields.io/nuget/dt/StrongOf?label=downloads)](https://nubrowse.com/packages/StrongOf) | `dotnet add package StrongOf` |
+| **[StrongOf.Domains](https://nubrowse.com/packages/StrongOf.Domains)**<br><sub>Ready-to-use domain types</sub> | [![Version](https://img.shields.io/nuget/v/StrongOf.Domains?logo=nuget)](https://nubrowse.com/packages/StrongOf.Domains) | [![Downloads](https://img.shields.io/nuget/dt/StrongOf.Domains?label=downloads)](https://nubrowse.com/packages/StrongOf.Domains) | `dotnet add package StrongOf.Domains` |
+| **[StrongOf.Json](https://nubrowse.com/packages/StrongOf.Json)**<br><sub>System.Text.Json converters</sub> | [![Version](https://img.shields.io/nuget/v/StrongOf.Json?logo=nuget)](https://nubrowse.com/packages/StrongOf.Json) | [![Downloads](https://img.shields.io/nuget/dt/StrongOf.Json?label=downloads)](https://nubrowse.com/packages/StrongOf.Json) | `dotnet add package StrongOf.Json` |
+| **[StrongOf.AspNetCore](https://nubrowse.com/packages/StrongOf.AspNetCore)**<br><sub>Model binding, validation filters and OpenAPI</sub> | [![Version](https://img.shields.io/nuget/v/StrongOf.AspNetCore?logo=nuget)](https://nubrowse.com/packages/StrongOf.AspNetCore) | [![Downloads](https://img.shields.io/nuget/dt/StrongOf.AspNetCore?label=downloads)](https://nubrowse.com/packages/StrongOf.AspNetCore) | `dotnet add package StrongOf.AspNetCore` |
+| **[StrongOf.EntityFrameworkCore](https://nubrowse.com/packages/StrongOf.EntityFrameworkCore)**<br><sub>EF Core value converters and conventions</sub> | [![Version](https://img.shields.io/nuget/v/StrongOf.EntityFrameworkCore?logo=nuget)](https://nubrowse.com/packages/StrongOf.EntityFrameworkCore) | [![Downloads](https://img.shields.io/nuget/dt/StrongOf.EntityFrameworkCore?label=downloads)](https://nubrowse.com/packages/StrongOf.EntityFrameworkCore) | `dotnet add package StrongOf.EntityFrameworkCore` |
+| **[StrongOf.FluentValidation](https://nubrowse.com/packages/StrongOf.FluentValidation)**<br><sub>FluentValidation rules for strong types</sub> | [![Version](https://img.shields.io/nuget/v/StrongOf.FluentValidation?logo=nuget)](https://nubrowse.com/packages/StrongOf.FluentValidation) | [![Downloads](https://img.shields.io/nuget/dt/StrongOf.FluentValidation?label=downloads)](https://nubrowse.com/packages/StrongOf.FluentValidation) | `dotnet add package StrongOf.FluentValidation` |
 
-`net9.0` remains available for compatibility; Microsoft's support ended on November 10, 2026.
-The source generator continues to target `netstandard2.0` and uses Roslyn 5.12 from the .NET 11 SDK.
-BenchmarkDotNet uses the 0.16 preview line for its .NET 11 runtime support.
+The runtime packages target .NET 9, 10 and 11. The core package includes the `netstandard2.0` source generator.
 
-## Why? 
+## Why StrongOf?
 
-This library was created because C# still does not support [type abbreviations](https://learn.microsoft.com/en-us/dotnet/fsharp/language-reference/type-abbreviations).
-
-It is currently unclear whether this feature will ever become part of the language:  
-[Proposal: Type aliases / abbreviations / newtype](https://github.com/dotnet/csharplang/issues/410)
-
-## Table of Contents
-
-- [The idea](#the-idea)
-- [NativeAOT](#nativeaot)
-- [Usage](#usage)
-    - [Usage with source generators](#usage-with-source-generators)
-    - [Usage without source generators](#usage-without-source-generators)
-    - [Bulk conversion helpers](#bulk-conversion-helpers)
-    - [Validation helpers for custom domain types](#validation-helpers-for-custom-domain-types)
-    - [Available marker attributes](#available-marker-attributes)
-- [StrongOf.Domains](#usage-with-strongofdomains)
-    - [Global Usings - avoid repetitive `using` directives](#global-usings---avoid-repetitive-using-directives)
-    - [Namespace naming rationale](#namespace-naming-rationale)
-- [Json](#usage-with-json)
-- [ASP.NET Core](#usage-with-aspnet-core)
-    - [Usage with Minimal APIs](#usage-with-minimal-apis)
-    - [Usage with OpenApi (.NET 9+)](#usage-with-openapi-net-9)
-- [Entity Framework Core](#usage-with-entity-framework-core)
-    - [Register Converters Once with `ConfigureConventions` (Recommended)](#register-converters-once-with-configureconventions-recommended)
-    - [Configure Strong Types in `OnModelCreating`](#configure-strong-types-in-onmodelcreating)
-    - [LINQ Limitations](#linq-limitations)
-    - [Why No Source Generator for EF Core?](#why-no-source-generator-for-ef-core)
-- [FluentValidation](#usage-with-fluentvalidation)
-- [Migrations](#migrations)
-    - [Migration guide: StrongOf v2 -> v3 (Source Generators)](#migration-guide-strongof-v2---v3-source-generators)
-    - [Interop metadata for other source generators](#interop-metadata-for-other-source-generators)
-- [Performance matters](#performance-matters)
-- [FAQ](#faq)
-
-
-## The idea
-
-The frequent problem in code implementation is that values are not given any meaning and many methods are simply a technical string of values or data classes are just a list of types.
+A method accepting two `Guid` arguments allows callers to swap a tenant ID and a user ID. Give each identifier a type and the compiler checks every call.
 
 ```csharp
-public class User
-{    
-    public  Guid    TenantId { get; set; }
-    public  Guid    UserId { get; set; }
-    public  string  FirstName { get; set; }
-    public  string  LastName { get; set; }
-    public  string  Email { get; set; }
-}
-```
+using StrongOf.SourceGeneration;
 
-A consequential problem is that there is also no compiler support if parameters are swapped. This can only be covered by complex unit tests.
-
-```csharp
-// no compiler warning if you mess up the order here
-public User AddUser(Guid tenantId, Guid userId, string firstName, string lastName, string email)
-```
-
-The idea is to use a domain-driven design approach to give specific values a meaning through their own types.
-
-```csharp
-
-[Strong<Guid>]
+[StrongGuid]
 public partial class TenantId;
 
 [StrongGuid]
 public partial class UserId;
 
-[StrongString]
-public partial class FirstName;
-
-[Strong<String>]
-public partial class LastName;
-
-[Strong<String>]
-public partial class Email;
-
-public class User
-{    
-    public  TenantId   TenantId { get; set; }
-    public  UserId     UserId { get; set; }
-    public  FirstName  FirstName { get; set; }
-    public  LastName   LastName { get; set; }
-    public  Email      Email { get; set; }
+public interface IUserStore
+{
+    Task<bool> ExistsAsync(TenantId tenantId, UserId userId);
 }
-
-// with compiler warning if you mess up the order here
-public User AddUser(TenantId tenantId, UserId userId, FirstName firstName, LastName lastName, Email email)
 ```
-
-Now you are safe!
-
-## NativeAOT
-
-Current packages require .NET 9 or later; .NET 8 is no longer a target framework.
-
-`StrongOf` supports NativeAOT and trimming on .NET 9, 10, and 11. Factories dispatch to static
-`Create` implementations without reflection or runtime code generation. `StrongOf.Json` and
-`StrongOf.Domains` are included in the native smoke test as well.
-
-| Package | NativeAOT scope |
-|---------|-----------------|
-| `StrongOf` | Supported; AOT and trimming analyzers enabled |
-| `StrongOf.Json` | Supported with a generated `JsonSerializerContext`; see the JSON example below |
-| `StrongOf.Domains` | Supported; platform-dependent operations still depend on OS data such as time zones |
-| `StrongOf.SourceGenerators` | Runs at build time, not inside the native application |
-| `StrongOf.AspNetCore` | No package-wide guarantee; MVC is unsupported by NativeAOT |
-| `StrongOf.EntityFrameworkCore` | No NativeAOT guarantee for the current EF Core 8 dependency |
-| `StrongOf.FluentValidation` | No NativeAOT guarantee for the FluentValidation dependency |
-
-Enable native publishing in your **application**:
-
-```xml
-<PropertyGroup>
-  <PublishAot>true</PublishAot>
-  <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
-</PropertyGroup>
-```
-
-The supported library projects declare `IsAotCompatible=true`. `Directory.Build.targets` additionally
-enables `VerifyReferenceAotCompatibility` for their .NET 10+ targets. This is a metadata check (`IL3058`),
-not a replacement for AOT code analysis or native execution. Older framework reference assemblies do not
-carry the metadata introduced in .NET 10, so that additional check is not enabled for .NET 9.
-The Roslyn generator and test projects are not marked as runtime AOT libraries.
-
-CI publishes and runs the [NativeAOT example](samples/StrongOf.NativeAot/readme.md) for .NET 9, 10, and 11
-on Windows x64 and Linux x64, with compiler/linker warnings as errors and JSON reflection disabled.
-It roots the Core, Json and Domains assemblies to analyze unused library code as well. Other platforms and
-the ASP.NET Core, EF Core and FluentValidation integrations are outside this native test's coverage.
 
 ## Usage
 
 The recommended approach is to define strong types with the built-in source generator. If you prefer the classic hand-written form, that is still fully supported and shown afterwards.
 
-### Usage with source generators
-
-> For v2 users: see migration guide to v3 at the end of this readme.
-
-The shipped Roslyn source generator turns a single attribute-marked partial class into a fully implemented strong type, with **zero** Expression-based factory dependency. The result is fully Native AOT and trim safe.
-
-Recommended style is the generic form `Strong<TTarget>`:
-
-- Preferred: `[StrongGuid]` and `[Strong<Guid>]`
-- Also supported: `[Strong(typeof(Guid))]`
-- Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
-- Generated classes must be top-level, non-generic partial classes. A class such as `UserId<T>` produces
-  diagnostic `STRONG005`; this restriction does not apply to the marker syntax `[Strong<Guid>]`.
+### Generated types
 
 ```csharp
 using StrongOf.SourceGeneration;
 
 [Strong<Guid>]
-public partial class UserId;
+public partial class OrderId;
 
-[StrongGuid] 
-public partial class LegacyUserId;
-
-[StrongString]
-public partial class Email;
-
-[Strong<string>]
-public partial class Alias;
-
-[StrongInt32] 
-public partial class Quantity;
-
-[StrongDecimal]
-public partial class Amount;
-```
-
-The generator emits the primary constructor, the base type (`StrongGuid<UserId>`,
-`StrongString<Email>`, ...) and an AOT-friendly static `Create` method that the generic `From(...)`
-dispatch resolves directly to `new TStrong(value)`. No reflection, no `Expression.Compile`.
-
-You can still extend the type with your own partial - the generator only contributes the
-constructor / base type / `Create` member, never the body:
-
-```csharp
-[StrongString]
-public partial class Email
+public static class Orders
 {
-    public bool LooksLikeEmail() => Value.Contains('@');
+    public static OrderId NewId() => OrderId.From(Guid.NewGuid());
 }
 ```
 
+The [source generator](#source-generator) supplies the constructor, base class and factory.
 
 ### Usage without source generators
 
@@ -252,6 +96,8 @@ UserId userId2 = UserId.From(Guid.NewGuid());
 ```
 
 `From(...)` is intended for generic scenarios where the concrete strong type is not known statically.
+
+## API Reference
 
 ### Bulk conversion helpers
 
@@ -302,26 +148,7 @@ public sealed class Email(string value) : StrongString<Email>(value), IStrongOf<
 
 This keeps construction explicit and allows validation without moving logic into the primary constructor.
 
-### Available marker attributes
-
-The following marker attributes are available in `StrongOf.SourceGeneration`:
-
-| Attribute | Wraps |
-|-----------|-------|
-| `[Strong<TTarget>]` | Generic form (same supported primitive set as below) |
-| `[StrongBoolean]` | `bool` |
-| `[StrongChar]` | `char` |
-| `[StrongDateTime]` | `DateTime` |
-| `[StrongDateTimeOffset]` | `DateTimeOffset` |
-| `[StrongDecimal]` | `decimal` |
-| `[StrongDouble]` | `double` |
-| `[StrongGuid]` | `Guid` |
-| `[StrongInt32]` | `int` |
-| `[StrongInt64]` | `long` |
-| `[StrongString]` | `string` |
-| `[StrongTimeSpan]` | `TimeSpan` |
-
-## Usage with StrongOf.Domains
+## StrongOf.Domains
 
 `StrongOf.Domains` ships a collection of ready-to-use strong types organized into namespaces by domain area:
 
@@ -381,7 +208,79 @@ public class User
 
 The namespace names are deliberately chosen to **not conflict** with common domain class names (`Address`, `Person`, `Network`, `Location` etc. are all typical class names in business applications). Using plural or domain-specific nouns (`Postal`, `People`, `Networking`) means you can safely have both a `namespace StrongOf.Domains.Postal` import and a `class Address` in the same file without any ambiguity.
 
-## Usage with Json
+## Source Generator
+
+Upgrading from v2? See the [migration guide](#migrations).
+
+The shipped Roslyn source generator turns a single attribute-marked partial class into a fully implemented strong type, with **zero** Expression-based factory dependency. The result is fully Native AOT and trim safe.
+
+Recommended style is the generic form `Strong<TTarget>`:
+
+- Preferred: `[StrongGuid]` and `[Strong<Guid>]`
+- Also supported: `[Strong(typeof(Guid))]`
+- Exactly one marker is required per type declaration (do not combine multiple marker forms on the same class).
+- Generated classes must be top-level, non-generic partial classes. A class such as `UserId<T>` produces
+  diagnostic `STRONG005`; this restriction does not apply to the marker syntax `[Strong<Guid>]`.
+
+```csharp
+using StrongOf.SourceGeneration;
+
+[Strong<Guid>]
+public partial class UserId;
+
+[StrongGuid]
+public partial class LegacyUserId;
+
+[StrongString]
+public partial class Email;
+
+[Strong<string>]
+public partial class Alias;
+
+[StrongInt32]
+public partial class Quantity;
+
+[StrongDecimal]
+public partial class Amount;
+```
+
+The generator emits the primary constructor, the base type (`StrongGuid<UserId>`,
+`StrongString<Email>`, ...) and an AOT-friendly static `Create` method that the generic `From(...)`
+dispatch resolves directly to `new TStrong(value)`. No reflection, no `Expression.Compile`.
+
+You can still extend the type with your own partial - the generator only contributes the
+constructor / base type / `Create` member, never the body:
+
+```csharp
+[StrongString]
+public partial class Email
+{
+    public bool LooksLikeEmail() => Value.Contains('@');
+}
+```
+
+### Available marker attributes
+
+The following marker attributes are available in `StrongOf.SourceGeneration`:
+
+| Attribute | Wraps |
+|-----------|-------|
+| `[Strong<TTarget>]` | Generic form (same supported primitive set as below) |
+| `[StrongBoolean]` | `bool` |
+| `[StrongChar]` | `char` |
+| `[StrongDateTime]` | `DateTime` |
+| `[StrongDateTimeOffset]` | `DateTimeOffset` |
+| `[StrongDecimal]` | `decimal` |
+| `[StrongDouble]` | `double` |
+| `[StrongGuid]` | `Guid` |
+| `[StrongInt32]` | `int` |
+| `[StrongInt64]` | `long` |
+| `[StrongString]` | `string` |
+| `[StrongTimeSpan]` | `TimeSpan` |
+
+## Real-World Examples
+
+### Usage with Json
 
 Use [StrongOf.Json](https://NuBrowse.com/packages/StrongOf.Json) with generated JSON metadata.
 For strong types generated in the same project, place the converter attribute on the strong type itself:
@@ -419,7 +318,7 @@ precompiled domain types and wire formats.
 `Z` or an explicit offset. They preserve that offset instead of normalizing to UTC. Use `.ToUniversalTime()`
 on the underlying value when UTC normalization is required.
 
-## Usage with ASP.NET Core
+### Usage with ASP.NET Core
 
 This extension does not make ASP.NET Core MVC NativeAOT-compatible. Assembly-scanning registration is
 annotated with `RequiresUnreferencedCode`, and automatic generic binder registration with
@@ -469,7 +368,7 @@ public class MyCustomStrongGuidBinder<TStrong> : StrongOfBinder
 }
 ```
 
-### Usage with Minimal APIs
+#### Usage with Minimal APIs
 
 All strong types implement `IParsable<TSelf>` and work as route/query parameters in Minimal APIs out of the box.
 Use the validation filter from `StrongOf.AspNetCore.MinimalApis` to automatically validate `IValidatable` parameters:
@@ -485,7 +384,7 @@ app.MapPost("/users", (EmailAddress email) => Results.Ok(email))
    .WithStrongOfValidation();
 ```
 
-### Usage with OpenApi (.NET 9+)
+#### Usage with OpenApi (.NET 9+)
 
 Use the schema transformer from `StrongOf.AspNetCore.OpenApi` to correctly map strong types in OpenAPI specs:
 
@@ -516,7 +415,7 @@ Without the transformer, strong types are described as complex nested objects (e
 
 Mapping is resolved via the `IStrong*` marker interfaces, so custom strong types (including those from `StrongOf.Domains` or your own domain assemblies) are covered automatically without additional registration.
 
-## Usage with Entity Framework Core
+### Usage with Entity Framework Core
 
 The current adapter uses EF Core 8 and does not promise NativeAOT support for database operations.
 The core strong types remain usable without EF Core; see [adapter documentation](src/StrongOf.EntityFrameworkCore/readme.md).
@@ -527,7 +426,7 @@ Install [StrongOf.EntityFrameworkCore](https://NuBrowse.com/packages/StrongOf.En
 dotnet add package StrongOf.EntityFrameworkCore
 ```
 
-### Register Converters Once with `ConfigureConventions` (Recommended)
+#### Register Converters Once with `ConfigureConventions` (Recommended)
 
 For most applications, register each strong type once in `ConfigureConventions`. EF Core then applies the converter globally across all entities and `DbSet`s with no per-property configuration required:
 
@@ -548,7 +447,7 @@ public class AppDbContext : DbContext
 
 `ConfigureConventions` uses EF Core's pre-convention activation path. `StrongOfValueConverter<TStrong, TTarget>` supports this by exposing the public parameterless constructor EF Core expects for `HaveConversion<TConversion>()`.
 
-### Configure Strong Types in `OnModelCreating`
+#### Configure Strong Types in `OnModelCreating`
 
 If you want explicit control over individual properties or want the conversion right next to length, precision, or column-type settings, configure it in `OnModelCreating`:
 
@@ -574,7 +473,7 @@ protected override void OnModelCreating(ModelBuilder modelBuilder)
 }
 ```
 
-### LINQ Limitations
+#### LINQ Limitations
 
 EF Core value converters work transparently for CRUD, equality comparisons (`==`, `!=`), and ordering. However, be aware of these limitations:
 
@@ -585,11 +484,11 @@ EF Core value converters work transparently for CRUD, equality comparisons (`==`
 
 See the [StrongOf.EntityFrameworkCore readme](src/StrongOf.EntityFrameworkCore/readme.md) for detailed examples and a full compatibility table.
 
-### Why No Source Generator for EF Core?
+#### Why No Source Generator for EF Core?
 
 The generic `StrongOfValueConverter<TStrong, TTarget>` already eliminates all per-type boilerplate. Combined with `ConfigureConventions`, registration is a single line per type, while `OnModelCreating` remains available when you want more explicit per-property control.
 
-## Usage with FluentValidation
+### Usage with FluentValidation
 
 This extension has no package-wide NativeAOT guarantee. Its FluentValidation dependency must be assessed
 in the consuming application. Core `IValidatable` and `StrongValidation` helpers require no FluentValidation dependency.
@@ -747,7 +646,72 @@ public sealed class UserId(Guid value) : StrongGuid<UserId>(value), IStrongOf<Gu
 
 The generator does exactly this for you.
 
-## Performance matters
+## Native AOT and trimming
+
+Current packages require .NET 9 or later; .NET 8 is no longer a target framework.
+
+`StrongOf` supports NativeAOT and trimming on .NET 9, 10, and 11. Factories dispatch to static
+`Create` implementations without reflection or runtime code generation. `StrongOf.Json` and
+`StrongOf.Domains` are included in the native smoke test as well.
+
+| Package | NativeAOT scope |
+|---------|-----------------|
+| `StrongOf` | Supported; AOT and trimming analyzers enabled |
+| `StrongOf.Json` | Supported with a generated `JsonSerializerContext`; see the JSON example below |
+| `StrongOf.Domains` | Supported; platform-dependent operations still depend on OS data such as time zones |
+| `StrongOf.SourceGenerators` | Runs at build time, not inside the native application |
+| `StrongOf.AspNetCore` | No package-wide guarantee; MVC is unsupported by NativeAOT |
+| `StrongOf.EntityFrameworkCore` | No NativeAOT guarantee for the EF Core integration |
+| `StrongOf.FluentValidation` | No NativeAOT guarantee for the FluentValidation dependency |
+
+Enable native publishing in your **application**:
+
+```xml
+<PropertyGroup>
+  <PublishAot>true</PublishAot>
+  <JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+</PropertyGroup>
+```
+
+The supported library projects declare `IsAotCompatible=true`. `Directory.Build.targets` additionally
+enables `VerifyReferenceAotCompatibility` for their .NET 10+ targets. This is a metadata check (`IL3058`),
+not a replacement for AOT code analysis or native execution. Older framework reference assemblies do not
+carry the metadata introduced in .NET 10, so that additional check is not enabled for .NET 9.
+The Roslyn generator and test projects are not marked as runtime AOT libraries.
+
+CI publishes and runs the [NativeAOT example](samples/StrongOf.NativeAot/readme.md) for .NET 9, 10, and 11
+on Windows x64 and Linux x64, with compiler/linker warnings as errors and JSON reflection disabled.
+It roots the Core, Json and Domains assemblies to analyze unused library code as well. Other platforms and
+the ASP.NET Core, EF Core and FluentValidation integrations are outside this native test's coverage.
+
+## Build and test
+
+Build with the stable .NET SDK 11.0.100 pinned in `global.json` (C# 15).
+Running the complete test suite also requires the .NET 9 and .NET 10 runtimes.
+Framework dependencies are selected per target framework:
+
+| Target framework | ASP.NET Core OpenAPI / TestHost | EF Core / InMemory | Microsoft.OpenApi |
+| --- | --- | --- | --- |
+| `net9.0` | 9.0.23 | 9.0.23 | 1.6.31 |
+| `net10.0` | 10.0.15 | 10.0.15 | 2.13.0 |
+| `net11.0` | 11.0.0 | 11.0.0 | 3.11.0 |
+
+`net9.0` remains available for compatibility; Microsoft's support ended on November 10, 2026.
+The source generator continues to target `netstandard2.0` and uses Roslyn 5.12 from the .NET 11 SDK.
+BenchmarkDotNet uses the 0.16 preview line for its .NET 11 runtime support.
+
+```sh
+dotnet build -c Release
+dotnet test -c Release --no-build
+```
+
+CI requires **100% line and branch coverage** across the six runtime packages and the source generator. Run `just test-cov` or `pwsh -File tools/Test-Coverage.ps1` for the same Release check. It merges executable source lines and branches across the .NET 9, 10 and 11 test runs and writes the individual reports under `TestResults/`.
+
+## Release
+
+Published packages and release notes are available on [GitHub Releases](https://github.com/BenjaminAbt/StrongOf/releases).
+
+## Benchmark
 
 The historical measurements below include .NET 8 for comparison. Current packages and benchmark jobs
 target .NET 9, 10, and 11 only.
@@ -809,6 +773,10 @@ Memory: 61,64 GB Total, 37,06 GB Available
 | String_From | .NET 11.0 | 1.876 ns | 0.0322 ns | 0.0251 ns |  1.00 | 0.0014 |      24 B |
 ```
 
+## Samples
+
+The [Native AOT sample](samples/StrongOf.NativeAot/readme.md) demonstrates generated types, JSON serialization and native publishing.
+
 ## FAQ
 
 __Why no records?__
@@ -819,6 +787,10 @@ __Why no structs?__
 
 Structs cannot be used in all scenarios, e.g. with ASP.NET Core Action parameters.
 
----
+## Maintained
 
-[MIT LICENSE](./LICENSE)
+[Benjamin Abt](https://benjamin-abt.com)
+
+## License
+
+[MIT](LICENSE)

@@ -56,4 +56,11 @@ public class StrongTimeSpanJsonConverterTests
         // Assert
         Assert.Equal("02:03:04", jsonValue);
     }
+
+    [Fact]
+    public void EmptyJsonStringProducesNull()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Null(JsonSerializer.Deserialize<TestTimeSpanOf>("\"\"", _options));
+    }
 }

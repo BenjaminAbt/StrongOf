@@ -40,6 +40,9 @@ public class CurrencyCodeTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, CurrencyCode.TryCreate(code, out CurrencyCode? created));
+        Assert.Equal(expected ? code : null, created?.Value);
     }
 
     [Theory]

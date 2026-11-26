@@ -50,6 +50,9 @@ public class FullNameTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, FullName.TryCreate(name, out FullName? created));
+        Assert.Equal(expected ? name : null, created?.Value);
     }
 
     [Theory]

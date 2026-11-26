@@ -41,6 +41,9 @@ public class HostNameTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, HostName.TryCreate(value, out HostName? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

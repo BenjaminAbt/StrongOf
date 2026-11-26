@@ -24,6 +24,9 @@ public class ColorHexTests
     {
         ColorHex color = new ColorHex(value);
         Assert.Equal(expected, color.IsValidFormat());
+
+        Assert.Equal(expected, ColorHex.TryCreate(value, out ColorHex? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

@@ -17,6 +17,9 @@ public class IsbnTests
     {
         Isbn isbn = new Isbn(value);
         Assert.Equal(expected, isbn.IsValidFormat());
+
+        Assert.Equal(expected, Isbn.TryCreate(value, out Isbn? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Theory]

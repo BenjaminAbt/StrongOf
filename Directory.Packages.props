@@ -2,6 +2,14 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
   </PropertyGroup>
+  <PropertyGroup Label="SourceGenerator">
+    <!-- Roslyn version the StrongOf source generator compiles against. This is the MINIMUM compiler
+         version consumers need, so it must stay at the compiler of the oldest supported SDK
+         (.NET 9.0.100 = Roslyn 4.12) and must NOT follow the analyzer/test versions below.
+         Raising it breaks consumers on older SDKs (generator silently skipped, CS9057).
+         Enforced at build time by StrongOf.SourceGenerators.csproj. -->
+    <StrongOfGeneratorRoslynVersion>4.12.0</StrongOfGeneratorRoslynVersion>
+  </PropertyGroup>
   <ItemGroup Label="Dependencies">
     <!-- System.Text.Json is supplied by the target framework; no package reference is needed. -->
     <!-- EF Core and ASP.NET Core packages follow the target framework's release line. -->
@@ -54,9 +62,9 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
-    <PackageVersion Include="coverlet.collector" Version="10.1.1">
+    <PackageVersion Include="coverlet.mtp" Version="10.1.1">
       <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <IncludeAssets>compile; runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
   </ItemGroup>
   <ItemGroup Label="Analyzers">

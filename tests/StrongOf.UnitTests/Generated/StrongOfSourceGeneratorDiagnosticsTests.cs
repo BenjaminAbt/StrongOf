@@ -1,7 +1,6 @@
 // Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Collections.Immutable;
-using System.Reflection;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using StrongOf.SourceGeneration;
@@ -87,6 +86,35 @@ public sealed class StrongOfSourceGeneratorDiagnosticsTests
         Assert.DoesNotContain(diagnostics, static d => d.Severity == DiagnosticSeverity.Error);
     }
 
+    [Theory]
+    [InlineData("bool")]
+    [InlineData("char")]
+    [InlineData("decimal")]
+    [InlineData("double")]
+    [InlineData("int")]
+    [InlineData("long")]
+    [InlineData("string")]
+    [InlineData("System.Guid")]
+    [InlineData("System.DateTime")]
+    [InlineData("System.DateTimeOffset")]
+    [InlineData("System.TimeSpan")]
+    public void BothMarkerFormsGenerateConstructibleTypes(string primitive)
+    {
+        string source = $$"""
+            using StrongOf.SourceGeneration;
+            [Strong<{{primitive}}>]
+            public partial class GenericValue;
+            [Strong(typeof({{primitive}}))]
+            public partial class TypeofValue;
+            public static class Consumer
+            {
+                public static (GenericValue, TypeofValue) Wrap({{primitive}} value) =>
+                    (new GenericValue(value), new TypeofValue(value));
+            }
+            """;
+        Assert.DoesNotContain(RunGenerator(source), static d => d.Severity == DiagnosticSeverity.Error);
+    }
+
     private static ImmutableArray<Diagnostic> RunGenerator(string source)
     {
         CSharpCompilation compilation = CreateCompilation(source);
@@ -107,58 +135,7 @@ public sealed class StrongOfSourceGeneratorDiagnosticsTests
 
     private static ISourceGenerator CreateSourceGenerator()
     {
-        string generatorAssemblyPath = ResolveGeneratorAssemblyPath();
-        Assembly generatorAssembly = Assembly.LoadFrom(generatorAssemblyPath);
-
-        Type? generatorType = generatorAssembly.GetType("StrongOf.SourceGenerators.StrongOfGenerator", throwOnError: false, ignoreCase: false);
-        Assert.NotNull(generatorType);
-
-        object? instance = Activator.CreateInstance(generatorType!);
-        Assert.NotNull(instance);
-
-        Assert.IsAssignableFrom<IIncrementalGenerator>(instance);
-        IIncrementalGenerator incrementalGenerator = (IIncrementalGenerator)instance;
-
-        return incrementalGenerator.AsSourceGenerator();
-    }
-
-    private static string ResolveGeneratorAssemblyPath()
-    {
-        string repositoryRoot = ResolveRepositoryRoot();
-
-        string generatorPath = Path.Combine(
-            repositoryRoot,
-            "src",
-            "StrongOf.SourceGenerators",
-            "bin",
-#if DEBUG
-            "Debug",
-#else
-            "Release",
-#endif
-            "netstandard2.0",
-            "StrongOf.SourceGenerators.dll");
-
-        Assert.True(File.Exists(generatorPath), "StrongOf.SourceGenerators.dll was not found for the current build configuration.");
-        return generatorPath;
-    }
-
-    private static string ResolveRepositoryRoot()
-    {
-        DirectoryInfo? current = new(AppContext.BaseDirectory);
-
-        while (current is not null)
-        {
-            string sourceGeneratorProjectDirectory = Path.Combine(current.FullName, "src", "StrongOf.SourceGenerators");
-            if (Directory.Exists(sourceGeneratorProjectDirectory))
-            {
-                return current.FullName;
-            }
-
-            current = current.Parent;
-        }
-
-        throw new InvalidOperationException("Could not resolve repository root from test base directory.");
+        return new global::StrongOf.SourceGenerators.StrongOfGenerator().AsSourceGenerator();
     }
 
     private static CSharpCompilation CreateCompilation(string source)
@@ -204,5 +181,45 @@ public sealed class StrongOfSourceGeneratorDiagnosticsTests
         }
 
         return references.ToImmutable();
+    }
+
+    [Theory]
+    [InlineData("[StrongGuid] public class Id;", "STRONG001")]
+    [InlineData("public class Parent { [StrongGuid] public partial class Id; }", "STRONG002")]
+    [InlineData("[Strong<short>] public partial class Id;", "STRONG003")]
+    [InlineData("[Strong<int[]>] public partial class Id;", "STRONG003")]
+    [InlineData("[Strong(typeof(short))] public partial class Id;", "STRONG003")]
+    public void InvalidDeclarationReportsSpecificDiagnostic(string declaration, string expectedId)
+    {
+        ImmutableArray<Diagnostic> diagnostics = RunGenerator("using StrongOf.SourceGeneration; " + declaration);
+        Assert.Contains(diagnostics, d => string.Equals(d.Id, expectedId, StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void UnrelatedAttributesDoNotCountAsStrongMarkers()
+    {
+        const string source = """
+            using StrongOf.SourceGeneration;
+            namespace StrongOf.SourceGeneration { public class ExtraAttribute : System.Attribute; }
+            [System.Serializable, Extra, StrongGuid] public partial class Id;
+            """;
+        Assert.DoesNotContain(RunGenerator(source), static d => d.Severity == DiagnosticSeverity.Error);
+    }
+
+    [Theory]
+    [InlineData("[Strong] public partial class Id;")]
+    [InlineData("[Strong(null)] public partial class Id;")]
+    [InlineData("[Strong(\"bad\")] public partial class Id;")]
+    public void IncompleteTypeofAttributeDoesNotCrashGenerator(string declaration)
+    {
+        ImmutableArray<Diagnostic> diagnostics = RunGenerator("using StrongOf.SourceGeneration; " + declaration);
+        Assert.DoesNotContain(diagnostics, static d => string.Equals(d.Id, "CS8785", StringComparison.Ordinal));
+        Assert.DoesNotContain(diagnostics, static d => d.Id.StartsWith("STRONG", StringComparison.Ordinal));
+    }
+
+    [Fact]
+    public void RuntimeMarkerExposesPrimitiveType()
+    {
+        Assert.Equal(typeof(int), new StrongAttribute(typeof(int)).TargetType);
     }
 }

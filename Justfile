@@ -46,7 +46,7 @@ test *ARGS:
     dotnet test --configuration "{{CONFIG}}" --framework "{{TFM}}" --nologo --verbosity minimal {{ARGS}}
 
 test-cov:
-    dotnet test --configuration "{{CONFIG}}" --framework "{{TFM}}" --nologo --verbosity minimal /p:CollectCoverage=true /p:CoverletOutputFormat="cobertura,lcov,opencover" /p:CoverletOutput="./TestResults/coverage/coverage"
+    ./tools/Test-Coverage.ps1
 
 
 test-filter QUERY:

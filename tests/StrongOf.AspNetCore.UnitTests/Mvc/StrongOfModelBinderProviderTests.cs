@@ -35,7 +35,7 @@ public class StrongOfModelBinderProviderTests
         MvcOptions options = new();
 
         // Act
-        options.AddStrongOfModelBinderProvider(typeof(TestUserId), typeof(TestEmail), typeof(TestTimeout));
+        options.AddStrongOfModelBinderProvider(typeof(TestUserId), typeof(TestUserId), typeof(TestEmail), typeof(TestTimeout));
         StrongOfModelBinderProvider provider = Assert.IsType<StrongOfModelBinderProvider>(options.ModelBinderProviders[0]);
 
         // Assert
@@ -93,6 +93,37 @@ public class StrongOfModelBinderProviderTests
 
         // Assert
         Assert.Contains("At least one supported StrongOf type", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void OpenGenericTypeCannotBeRegistered()
+    {
+        MvcOptions options = new();
+        Assert.Throws<NotSupportedException>(() => options.AddStrongOfModelBinderProvider(typeof(StrongGuid<>)));
+    }
+
+    [Theory]
+    [InlineData(true)]
+    [InlineData(false)]
+    public async Task AbsentAndEmptyInputLeaveResultUnset(bool supplied)
+    {
+        IValueProvider values = Substitute.For<IValueProvider>();
+        values.GetValue("email").Returns(supplied ? new ValueProviderResult("") : ValueProviderResult.None);
+        DefaultModelBindingContext context = new() { ModelName = "email", ValueProvider = values, ModelState = new() };
+        await new StrongStringBinder<TestEmail>().BindModelAsync(context);
+        Assert.False(context.Result.IsModelSet);
+        Assert.Equal(supplied, context.ModelState.ContainsKey("email"));
+    }
+
+    [Fact]
+    public async Task NonEmptyInputSetsModelResult()
+    {
+        IValueProvider values = Substitute.For<IValueProvider>();
+        values.GetValue("email").Returns(new ValueProviderResult("user@example.com"));
+        DefaultModelBindingContext context = new() { ModelName = "email", ValueProvider = values, ModelState = new() };
+        await new StrongStringBinder<TestEmail>().BindModelAsync(context);
+        Assert.True(context.Result.IsModelSet);
+        Assert.Equal(new TestEmail("user@example.com"), context.Result.Model);
     }
 
     private static ModelBinderProviderContext CreateContext(Type modelType)

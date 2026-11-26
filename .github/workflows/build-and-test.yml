@@ -36,8 +36,8 @@ jobs:
             rid: win-x64
         os: [ubuntu-latest, windows-latest]
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-dotnet@v5
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: |
             9.0.x
@@ -65,12 +65,12 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6.0.0
         with:
           dotnet-version: |
             9.0.x
@@ -78,7 +78,7 @@ jobs:
           global-json-file: global.json
 
       - name: Calculate Version with NBGV
-        uses: dotnet/nbgv@master
+        uses: dotnet/nbgv@v0.5.2
         id: nbgv
         with:
           setAllVars: true
@@ -90,26 +90,30 @@ jobs:
       - name: Build
         run: dotnet build --configuration ${{ inputs.configuration }} --verbosity minimal /p:Version=${{ steps.nbgv.outputs.SemVer2 }}
 
-      - name: Test
-        # --no-build reuses artifacts from the Build step above.
-        # Arguments after '--' are passed directly to the xunit.v3 MTP runner.
-        # '--report-xunit-trx' is the xUnit.net TRX reporter (not the VSTest '--logger' flag,
-        # which MTP does not support).
-        run: dotnet test --configuration ${{ inputs.configuration }} --no-build --verbosity normal /p:Version=${{ steps.nbgv.outputs.SemVer2 }} -- --report-xunit-trx
+      - name: Verify formatting
+        run: |
+          dotnet build src/StrongOf.SourceGenerators/StrongOf.SourceGenerators.csproj --configuration Debug --verbosity minimal
+          dotnet format --verify-no-changes --verbosity minimal
+
+      - name: Test and verify 100% line and branch coverage
+        shell: pwsh
+        run: ./tools/Test-Coverage.ps1 -Configuration '${{ inputs.configuration }}' -NoBuild
 
       - name: Upload test results
         if: always() && inputs.upload-test-results
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: test-results
-          path: '**/TestResults/**/*.trx'
+          path: |
+            TestResults/coverage-*/*.trx
+            TestResults/coverage-*/coverage.cobertura.*.xml
 
       - name: Pack NuGet packages
         run: dotnet pack --configuration ${{ inputs.configuration }} --no-build --include-symbols -p:SymbolPackageFormat=snupkg --output ./artifacts /p:PackageVersion=${{ steps.nbgv.outputs.SemVer2 }}
 
       - name: Upload NuGet packages
         if: inputs.upload-packages
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: nuget-packages
           path: |

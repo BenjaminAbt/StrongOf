@@ -42,6 +42,9 @@ public class EmailAddressTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, EmailAddress.TryCreate(email, out EmailAddress? created));
+        Assert.Equal(expected ? email : null, created?.Value);
     }
 
     [Theory]

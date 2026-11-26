@@ -22,6 +22,9 @@ public class MimeTypeTests
     {
         MimeType mime = new MimeType(value);
         Assert.Equal(expected, mime.IsValidFormat());
+
+        Assert.Equal(expected, MimeType.TryCreate(value, out MimeType? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

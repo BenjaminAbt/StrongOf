@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Text;
 using System.Text.Json;
@@ -50,5 +50,12 @@ public class StrongInt32JsonConverterTests
 
         // Assert
         Assert.Equal("\"123\"", json);
+    }
+
+    [Fact]
+    public void EmptyJsonStringProducesNull()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Null(JsonSerializer.Deserialize<TestInt32Of>("\"\"", _options));
     }
 }

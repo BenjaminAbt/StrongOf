@@ -24,6 +24,9 @@ public class SemVerTests
     {
         SemVer version = new SemVer(value);
         Assert.Equal(expected, version.IsValidFormat());
+
+        Assert.Equal(expected, SemVer.TryCreate(value, out SemVer? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

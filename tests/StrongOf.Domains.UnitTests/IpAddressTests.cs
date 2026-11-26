@@ -41,6 +41,9 @@ public class IpAddressTests
 
         // Assert
         Assert.Equal(expected, result);
+
+        Assert.Equal(expected, IpAddress.TryCreate(value, out IpAddress? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Theory]

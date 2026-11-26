@@ -159,7 +159,7 @@ public sealed class StrongOfModelBinderProvider : IModelBinderProvider
 
         Type? currentType = strongType;
 
-        while (currentType is not null && currentType != typeof(object))
+        while (currentType is not null)
         {
             // StrongOf model types usually inherit from intermediate generic base classes
             // (for example StrongGuid<TStrong>). Walking the base chain lets us discover

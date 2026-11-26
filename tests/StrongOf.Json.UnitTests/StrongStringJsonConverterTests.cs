@@ -56,4 +56,24 @@ public class StrongStringJsonConverterTests
         // Assert
         Assert.Equal("hello-world", jsonValue);
     }
+
+    [Fact]
+    public void EmptyJsonStringProducesNull()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Null(JsonSerializer.Deserialize<TestStringOf>("\"\"", _options));
+    }
+
+    [Fact]
+    public void LegacyConverterPreservesStringWireFormat()
+    {
+#pragma warning disable CS0618 // Verify the public compatibility alias.
+        _options.Converters.Add(new StrongStringOffsetJsonConverter<TestStringOf>());
+#pragma warning restore CS0618
+        const string json = "\"example\"";
+        TestStringOf? value = JsonSerializer.Deserialize<TestStringOf>(json, _options);
+        Assert.Equal("example", value?.Value);
+        Assert.Equal(json, JsonSerializer.Serialize(value, _options));
+        Assert.Null(JsonSerializer.Deserialize<TestStringOf>("\"\"", _options));
+    }
 }

@@ -90,6 +90,23 @@ public class StrongOfSchemaTransformerTests
     }
 
     [Fact]
+    public async Task TransformAsync_StrongGuid_WithNullProperties_MapsToStringUuid()
+    {
+        // Arrange
+        StrongOfSchemaTransformer transformer = new();
+        OpenApiSchema schema = new() { Properties = null };
+        OpenApiSchemaTransformerContext context = CreateContext(typeof(TestId));
+
+        // Act
+        await transformer.TransformAsync(schema, context, CancellationToken.None);
+
+        // Assert
+        AssertSchemaType(schema, "string");
+        Assert.Equal("uuid", schema.Format);
+        AssertNoProperties(schema);
+    }
+
+    [Fact]
     public async Task TransformAsync_StrongString_MapsToString()
     {
         // Arrange

@@ -2,11 +2,14 @@
 
     <PropertyGroup Label="Native AoT Analyzers">
         <IsAotCompatible>true</IsAotCompatible>
+        <VerifyReferenceAotCompatibility Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net10.0'))">true</VerifyReferenceAotCompatibility>
     </PropertyGroup>
 
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.Domains</PackageId>
         <IsPackable>true</IsPackable>
+        <Description>Ready-to-use strongly typed domain primitives for StrongOf including EmailAddress, Url, Iban, CurrencyCode, CountryCode, ZipCode, IpAddress, SemVer, GeoCoordinate and more.</Description>
+        <PackageTags>StrongOf, Domains, ValueObjects, DDD, EmailAddress, Iban, Postal, Networking, NativeAOT</PackageTags>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

@@ -8,6 +8,8 @@
     <PropertyGroup Label="Package">
         <PackageId>StrongOf.AspNetCore</PackageId>
         <IsPackable>true</IsPackable>
+        <Description>ASP.NET Core integration for StrongOf providing MVC model binders, Minimal API validation endpoint filters, and OpenAPI schema transformers.</Description>
+        <PackageTags>StrongOf, AspNetCore, MVC, MinimalApi, OpenApi, ModelBinder, Validation</PackageTags>
         <PackageReadmeFile>readme.md</PackageReadmeFile>
     </PropertyGroup>
 

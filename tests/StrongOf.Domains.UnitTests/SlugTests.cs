@@ -20,6 +20,9 @@ public class SlugTests
     {
         Slug slug = new Slug(value);
         Assert.Equal(expected, slug.IsValidFormat());
+
+        Assert.Equal(expected, Slug.TryCreate(value, out Slug? created));
+        Assert.Equal(expected ? value : null, created?.Value);
     }
 
     [Fact]

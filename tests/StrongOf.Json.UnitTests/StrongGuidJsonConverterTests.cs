@@ -1,4 +1,4 @@
-﻿// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
+// Copyright © BEN ABT (https://benjamin-abt.com) - all rights reserved
 
 using System.Text;
 using System.Text.Json;
@@ -50,5 +50,12 @@ public class StrongGuidJsonConverterTests
 
         // Assert
         Assert.Equal("\"d3dd268c-7d12-4e2a-89b9-5368f0b2f38a\"", json);
+    }
+
+    [Fact]
+    public void EmptyJsonStringProducesNull()
+    {
+        _options.Converters.Add(_converter);
+        Assert.Null(JsonSerializer.Deserialize<TestGuidOf>("\"\"", _options));
     }
 }
